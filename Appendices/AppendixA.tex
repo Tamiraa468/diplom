@@ -1,0 +1,115 @@
+% Appendix A
+\section{Программын кодын хэсгээс}
+\label{app:code}
+
+\subsection{Захиалга хүлээн авах функц (Atomic Transaction)}
+Энэхүү функц нь хүргэгч захиалгыг хүлээн авах үед өгөгдлийн бүрэн бүтэн байдлыг хангах зорилгоор Firestore Transaction ашигладаг.
+
+\begin{lstlisting}[language=JavaScript, caption=Accept Order Transaction]
+export const acceptOrder = async (orderId: string, courierId: string) => {
+  try {
+    await runTransaction(db, async (transaction) => {
+      // 1. Get order ref
+      const orderRef = doc(db, "orders", orderId);
+      const orderDoc = await transaction.get(orderRef);
+
+      if (!orderDoc.exists()) {
+        throw "Order does not exist!";
+      }
+
+      // 2. Get courier info for denormalization
+      const courierRef = doc(db, "users", courierId);
+      const courierDoc = await transaction.get(courierRef);
+      
+      if (!courierDoc.exists()) {
+        throw "Courier profile not found!";
+      }
+
+      const courierData = courierDoc.data();
+      
+      // 3. Prepare denormalized data
+      const courierInfo: CourierInfo = {
+        name: courierData.name || courierData.displayName || "Courier",
+        phone: courierData.phone || courierData.phoneNumber || "",
+      };
+      
+      if (courierData.photoURL) {
+        courierInfo.photoURL = courierData.photoURL;
+      }
+
+      // 4. Update order atomically
+      transaction.update(orderRef, {
+        status: "accepted",
+        courierId: courierId,
+        acceptedAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        courierInfo: courierInfo 
+      });
+    });
+    
+    console.log("Order accepted successfully via transaction");
+  } catch (error) {
+    console.error("Transaction failed: ", error);
+    throw error;
+  }
+};
+\end{lstlisting}
+
+\subsection{Firestore Security Rules}
+Хэрэглэгчийн өгөгдлийг хамгаалах дүрмийн жишээ.
+
+\begin{lstlisting}[caption=Firestore Security Rules]
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    // Users collection
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && isOwner(userId);
+      allow update: if isAuthenticated() && isOwner(userId);
+    }
+    
+    // Orders collection
+    match /orders/{orderId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated(); 
+    }
+  }
+}
+\end{lstlisting}
+
+\subsection{Firebase тохиргоо (firebase.ts)}
+\begin{lstlisting}[language=JavaScript, caption=Firebase Config]
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
+
+const firebaseConfig = {
+  apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID,
+};
+
+const app = initializeApp(firebaseConfig);
+
+export const auth = getAuth(app);
+export const db = getFirestore(app);
+export const storage = getStorage(app);
+
+export default app;
+\end{lstlisting}

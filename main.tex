@@ -1,0 +1,178 @@
+% Modular main.tex: includes front-matter files from FrontBackMatter/
+\documentclass[12pt,a4paper,oneside]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1,T2A]{fontenc}
+\usepackage[mongolian,english]{babel}
+
+% Geometry
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+
+% Bibliography (biblatex + biber)
+\usepackage[backend=biber,style=numeric,sorting=none]{biblatex}
+\addbibresource{references.bib}
+
+% Graphics, math, tables
+\usepackage{graphicx,amsmath,amssymb,booktabs,caption,subcaption}
+\usepackage{array,multirow,longtable} % longtable нэмэв
+\usepackage{xcolor,colortbl}
+\usepackage{float} % [H] байршлын тохируулга
+
+% Code listings
+\usepackage{listings}
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+% Define JavaScript language
+\lstdefinelanguage{JavaScript}{
+  keywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break, const, let, async, await, throw, import, export, from, default},
+  keywordstyle=\color{blue}\bfseries,
+  ndkeywords={class, export, boolean, throw, implements, import, this},
+  ndkeywordstyle=\color{darkgray}\bfseries,
+  identifierstyle=\color{black},
+  sensitive=false,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  commentstyle=\color{codegreen}\ttfamily,
+  stringstyle=\color{codepurple}\ttfamily,
+  morestring=[b]',
+  morestring=[b]"
+}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+% TikZ for diagrams
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,positioning,fit,calc,shadows}
+
+% Links, TOC, header/footer
+\usepackage[
+    colorlinks=true,      % Links will be colored text instead of having boxes
+    linkcolor=black,      % Internal links (sections, pages) in black
+    citecolor=black,      % Citation links in black
+    filecolor=black,      % File links in black
+    urlcolor=black,       % URLs in black
+    pdfborder={0 0 0}     % Removes the border around links
+]{hyperref}
+\usepackage[titles]{tocloft}
+\usepackage{fancyhdr}
+
+% ToC Customization
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}} % Add dots for sections
+\setcounter{tocdepth}{3} % Depth: section, subsection, subsubsection
+
+% Optional: Add "Page" (Хуудас) above page numbers
+\renewcommand{\cftaftertoctitle}{%
+  \hfill\textbf{Хуудас}\par\medskip}
+
+% Simple verbatim for code samples
+\usepackage{verbatim}
+
+% Preamble metadata (edit as needed)
+\newcommand{\univname}{Шинэ Монгол Технологийн Коллеж}
+\newcommand{\facname}{Мэдээлэл Технологийн Сургууль}
+\newcommand{\deptname}{Компьютерийн ухааны тэнхим}
+\newcommand{\ttitle}{Байгууллагын бүтээгдэхүүн түгээлтийн нэгдсэн систем}
+\newcommand{\ttitleeng}{Unified B2B Product Delivery System}
+\newcommand{\thesistype}{Бакалаврын төгсөлтийн ажил}
+
+\newcommand{\authorshort}{Ү. Тамир}
+\newcommand{\authorlong}{Үдэлгомбо Тамир}
+\newcommand{\authorcode}{s21c011b}
+\newcommand{\authoremail}{s21c011b@nmct.edu.mn}
+\newcommand{\authorphone}{89475188}
+
+\newcommand{\supervisor}{Н.Соронзонболд}
+
+\newcommand{\submitdate}{2025 оны 12 сар}
+\newcommand{\degree}{Программ хангамжийн мэргэжилтэн}
+
+\newcommand{\keywordsMN}{B2B платформ, захиалгын удирдлага, бодит цагийн хяналт, React Native, Firebase, гар утасны аппликейшн, денормализаци}
+\newcommand{\keywordnames}{B2B платформ, захиалгын удирдлага, бодит цагийн хяналт, React Native, Firebase, гар утасны аппликейшн, денормализаци}
+\newcommand{\authorshipname}{Зохиогчийн мэдүүлэг}
+\newcommand{\acknowledgementname}{Талархал}
+\newcommand{\abbrevname}{Товчлолын жагсаалт}
+\newcommand{\addressname}{}
+
+% Aliases for front-matter files compatibility
+\newcommand{\shortname}{\authorshort}
+\newcommand{\supname}{\supervisor}
+\newcommand{\chairname}{\deptchair}
+\newcommand{\readname}{\reader}
+
+% Small helpers used in front-matter files
+\newcommand{\addchaptertocentry}[1]{\addcontentsline{toc}{section}{#1}}
+\newenvironment{declaration}{\begin{titlepage}}{\end{titlepage}}
+
+% Header/Footer
+% \pagestyle{fancy}
+% \fancyhf{}
+% \fancyhead[L]{\footnotesize \ttitle}
+% \fancyhead[R]{\footnotesize \authorlong}
+% \fancyfoot[C]{\thepage}
+% \renewcommand{\headrulewidth}{0.5pt}
+% \renewcommand{\footrulewidth}{0.5pt}
+
+% Document
+\begin{document}
+
+% Start with Roman numerals for front-matter
+\pagenumbering{roman}
+
+% Include modular front-matter files (keep these files in FrontBackMatter/)
+\include{FrontBackMatter/TittlePage}
+% \include{FrontBackMatter/Plan-review}
+% \include{FrontBackMatter/declaration}
+\include{FrontBackMatter/Abstract}
+\include{FrontBackMatter/Abberaviation}
+\include{FrontBackMatter/TableOfContent}
+
+\cleardoublepage
+
+% Switch to Arabic numerals for main content
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+% Table of contents
+
+\newpage
+
+% ...existing code...
+% Main content (create Chapters/ files and include them)
+\include{Chapters/Chapter1}
+\include{Chapters/Chapter2}
+\include{Chapters/Chapter3}
+\include{Chapters/Chapter4}
+\include{Chapters/Chapter5}
+\include{Chapters/DataLineageSystem}
+
+% Appendices
+\appendix
+\include{Appendices/AppendixA}
+
+% Bibliography
+\printbibliography[heading=bibintoc,title={Ном зүй}]
+\clearpage
+
+\end{document}

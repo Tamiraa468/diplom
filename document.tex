@@ -1,0 +1,46 @@
+\documentclass[12pt,a4paper]{article}
+
+% === МОНГОЛ КИРИЛЛ ҮСГИЙН ДЭМЖЛЭГ (pdfLaTeX-д зөв арга) ===
+\usepackage[T2A,T1]{fontenc}        % T2A = Кирилл үсэг
+\usepackage[mongolian,english]{babel}  % mongolian = Монгол кирилл
+
+% === Бусад хэрэгтэй багцууд ===
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+
+\title{Түүврийн баримт бичиг}
+\author{}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Оршил}
+
+Монгол Улс нь дотоодын нийт бүтээгдэхүүн (ДНБ)-ээрээ дэлхийд дунд зэрэгт ордог. Газрын гадаргаа нь 1.5 сая км² талбайтай, хүн ам нь 3.5 сая орчим.
+
+\section{Өгөгдөл}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lcr}
+\toprule
+\textbf{Бүтээгдэхүүн} & \textbf{Тоо хэмжээ} & \textbf{Үнэ} \\
+\midrule
+А ангилал & 10 & 100 \\
+Б ангилал & 20 & 200 \\
+В ангилал & 30 & 300 \\
+Г ангилал & 40 & 400 \\
+\bottomrule
+\end{tabular}
+\caption{Жишээ хүснэгт}
+\end{table}
+
+\section{Дүгнэлт}
+
+Монгол Улс цаашид уул уурхай, хөдөө аж ахуй, аялал жуулчлалын салбараа хөгжүүлэх боломжтой.
+
+\end{document}

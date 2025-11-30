@@ -1,0 +1,145 @@
+\babel@toc {english}{}\relax 
+\contentsline {section}{Хураангуй}{i}{Doc-Start}%
+\contentsline {section}{Товчлолын жагсаалт}{ii}{Doc-Start}%
+\contentsline {section}{Contents}{iii}{section*.1}%
+\contentsline {section}{\numberline {1}Удиртгал}{1}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Судалгааны үндэслэл}{1}{subsection.1.1}%
+\contentsline {paragraph}{Монгол улсын нөхцөл байдал}{1}{section*.3}%
+\contentsline {paragraph}{Үндсэн асуудлууд}{1}{section*.4}%
+\contentsline {subsection}{\numberline {1.2}Судалгааны зорилго}{2}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}Судалгааны зорилтууд}{2}{subsection.1.3}%
+\contentsline {subsection}{\numberline {1.4}Судалгааны ач холбогдол}{3}{subsection.1.4}%
+\contentsline {subsubsection}{\numberline {1.4.1}Практик ач холбогдол}{3}{subsubsection.1.4.1}%
+\contentsline {subsubsection}{\numberline {1.4.2}Нийгэм, эдийн засгийн ач холбогдол}{3}{subsubsection.1.4.2}%
+\contentsline {subsection}{\numberline {1.5}Судалгааны хамрах хүрээ ба хязгаарлалт}{3}{subsection.1.5}%
+\contentsline {subsubsection}{\numberline {1.5.1}Хамрах хүрээ}{3}{subsubsection.1.5.1}%
+\contentsline {subsubsection}{\numberline {1.5.2}Хязгаарлалт}{3}{subsubsection.1.5.2}%
+\contentsline {subsection}{\numberline {1.6}Дипломын ажлын бүтэц}{4}{subsection.1.6}%
+\contentsline {section}{\numberline {2}Онолын болон харьцуулсан судалгаа}{5}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Онолын судалгаа}{5}{subsection.2.1}%
+\contentsline {subsubsection}{\numberline {2.1.1}Нийлүүлэлтийн сүлжээний удирдлага (SCM)}{5}{subsubsection.2.1.1}%
+\contentsline {subsubsection}{\numberline {2.1.2}B2B Түгээлтийн процесс ба онцлог}{5}{subsubsection.2.1.2}%
+\contentsline {subsubsection}{\numberline {2.1.3}Last-Mile Delivery (Сүүлийн цэгийн хүргэлт)}{6}{subsubsection.2.1.3}%
+\contentsline {subsubsection}{\numberline {2.1.4}Маршрутын оновчлол (Route Optimization)}{6}{subsubsection.2.1.4}%
+\contentsline {subsubsection}{\numberline {2.1.5}Электрон баримт бичиг (e-POD)}{6}{subsubsection.2.1.5}%
+\contentsline {subsection}{\numberline {2.2}Технологийн судалгаа}{6}{subsection.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.1}Програмчлалын хэл}{6}{subsubsection.2.2.1}%
+\contentsline {subsubsection}{\numberline {2.2.2}Framework ба Platform}{8}{subsubsection.2.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.3}Database ба Backend (Firebase)}{10}{subsubsection.2.2.3}%
+\contentsline {subsubsection}{\numberline {2.2.4}NoSQL ба Atomic Denormalization}{12}{subsubsection.2.2.4}%
+\contentsline {subsubsection}{\numberline {2.2.5}Навигаци (Navigation)}{13}{subsubsection.2.2.5}%
+\contentsline {subsubsection}{\numberline {2.2.6}UI/UX Сангууд}{15}{subsubsection.2.2.6}%
+\contentsline {subsubsection}{\numberline {2.2.7}Expo SDK Сангууд}{17}{subsubsection.2.2.7}%
+\contentsline {subsubsection}{\numberline {2.2.8}State Management ба Storage}{19}{subsubsection.2.2.8}%
+\contentsline {subsubsection}{\numberline {2.2.9}Network ба API}{22}{subsubsection.2.2.9}%
+\contentsline {subsubsection}{\numberline {2.2.10}Animation ба Gestures}{24}{subsubsection.2.2.10}%
+\contentsline {subsubsection}{\numberline {2.2.11}Хөгжүүлэлтийн хэрэгслүүд (Development Tools)}{26}{subsubsection.2.2.11}%
+\contentsline {subsubsection}{\numberline {2.2.12}Технологийн стекийн нэгтгэл}{29}{subsubsection.2.2.12}%
+\contentsline {subsection}{\numberline {2.3}Ижил төстэй системүүдийн харьцуулалт}{31}{subsection.2.3}%
+\contentsline {subsubsection}{\numberline {2.3.1}Харьцуулсан дүгнэлт}{32}{subsubsection.2.3.1}%
+\contentsline {section}{\numberline {3}Судалгааны арга зүй}{33}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Хөгжүүлэлтийн арга зүй}{33}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Системийн шинжилгээ}{33}{subsection.3.2}%
+\contentsline {subsubsection}{\numberline {3.2.1}Хэрэглэгчийн ангилал}{33}{subsubsection.3.2.1}%
+\contentsline {subsubsection}{\numberline {3.2.2}Функциональ шаардлага}{33}{subsubsection.3.2.2}%
+\contentsline {subsubsection}{\numberline {3.2.3}Функциональ бус шаардлага}{34}{subsubsection.3.2.3}%
+\contentsline {subsubsection}{\numberline {3.2.4}Хэрэглээний тохиолдлын диаграмм (Use Case Diagram)}{34}{subsubsection.3.2.4}%
+\contentsline {subsubsection}{\numberline {3.2.5}Үйл ажиллагааны диаграмм (Activity Diagram)}{34}{subsubsection.3.2.5}%
+\contentsline {subsection}{\numberline {3.3}Системийн архитектур}{35}{subsection.3.3}%
+\contentsline {subsubsection}{\numberline {3.3.1}Технологийн сонголт}{35}{subsubsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.4}Өгөгдлийн сангийн зохиомж (ERD)}{36}{subsection.3.4}%
+\contentsline {subsubsection}{\numberline {3.4.1}Өгөгдлийн сангийн бүтэц (Schema)}{36}{subsubsection.3.4.1}%
+\contentsline {subsection}{\numberline {3.5}Алгоритм ба Логик шийдэл}{37}{subsection.3.5}%
+\contentsline {subsubsection}{\numberline {3.5.1}Атомик Денормализаци (Atomic Denormalization)}{37}{subsubsection.3.5.1}%
+\contentsline {subsubsection}{\numberline {3.5.2}Бодит цагийн захиалгын удирдлага}{37}{subsubsection.3.5.2}%
+\contentsline {subsection}{\numberline {3.6}Тестлэлт}{37}{subsection.3.6}%
+\contentsline {section}{\numberline {4}Судалгааны үр дүн}{38}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Системийн хэрэгжүүлэлт}{38}{subsection.4.1}%
+\contentsline {subsubsection}{\numberline {4.1.1}Хэрэглэгчийн интерфэйс (UI)}{38}{subsubsection.4.1.1}%
+\contentsline {subsection}{\numberline {4.2}Хоёр талт захиалгын удирдлага (Two-Sided Order Management)}{38}{subsection.4.2}%
+\contentsline {subsubsection}{\numberline {4.2.1}Захиалагчийн хэсэг (My Orders)}{38}{subsubsection.4.2.1}%
+\contentsline {subsubsection}{\numberline {4.2.2}Хүргэгчийн хэсэг (My Deliveries)}{38}{subsubsection.4.2.2}%
+\contentsline {subsection}{\numberline {4.3}Кодчиллын хэсэг}{39}{subsection.4.3}%
+\contentsline {subsubsection}{\numberline {4.3.1}Firebase тохиргоо ба Холболт}{39}{subsubsection.4.3.1}%
+\contentsline {subsubsection}{\numberline {4.3.2}Захиалга үүсгэх функц}{39}{subsubsection.4.3.2}%
+\contentsline {subsubsection}{\numberline {4.3.3}Бодит цагийн хяналт (Real-time Listener)}{40}{subsubsection.4.3.3}%
+\contentsline {subsection}{\numberline {4.4}Процессын цахимжуулалтын үр дүн}{41}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}Цахим баримт бичиг (e-POD) нэвтрүүлэлт}{41}{subsection.4.5}%
+\contentsline {subsection}{\numberline {4.6}Маршрут оновчлолын үр дүн}{41}{subsection.4.6}%
+\contentsline {subsection}{\numberline {4.7}Хэлэлцүүлэг}{41}{subsection.4.7}%
+\contentsline {section}{\numberline {5}Дүгнэлт}{42}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Хүрсэн үр дүн}{42}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Тулгарсан бэрхшээл ба шийдэл}{42}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Цаашдын хөгжүүлэлт}{42}{subsection.5.3}%
+\contentsline {section}{\numberline {6}Өгөгдлийн Гарал Үүслийн Систем}{44}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Уран зохиолын тойм}{44}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Удиртгал}{45}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}Өгөгдлийн гарал үүсэл}{46}{subsection.6.3}%
+\contentsline {subsubsection}{\numberline {6.3.1}Өгөгдлийн гарал үүслийн төрлүүд}{46}{subsubsection.6.3.1}%
+\contentsline {paragraph}{Урагшлах гарал үүсэл (Нөлөөллийн шинжилгээ)}{46}{section*.25}%
+\contentsline {paragraph}{Ухрах гарал үүсэл (Үндсэн шалтгааны шинжилгээ)}{46}{section*.26}%
+\contentsline {paragraph}{Хэвтээ гарал үүсэл}{46}{section*.27}%
+\contentsline {subsubsection}{\numberline {6.3.2}Гарал үүслийн нарийвчлал}{46}{subsubsection.6.3.2}%
+\contentsline {subsection}{\numberline {6.4}Хамрах хүрээ}{47}{subsection.6.4}%
+\contentsline {subsubsection}{\numberline {6.4.1}Хамрах хүрээнд багтах}{47}{subsubsection.6.4.1}%
+\contentsline {subsubsection}{\numberline {6.4.2}Хамрах хүрээнд багтахгүй}{47}{subsubsection.6.4.2}%
+\contentsline {subsection}{\numberline {6.5}Өгөгдлийн гарал үүслийн чухал тодорхойлолтууд}{47}{subsection.6.5}%
+\contentsline {subsection}{\numberline {6.6}Зохиомж}{48}{subsection.6.6}%
+\contentsline {subsubsection}{\numberline {6.6.1}Архитектурын зарчмууд}{48}{subsubsection.6.6.1}%
+\contentsline {subsubsection}{\numberline {6.6.2}Системийн бүрэлдэхүүн хэсгүүд}{49}{subsubsection.6.6.2}%
+\contentsline {paragraph}{Танилцуулгын давхарга}{49}{section*.28}%
+\contentsline {paragraph}{API давхарга}{49}{section*.29}%
+\contentsline {paragraph}{Задлагчийн хөдөлгүүр}{49}{section*.30}%
+\contentsline {paragraph}{Граф өгөгдлийн сан}{49}{section*.31}%
+\contentsline {paragraph}{Метадата хадгалах сан}{49}{section*.32}%
+\contentsline {subsubsection}{\numberline {6.6.3}Технологийн стек}{49}{subsubsection.6.6.3}%
+\contentsline {subsection}{\numberline {6.7}Төслийн суурь мэдээлэл}{49}{subsection.6.7}%
+\contentsline {subsubsection}{\numberline {6.7.1}Салбарын нөхцөл байдал}{50}{subsubsection.6.7.1}%
+\contentsline {subsubsection}{\numberline {6.7.2}Байгууллагын сорилтууд}{50}{subsubsection.6.7.2}%
+\contentsline {subsubsection}{\numberline {6.7.3}Төслийн үүсэл}{50}{subsubsection.6.7.3}%
+\contentsline {subsection}{\numberline {6.8}Санал болгож буй шийдэл}{50}{subsection.6.8}%
+\contentsline {subsubsection}{\numberline {6.8.1}Шийдлийн тойм}{51}{subsubsection.6.8.1}%
+\contentsline {subsubsection}{\numberline {6.8.2}Гол онцлогууд}{51}{subsubsection.6.8.2}%
+\contentsline {paragraph}{Автоматжуулсан гарал үүслийн гаргаж авалт}{51}{section*.34}%
+\contentsline {paragraph}{Интерактив дүрслэл}{51}{section*.35}%
+\contentsline {paragraph}{Нөлөөллийн шинжилгээ}{51}{section*.36}%
+\contentsline {paragraph}{API-д түрүүлсэн зохиомж}{51}{section*.37}%
+\contentsline {subsubsection}{\numberline {6.8.3}Байршуулалтын загвар}{51}{subsubsection.6.8.3}%
+\contentsline {subsection}{\numberline {6.9}Шаардлагын жагсаалт}{52}{subsection.6.9}%
+\contentsline {subsubsection}{\numberline {6.9.1}Шаардлагын тодорхойлолт}{52}{subsubsection.6.9.1}%
+\contentsline {paragraph}{Функциональ шаардлагууд}{52}{table.caption.39}%
+\contentsline {paragraph}{Функциональ бус шаардлагууд}{52}{section*.40}%
+\contentsline {subsubsection}{\numberline {6.9.2}Таамаглал ба хамаарлууд}{53}{subsubsection.6.9.2}%
+\contentsline {paragraph}{Таамаглалууд}{53}{section*.41}%
+\contentsline {paragraph}{Хамаарлууд}{53}{section*.42}%
+\contentsline {subsubsection}{\numberline {6.9.3}Эрсдэл}{53}{subsubsection.6.9.3}%
+\contentsline {subsection}{\numberline {6.10}UML диаграммууд}{53}{subsection.6.10}%
+\contentsline {subsubsection}{\numberline {6.10.1}Use Case диаграмм}{54}{subsubsection.6.10.1}%
+\contentsline {subsubsection}{\numberline {6.10.2}Class диаграмм}{54}{subsubsection.6.10.2}%
+\contentsline {subsubsection}{\numberline {6.10.3}Activity диаграмм}{55}{subsubsection.6.10.3}%
+\contentsline {subsubsection}{\numberline {6.10.4}Sequence диаграмм}{56}{subsubsection.6.10.4}%
+\contentsline {subsection}{\numberline {6.11}Хэрэгжүүлэлт}{56}{subsection.6.11}%
+\contentsline {subsubsection}{\numberline {6.11.1}Хэрэглэгчийн модуль}{56}{subsubsection.6.11.1}%
+\contentsline {paragraph}{Зорилго ба онцлогууд}{57}{section*.44}%
+\contentsline {paragraph}{Нэвтрэлт ба баталгаажуулалт}{57}{section*.45}%
+\contentsline {paragraph}{Хэрэглэгчийн үүргүүд}{57}{section*.46}%
+\contentsline {paragraph}{Гол функцууд}{57}{section*.47}%
+\contentsline {subsubsection}{\numberline {6.11.2}Задлагч}{58}{subsubsection.6.11.2}%
+\contentsline {paragraph}{Метадата гаргаж авах үйл явц}{58}{section*.48}%
+\contentsline {paragraph}{Дэмжигдсэн форматууд}{58}{section*.49}%
+\contentsline {paragraph}{Гаралтын формат}{58}{section*.50}%
+\contentsline {subsubsection}{\numberline {6.11.3}Графикийн хэрэглэгчийн интерфэйс}{59}{subsubsection.6.11.3}%
+\contentsline {paragraph}{Фреймворк ба технологи}{59}{section*.51}%
+\contentsline {paragraph}{Үндсэн дэлгэцүүд}{59}{section*.52}%
+\contentsline {paragraph}{Гарал үүслийн графын дүрслэл}{60}{section*.53}%
+\contentsline {paragraph}{Интерактив функцууд}{60}{section*.54}%
+\contentsline {paragraph}{Экспортын сонголтууд}{60}{section*.55}%
+\contentsline {subsection}{\numberline {6.12}Дүгнэлт}{60}{subsection.6.12}%
+\contentsline {subsubsection}{\numberline {6.12.1}Амжилтуудын товч}{61}{subsubsection.6.12.1}%
+\contentsline {subsubsection}{\numberline {6.12.2}Бизнесийн үнэ цэнэ}{61}{subsubsection.6.12.2}%
+\contentsline {subsubsection}{\numberline {6.12.3}Ирээдүйн сайжруулалтууд}{61}{subsubsection.6.12.3}%
+\contentsline {subsection}{\numberline {6.13}Ном зүй}{62}{subsection.6.13}%
+\contentsline {section}{\numberline {A}Программын кодын хэсгээс}{63}{appendix.A}%
+\contentsline {subsection}{\numberline {A.1}Захиалга хүлээн авах функц (Atomic Transaction)}{63}{subsection.A.1}%
+\contentsline {subsection}{\numberline {A.2}Firestore Security Rules}{64}{subsection.A.2}%
+\contentsline {subsection}{\numberline {A.3}Firebase тохиргоо (firebase.ts)}{64}{subsection.A.3}%
