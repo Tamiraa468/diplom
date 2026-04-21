@@ -1,0 +1,23 @@
+\babel@toc {english}{}\relax 
+\contentsline {figure}{\numberline {1}{\ignorespaces Multi-tenant өгөгдлийн тусгаарлалтын 3 загвар (Chong et al. 2006)}}{4}{figure.caption.5}%
+\contentsline {figure}{\numberline {2}{\ignorespaces Pessimistic vs Optimistic concurrency control: write-write contention-ы зан төлөв}}{4}{figure.caption.6}%
+\contentsline {figure}{\numberline {3}{\ignorespaces Uber Freight платформ}}{6}{figure.caption.8}%
+\contentsline {figure}{\numberline {4}{\ignorespaces Papa Logistics платформ}}{7}{figure.caption.9}%
+\contentsline {figure}{\numberline {5}{\ignorespaces Архитектурын 4 хязгаарлалт $\to $ тэдгээрийн шийдлийн зураглал}}{8}{figure.caption.10}%
+\contentsline {figure}{\numberline {6}{\ignorespaces Системийн ерөнхий бүтэц: 2 клиент апп + нэгдсэн backend}}{11}{figure.caption.13}%
+\contentsline {figure}{\numberline {7}{\ignorespaces Системийн үндсэн үйл ажиллагааны урсгал: бүртгэлээс орлого бүртгэл хүртэлх 8 алхамт үе шат}}{12}{figure.caption.14}%
+\contentsline {figure}{\numberline {8}{\ignorespaces BaaS-д суурилсан архитектурын бүтэц}}{13}{figure.caption.15}%
+\contentsline {figure}{\numberline {9}{\ignorespaces Олон давхаргат аюулгүй байдлын архитектур (гаднаас дотогш: сүлжээ → auth → middleware → данн → бизнес логик)}}{16}{figure.caption.17}%
+\contentsline {figure}{\numberline {10}{\ignorespaces ePOD OTP-ийн 5 давхаргат хамгаалалт: халдлагын төрөл бүрд харгалзах шийдэл}}{17}{figure.caption.19}%
+\contentsline {figure}{\numberline {11}{\ignorespaces Өгөгдлийн урсгалын диаграмм — Level 0 (контекст диаграмм)}}{19}{figure.caption.20}%
+\contentsline {figure}{\numberline {12}{\ignorespaces Хүргэгчийн юзкейс диаграмм}}{22}{figure.caption.22}%
+\contentsline {figure}{\numberline {13}{\ignorespaces Борлуулагчийн юзкейс диаграмм}}{23}{figure.caption.23}%
+\contentsline {figure}{\numberline {14}{\ignorespaces Админы юзкейс диаграмм}}{24}{figure.caption.24}%
+\contentsline {figure}{\numberline {15}{\ignorespaces Хүргэгчийн бүртгэл ба баталгаажуулалтын дараалал диаграмм}}{25}{figure.caption.25}%
+\contentsline {figure}{\numberline {16}{\ignorespaces Хүргэлтийн даалгавар үүсгэх ба нийтлэх дараалал диаграмм}}{26}{figure.caption.26}%
+\contentsline {figure}{\numberline {17}{\ignorespaces Даалгавар авах дараалал диаграмм (зэрэгцээ хандалтын хамгаалалт)}}{27}{figure.caption.27}%
+\contentsline {figure}{\numberline {18}{\ignorespaces Системийн өгөгдлийн сангийн үндсэн ERD}}{28}{figure.caption.28}%
+\contentsline {figure}{\numberline {19}{\ignorespaces k6 load test — 5 endpoint-ийн p50/p95/p99 latency хуваарилалт (100 VU, 30 мин)}}{31}{figure.caption.31}%
+\contentsline {figure}{\numberline {1}{\ignorespaces BaaS-mediated архитектурын гурван давхаргат бүтэц}}{42}{figure.caption.39}%
+\contentsline {figure}{\numberline {2}{\ignorespaces Системийн үндсэн урсгал: 8 алхамт үе шат}}{42}{figure.caption.40}%
+\contentsline {figure}{\numberline {3}{\ignorespaces k6 load test — endpoint latency хуваарилалт (100 VU, 30 мин)}}{43}{figure.caption.42}%

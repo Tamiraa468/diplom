@@ -1,23 +1,54 @@
 % Modular main.tex: includes front-matter files from FrontBackMatter/
-\documentclass[12pt,a4paper,oneside]{article}
+\documentclass[11pt,a4paper,oneside]{article}
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1,T2A]{fontenc}
 \usepackage[mongolian,english]{babel}
 
-% Geometry
+% Times New Roman фонт (бие)
+\usepackage{times}
+
+% ============================================================
+% Geometry - ТСА-ын албан шаардлагын дагуу
+% Зүүн тал: 3.0 cm, Баруун тал: 1.5 cm
+% Дээд тал: 2.0 cm, Доод тал: 2.0 cm
+% ============================================================
 \usepackage{geometry}
-\geometry{margin=2.5cm}
+\geometry{
+  a4paper,
+  left=3.0cm,
+  right=1.5cm,
+  top=2.0cm,
+  bottom=2.0cm,
+  headheight=14pt,
+  headsep=10pt,
+  footskip=25pt,
+  includeheadfoot=false
+}
+
+% Мөр хоорондын зай 1.15, догол мөр өмнөх зай 6pt
+\usepackage{setspace}
+\setstretch{1.15}
+\setlength{\parskip}{6pt}
+\setlength{\parindent}{0pt}
+
+% Зүүн/баруун талын текст зэрэгцүүлэлт (justify)
+% Энэ нь текстийг хоёр талаас нь тэгш зэрэгцүүлж, хэт том зай гарахаас сэргийлнэ
+\tolerance=1000
+\emergencystretch=3em
+\hyphenpenalty=50
+\hbadness=10000
 
 % Bibliography (biblatex + biber)
-\usepackage[backend=biber,style=numeric,sorting=none]{biblatex}
+\usepackage[backend=biber,style=ieee,sorting=none]{biblatex}
 \addbibresource{references.bib}
 
 % Graphics, math, tables
 \usepackage{graphicx,amsmath,amssymb,booktabs,caption,subcaption}
-\usepackage{array,multirow,longtable} % longtable нэмэв
+\usepackage{array,multirow,longtable}
+\usepackage{multicol}
 \usepackage{xcolor,colortbl}
-\usepackage{float} % [H] байршлын тохируулга
+\usepackage{float}
 
 % Code listings
 \usepackage{listings}
@@ -26,7 +57,6 @@
 \definecolor{codepurple}{rgb}{0.58,0,0.82}
 \definecolor{backcolour}{rgb}{0.95,0.95,0.92}
 
-% Define JavaScript language
 \lstdefinelanguage{JavaScript}{
   keywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break, const, let, async, await, throw, import, export, from, default},
   keywordstyle=\color{blue}\bfseries,
@@ -64,38 +94,81 @@
 
 % TikZ for diagrams
 \usepackage{tikz}
-\usetikzlibrary{shapes,arrows,positioning,fit,calc,shadows}
+\usetikzlibrary{shapes,shapes.multipart,arrows,arrows.meta,positioning,fit,calc,shadows,backgrounds}
+
+% PGFPlots for bar/line charts
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
 
 % Links, TOC, header/footer
 \usepackage[
-    colorlinks=true,      % Links will be colored text instead of having boxes
-    linkcolor=black,      % Internal links (sections, pages) in black
-    citecolor=black,      % Citation links in black
-    filecolor=black,      % File links in black
-    urlcolor=black,       % URLs in black
-    pdfborder={0 0 0}     % Removes the border around links
+    colorlinks=true,
+    linkcolor=black,
+    citecolor=black,
+    filecolor=black,
+    urlcolor=black,
+    pdfborder={0 0 0}
 ]{hyperref}
 \usepackage[titles]{tocloft}
 \usepackage{fancyhdr}
 
 % ToC Customization
-\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}} % Add dots for sections
-\setcounter{tocdepth}{3} % Depth: section, subsection, subsubsection
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+\setcounter{tocdepth}{2}
 
-% Optional: Add "Page" (Хуудас) above page numbers
+% Top-level (section = бүлэг) оруулгуудыг bold болгох,
+% subsection-ууд энгийн жинтэй үлдэх
+% (cftsecfont-ыг PTSerif bold-оор дор дахин тодорхойлсон — энд subsec-ийг энгийн болгож байна)
+\renewcommand{\cftsubsecfont}{\normalfont}
+\renewcommand{\cftsubsecpagefont}{\normalfont}
+
 \renewcommand{\cftaftertoctitle}{%
   \hfill\textbf{Хуудас}\par\medskip}
 
-% Simple verbatim for code samples
+\addto\captionsenglish{\renewcommand{\listfigurename}{Зургийн жагсаалт}}
+\addto\captionsenglish{\renewcommand{\listtablename}{Хүснэгтийн жагсаалт}}
+\addto\captionsenglish{\renewcommand{\contentsname}{Гарчиг}}
+
+\captionsetup[figure]{name=Зураг, font=small, labelfont=bf, justification=centering}
+\captionsetup[table]{name=Хүснэгт, font=small, labelfont=bf, justification=centering}
+
+\renewcommand{\cftfigleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cfttableader}{\cftdotfill{\cftdotsep}}
+
+\renewcommand{\cftfigpresnum}{Зураг~}
+\renewcommand{\cftfigaftersnum}{:}
+\setlength{\cftfignumwidth}{4.5em}
+
+\renewcommand{\cfttabpresnum}{Хүснэгт~}
+\renewcommand{\cfttabaftersnum}{:}
+\setlength{\cfttabnumwidth}{5.5em}
+
+\renewcommand{\cftafterloftitle}{%
+  \hfill\textbf{Хуудас}\par\medskip}
+\renewcommand{\cftafterlottitle}{%
+  \hfill\textbf{Хуудас}\par\medskip}
+
 \usepackage{verbatim}
 
-% Preamble metadata (edit as needed)
+% Section / Subsection / Subsubsection гарчгуудыг bold болгох.
+% Times нь T2A кириллийн bold хувилбар дэмждэггүй тул зөвхөн гарчгуудад
+% PT Serif bold-ыг түр сэлгэж хэрэглэнэ. Биеийн текст Times хэвээр.
+\usepackage{titlesec}
+\newcommand{\headingfont}{\fontfamily{PTSerif-TLF}\selectfont\bfseries}
+\titleformat{\section}{\headingfont\Large}{\thesection}{1em}{}
+\titleformat{\subsection}{\headingfont\large}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}{\headingfont\normalsize}{\thesubsubsection}{1em}{}
+
+% TOC дотор ч адил зөвхөн bold хэрэгтэй газарт PTSerif ашиглана
+\renewcommand{\cftsecfont}{\fontfamily{PTSerif-TLF}\selectfont\bfseries}
+\renewcommand{\cftsecpagefont}{\fontfamily{PTSerif-TLF}\selectfont\bfseries}
+
+% Preamble metadata
 \newcommand{\univname}{Шинэ Монгол Технологийн Коллеж}
-\newcommand{\facname}{Мэдээлэл Технологийн Сургууль}
-\newcommand{\deptname}{Компьютерийн ухааны тэнхим}
-\newcommand{\ttitle}{Байгууллагын бүтээгдэхүүн түгээлтийн нэгдсэн систем}
+\newcommand{\deptname}{Компьютерын ухааны тэнхим}
+\newcommand{\ttitle}{Байгууллагын бүтээгдэхүүн хүргэлтийн нэгдсэн систем}
 \newcommand{\ttitleeng}{Unified B2B Product Delivery System}
-\newcommand{\thesistype}{Бакалаврын төгсөлтийн ажил}
+\newcommand{\thesistype}{ДЭД БАКАЛАВРЫН ТӨГСӨЛТИЙН СУДАЛГААНЫ АЖИЛ}
 
 \newcommand{\authorshort}{Ү. Тамир}
 \newcommand{\authorlong}{Үдэлгомбо Тамир}
@@ -105,74 +178,66 @@
 
 \newcommand{\supervisor}{Н.Соронзонболд}
 
-\newcommand{\submitdate}{2025 оны 12 сар}
-\newcommand{\degree}{Программ хангамжийн мэргэжилтэн}
+\newcommand{\submitdate}{2026}
 
-\newcommand{\keywordsMN}{B2B платформ, захиалгын удирдлага, бодит цагийн хяналт, React Native, Firebase, гар утасны аппликейшн, денормализаци}
-\newcommand{\keywordnames}{B2B платформ, захиалгын удирдлага, бодит цагийн хяналт, React Native, Firebase, гар утасны аппликейшн, денормализаци}
+\newcommand{\keywordsMN}{B2B платформ, захиалгын удирдлага, бодит цагийн хяналт, React Native, Supabase, Next.js, ePOD, гар утасны аппликейшн}
+\newcommand{\keywordnames}{B2B платформ, захиалгын удирдлага, бодит цагийн хяналт, React Native, Supabase, Next.js, ePOD, гар утасны аппликейшн}
 \newcommand{\authorshipname}{Зохиогчийн мэдүүлэг}
 \newcommand{\acknowledgementname}{Талархал}
 \newcommand{\abbrevname}{Товчлолын жагсаалт}
 \newcommand{\addressname}{}
 
-% Aliases for front-matter files compatibility
 \newcommand{\shortname}{\authorshort}
 \newcommand{\supname}{\supervisor}
 \newcommand{\chairname}{\deptchair}
 \newcommand{\readname}{\reader}
 
-% Small helpers used in front-matter files
 \newcommand{\addchaptertocentry}[1]{\addcontentsline{toc}{section}{#1}}
 \newenvironment{declaration}{\begin{titlepage}}{\end{titlepage}}
 
-% Header/Footer
-% \pagestyle{fancy}
-% \fancyhf{}
-% \fancyhead[L]{\footnotesize \ttitle}
-% \fancyhead[R]{\footnotesize \authorlong}
-% \fancyfoot[C]{\thepage}
-% \renewcommand{\headrulewidth}{0.5pt}
-% \renewcommand{\footrulewidth}{0.5pt}
+% Header/Footer - текстийн өргөнтэй яг адил
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\footnotesize \ttitle}
+\fancyhead[R]{\footnotesize \authorlong}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0.5pt}
 
 % Document
 \begin{document}
 
-% Start with Roman numerals for front-matter
 \pagenumbering{roman}
 
-% Include modular front-matter files (keep these files in FrontBackMatter/)
-\include{FrontBackMatter/TittlePage}
-% \include{FrontBackMatter/Plan-review}
-% \include{FrontBackMatter/declaration}
+\include{FrontBackMatter/TitlePage}
 \include{FrontBackMatter/Abstract}
-\include{FrontBackMatter/Abberaviation}
+\include{FrontBackMatter/Abbreviation}
+\include{Chapters/plan}
 \include{FrontBackMatter/TableOfContent}
 
 \cleardoublepage
 
-% Switch to Arabic numerals for main content
 \pagenumbering{arabic}
 \setcounter{page}{1}
 
-% Table of contents
-
 \newpage
 
-% ...existing code...
-% Main content (create Chapters/ files and include them)
 \include{Chapters/Chapter1}
 \include{Chapters/Chapter2}
 \include{Chapters/Chapter3}
-\include{Chapters/Chapter4}
-\include{Chapters/Chapter5}
-\include{Chapters/DataLineageSystem}
+\include{Chapters/Chapter4_Experiments}
 
-% Appendices
-\appendix
-\include{Appendices/AppendixA}
+%===============================================================================
+% Ном зүй
+%===============================================================================
+\newpage
+\phantomsection
+\addcontentsline{toc}{section}{Ном зүй}
+\printbibliography[title={Ном зүй}]
 
-% Bibliography
-\printbibliography[heading=bibintoc,title={Ном зүй}]
-\clearpage
+%===============================================================================
+% Товчлол (Summary) — two-column condensed thesis summary at the very end
+%===============================================================================
+\include{FrontBackMatter/Summary}
 
 \end{document}

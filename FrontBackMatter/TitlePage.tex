@@ -1,0 +1,57 @@
+%--- FrontBackMatter/TitlePage.tex ---
+\begin{titlepage}
+
+\raggedright
+
+\noindent\begin{minipage}{0.15\textwidth}
+\vspace{-24mm}
+\IfFileExists{Figures/logo.png}{%
+  \includegraphics[width=\linewidth]{Figures/logo}
+}{}
+\end{minipage}
+\hfill
+\begin{minipage}{0.8\textwidth}
+\centering
+\vspace{-24mm}
+{\headingfont\Large \univname}\\[1.2mm]
+{\headingfont\Large \deptname}\\
+\end{minipage}
+\noindent
+
+\vspace{18mm}
+\raggedright
+\hfill\begin{minipage}{0.6\textwidth}
+\raggedleft
+Оюутны код: \authorcode\\
+Оюутны овог нэр: \authorlong
+\end{minipage}
+
+\vspace{55mm}
+
+\begin{center}
+{\linespread{1.15}\selectfont\headingfont\Large \parbox{0.95\textwidth}{\centering \ttitle}\\[4mm]}
+{\normalsize /\thesistype/}
+\end{center}
+
+\vspace{25mm}
+
+\begin{center}
+\begin{minipage}{0.4\textwidth}
+Удирдагч багш\\[1.5mm]
+Гүйцэтгэсэн оюутан
+\end{minipage}
+\hspace{0.5cm}
+\begin{minipage}{0.3\textwidth}
+\raggedleft
+/\supervisor, Магистр/\\[1.5mm]
+/\authorcode, \authorshort/
+\end{minipage}
+\end{center}
+
+\vfill
+\begin{center}
+Улаанбаатар хот\\
+\submitdate \hspace{1pt} он
+\end{center}
+
+\end{titlepage}

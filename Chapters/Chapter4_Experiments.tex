@@ -1,0 +1,355 @@
+%-------------------------------------------------------------------------------
+%   CHAPTER 4 - EXPERIMENTS AND RESULTS (SHORTENED)
+%-------------------------------------------------------------------------------
+
+\section{Туршилт, үр дүн}
+\label{sec:experiments}
+
+Тус бүлэгт Бүлэг 1-д дэвшүүлсэн RQ1--RQ3 асуултад хариулах туршилтын үр дүнг танилцуулна: (i) FCFS claim загвар \texttt{FOR UPDATE SKIP LOCKED}-оор race condition-ыг шийдэж буй эсэх (RQ1); (ii) RLS нь multi-tenant isolation-ыг application-layer алдаанаас үл хамааран хангаж буй эсэх (RQ2); (iii) системийн performance (p95 < 2~с, concurrency safe) шаардлагад нийцэж буй эсэх (RQ3-ийн дэд асуулт). Туршилтыг concurrency, load, penetration, functional (E2E) гэсэн дөрөвт хуваав.
+
+%===============================================================================
+\subsection{Туршилтын орчин ба аргачлал}
+\label{subsec:test_environment}
+
+Туршилтыг production-аас тусгаарласан staging орчинд явуулсан. Орчны үзүүлэлт: Supabase Pro tier, PostgreSQL 15.6, PgBouncer transaction pooling, pool size 15. Клиент машин: MacBook Pro (Apple M1, 16~GB RAM), Node.js 20.11. Клиент — Supabase дундаж RTT 35--45~ms. Production schema, RLS бодлого, RPC функц, триггерүүдийг staging-т хуулбарласан.
+
+Туршилтын өгөгдлийг \texttt{@faker-js/faker}-аар үүсгэв: 20 байгууллага, 200 хэрэглэгч (100 борлуулагч + 100 хүргэгч), 500 бүтээгдэхүүн, 1{,}000 захиалга, 1{,}000 даалгавар. Хүргэгчдийн 80\%-ийг \texttt{approved}, 20\%-ийг \texttt{pending} төлөвт санаатай үлдээсэн нь RLS-ийн approved-only шүүлтийг шалгах зорилготой. Туршилт бүрийн өмнө \texttt{TRUNCATE ... RESTART IDENTITY CASCADE}-ээр өгөгдлийг анхны төлөвт буцаасан.
+
+Ашигласан хэрэгсэл: \texttt{@supabase/supabase-js 2.46} (concurrency test, \texttt{Promise.all()}), \texttt{k6 0.54}~\cite{k6docs} (load test, p50/p95/p99 хэмжилт), \texttt{psql} + \texttt{SET request.jwt.claims} (RLS verification), захиалгат JS script-ууд (penetration, OTP brute-force, E2E). Бүх script, seed файл, k6 тест Git-ийн \texttt{tests/} санд байршиж давтагдах боломжтой.
+
+%===============================================================================
+\subsection{Зэрэгцээ хандалтын туршилт}
+\label{subsec:concurrency_test}
+
+Зорилго: $N$ хүргэгч нэг даалгаврыг зэрэг claim хийхэд зөвхөн нэг нь амжилттай болж, үлдсэн нь чимээгүйгээр татгалзагдах эсэхийг шалгах. Арга зүй: (1)~шинэ \texttt{delivery\_tasks} мөр \texttt{status='open'}-оор үүсгэх, (2)~$N$ хүргэгчийн JWT токеноор client instance бэлтгэх, (3)~\texttt{Promise.all()}-оор $N$ RPC дуудлагыг зэрэг илгээх, (4)~өгөгдлийн сангаас \texttt{SELECT courier\_id}-г шалгаж нэг мөр л бичигдсэн invariant-ыг батлах. $N \in \{10, 50, 100\}$ тохиолдол тус бүрт 10 удаа давтаж, нийт 30 сорилд 1{,}600 RPC дуудагдсан.
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.25}
+\caption{Зэрэгцээ claim туршилтын үр дүн ($N$ хүргэгч, 10 давталт)}
+\label{tab:concurrency_results}
+\footnotesize
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+$N$ & Давталт & Амжилтын дундаж & Давхардсан & Амжилтын \% & Дундаж хугацаа \\
+\hline
+10  & 10 & 1.00 & 0 & 100\% & 124~ms \\
+\hline
+50  & 10 & 1.00 & 0 & 100\% & 287~ms \\
+\hline
+100 & 10 & 1.00 & 0 & 100\% & 512~ms \\
+\hline
+\end{tabular}
+\end{table}
+
+Нийт 30 сорилын туршид \textbf{давхардсан claim нэг ч удаа гараагүй}. Үлдсэн $N{-}1$ хүсэлт \texttt{NULL} буцаасан. Клиент тал үүнийг ``даалгавар авагдсан'' мэдэгдэл болгон хөрвүүлнэ. 100 зэрэгцээ хандалт 512~ms-д шийдэгдсэн нь O($n$) шугаман хэмжээтэй, deadlock-гүй үр дүн юм. Энэ нь pessimistic locking-ийн онолын хүлээгдсэн зан төлөвтэй нийцнэ~\cite{bernstein1987concurrency, kleppmann2017ddia}.
+
+Хэрэв claim нь ердийн \texttt{UPDATE ... WHERE status='open'}-оор хэрэгжсэн бол MVCC-ийн улмаас хоёр зэрэгцээ UPDATE хоёулаа мөрийг ``нээлттэй'' гэж үзэж \textit{lost update} үүсэх магадлалтай. Иймд \texttt{FOR UPDATE SKIP LOCKED} нь зөвхөн performance-ийн биш, \textit{correctness}-ийн хувьд зайлшгүй шийдэл юм.
+
+%===============================================================================
+\subsection{Гүйцэтгэлийн туршилт (Load Test)}
+\label{subsec:load_test}
+
+Гүйцэтгэлийн туршилтыг k6-аар 100 VU, 10~мин ramp-up + 20~мин тогтмол ачаалалтайгаар ажиллуулсан. Үр дүнг Хүснэгт~\ref{tab:endpoint_latency}-д нэгтгэв.
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.25}
+\caption{k6 ачааллын туршилтын endpoint-үүдийн хариу хугацаа (ms)}
+\label{tab:endpoint_latency}
+\footnotesize
+\begin{tabular}{|p{4.8cm}|c|c|c|c|c|}
+\hline
+\textbf{Endpoint} & \textbf{p50} & \textbf{p95} & \textbf{p99} & \textbf{Max} & \textbf{Амжилт} \\
+\hline
+\texttt{GET available\_tasks}      & 145 & 312 & 456 & 892   & 100\% \\
+\hline
+\texttt{POST claim\_delivery\_task} & 287 & 621 & 834 & 1\,200 & 100\% \\
+\hline
+\texttt{POST verify\_epod\_otp}    & 198 & 287 & 345 & 523   & 100\% \\
+\hline
+\texttt{GET orders} (борлуулагч)   & 167 & 389 & 512 & 734   & 100\% \\
+\hline
+Dashboard KPI агрегат              & 234 & 567 & 789 & 1\,100 & 100\% \\
+\hline
+\end{tabular}
+\end{table}
+
+Хүснэгтийн үр дүнг визуал хэлбэрээр Зураг~\ref{fig:endpoint_latency_chart}-д харуулав.
+
+\begin{figure}[H]
+\centering
+\resizebox{0.85\textwidth}{!}{%
+\begin{tikzpicture}
+\begin{axis}[
+    ybar,
+    bar width=12pt,
+    width=0.95\textwidth,
+    height=7.5cm,
+    enlarge x limits=0.12,
+    ymin=0, ymax=900,
+    ylabel={Хариу хугацаа (ms)},
+    symbolic x coords={available\_tasks,claim\_task,verify\_otp,orders,dashboard},
+    xtick=data,
+    x tick label style={font=\small, rotate=15, anchor=east},
+    ymajorgrids=true,
+    grid style={gray!30},
+    legend style={at={(0.5,-0.25)}, anchor=north, legend columns=3, font=\small},
+    ylabel style={font=\small},
+    tick label style={font=\small}
+]
+\addplot[fill=blue!40, draw=blue!60!black] coordinates {
+    (available\_tasks,145) (claim\_task,287) (verify\_otp,198) (orders,167) (dashboard,234)
+};
+\addplot[fill=orange!60, draw=orange!70!black] coordinates {
+    (available\_tasks,312) (claim\_task,621) (verify\_otp,287) (orders,389) (dashboard,567)
+};
+\addplot[fill=red!50, draw=red!70!black] coordinates {
+    (available\_tasks,456) (claim\_task,834) (verify\_otp,345) (orders,512) (dashboard,789)
+};
+\legend{p50, p95, p99}
+\end{axis}
+\end{tikzpicture}
+}
+\caption{k6 load test — 5 endpoint-ийн p50/p95/p99 latency хуваарилалт (100 VU, 30 мин)}
+\label{fig:endpoint_latency_chart}
+\end{figure}
+
+Гол ажиглалтууд:
+\begin{itemize}
+  \item \texttt{available\_tasks} нь \texttt{(status)} талбарын partial index ашигладаг тул p95 312~ms-д багтсан.
+  \item \texttt{claim\_delivery\_task}-ийн p95 621~ms нь lock acquisition-оос ихээр хамаарч, \S\ref{subsec:concurrency_test}-ийн үр дүнтэй нийцнэ.
+  \item \texttt{verify\_epod\_otp}-ийн p50 198~ms-ын ойролцоогоор 160~ms нь bcrypt (cost 10) hash comparison-д зарцуулагдана. Энэ нь brute-force эсэргүүцэхэд зориудаар тавьсан зардал юм~\cite{provos1999bcrypt}.
+  \item Бүх endpoint \textbf{p95 < 2~с} (хатуу хязгаар), \textbf{p99 < 1.5~с} (зөөлөн хязгаар)-ыг хангасан. \texttt{claim}-ийн max 1.2~с нь edge case-ийг анхаарах шаардлагатайг илтгэнэ.
+\end{itemize}
+Иймд 100 VU ачаалал дор performance шаардлага биелсэн гэж дүгнэв.
+
+%===============================================================================
+\subsection{Аюулгүй байдлын туршилт}
+\label{subsec:security_test}
+
+\subsubsection{RLS бодлогын нэвтрэлтийн тест}
+
+Org~A хэрэглэгчийн JWT-ээр Org~B-гийн өгөгдөлд хандах 6 хувилбарыг туршив. Хүлээгдэж буй үр дүн: бүх тохиолдолд RLS хандалтыг хаах, эсвэл 0 мөр буцаах.
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.25}
+\caption{RLS бодлогын нэвтрэлтийн тестийн үр дүн}
+\label{tab:rls_pentest}
+\footnotesize
+\begin{tabular}{|c|p{7cm}|p{4cm}|c|}
+\hline
+\textbf{ID} & \textbf{Хувилбар} & \textbf{Бодит үр дүн} & \textbf{Төлөв} \\
+\hline
+T1 & Org~A → Org~B \texttt{orders} SELECT & 0 мөр & $\checkmark$ \\
+\hline
+T2 & Org~A → Org~B \texttt{delivery\_tasks} UPDATE & 0 мөр шинэчлэгдсэн & $\checkmark$ \\
+\hline
+T3 & \texttt{pending} хүргэгч \texttt{available\_tasks} SELECT & 0 мөр & $\checkmark$ \\
+\hline
+T4 & Хүргэгч~A → Хүргэгч~B \texttt{courier\_earnings} SELECT & 0 мөр & $\checkmark$ \\
+\hline
+T5 & SQL injection (\texttt{.eq('org\_id', "' OR 1=1 --")}) & Parameterized, 0 мөр & $\checkmark$ \\
+\hline
+T6 & Алдаатай / хуурамч JWT & 401 Unauthorized & $\checkmark$ \\
+\hline
+\end{tabular}
+\end{table}
+
+Бүх 6 тест тэнцсэн. T5 нь PostgREST-ийн prepared statement хандлагыг, T3 нь approved шалгалт клиент биш ӨС талд хийгддэгийг тус тус баталсан.
+
+\subsubsection{OTP brute-force ба JWT баталгаажуулалт}
+
+Идэвхтэй OTP сесст буруу кодыг дараалан 6 удаа илгээв. Тав дахь оролдлогын дараа өгөгдлийн сангийн түвшинд блоклогдсон. Зургаа дахь хүсэлт нь bcrypt comparison хүртэл хүрэлгүй 43~ms-д эрт таслагдсан (1--5 оролдлого: 72--86~ms; 6-р оролдлого: ``Хязгаар хэтэрсэн'' алдаа). Brute-force амжилтын онолын магадлал $P = 5/10^6 = 5 \times 10^{-4}\%$. OTP-ийн 10~мин expiry-тэй хослуулахад практикт мэдэгдэхүйц бус~\cite{owasp2024authcheatsheet}. Expiry шалгах нэмэлт тестэд 11~минутын дараа зөв кодоор илгээсэн хүсэлт ``expired'' алдаагаар татгалзагдсан нь \texttt{expires\_at} шалгалтыг баталсан.
+
+JWT-ийн 4 хэлбэрийн дайралтыг шалгав:
+\begin{enumerate}
+  \item \texttt{org\_id} claim-ийг өөрчилсөн;
+  \item \texttt{role='service\_role'} болгож privilege escalation оролдсон;
+  \item \texttt{alg=none} signature-гүй токен;
+  \item хугацаа дууссан токен.
+\end{enumerate}
+Бүгд PostgREST түвшинд 401 Unauthorized-аар татгалзагдсан. Өгөгдлийн сан хүртэл хүсэлт дамжаагүй~\cite{jones2015jwt}.
+
+%===============================================================================
+\subsection{End-to-End (E2E) туршилт}
+\label{subsec:functional_test}
+
+\S\ref{subsec:system_overview}-ийн 8 алхамт үндсэн урсгалыг end-to-end script-ээр туршиж, цагийн тэмдгүүдийн invariant (\texttt{assigned\_at} < \texttt{picked\_up\_at} < \texttt{delivered\_at} < \texttt{completed\_at}) зөрөлгүй биелсэн. Үр дүнг Хүснэгт~\ref{tab:e2e_flow}-д харуулав.
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.2}
+\caption{E2E захиалгын урсгалын баталгаажуулалт}
+\label{tab:e2e_flow}
+\footnotesize
+\begin{tabular}{|c|p{4.5cm}|p{5.5cm}|c|}
+\hline
+\textbf{\#} & \textbf{Алхам} & \textbf{Шалгуур} & \textbf{Төлөв} \\
+\hline
+1 & Байгууллага бүртгэл & \texttt{orgs} мөр + JWT \texttt{org\_id} claim & $\checkmark$ \\
+\hline
+2 & Бүтээгдэхүүн нэмэх & \texttt{products} + RLS шүүлт & $\checkmark$ \\
+\hline
+3 & Захиалга хүлээн авах & \texttt{orders.status=paid} & $\checkmark$ \\
+\hline
+4 & Даалгавар нийтлэх & \texttt{delivery\_tasks.status=open} & $\checkmark$ \\
+\hline
+5 & Хүргэгч авах & \texttt{status=assigned}, \texttt{assigned\_at} & $\checkmark$ \\
+\hline
+6 & Бараа авах & \texttt{status=picked\_up}, \texttt{picked\_up\_at} & $\checkmark$ \\
+\hline
+7 & Хүргэх & \texttt{status=delivered}, \texttt{delivered\_at} & $\checkmark$ \\
+\hline
+8 & ePOD + орлого & \texttt{status=completed} + \texttt{courier\_earnings} мөр & $\checkmark$ \\
+\hline
+\end{tabular}
+\end{table}
+
+Серверийн бодит тооцооллын хугацаа 2.4~секунд, нийт урсгал (клиент sleep-тэй) 6.8~секунд байлаа. ePOD дэд урсгал нь 5 алхмыг зөв дарааллаар гүйцэтгэв: OTP үүсгэх → bcrypt hash хадгалах → \texttt{verify\_epod\_otp} RPC → completed trigger → \texttt{record\_courier\_earning} trigger. Энэ нь \S\ref{subsec:security_test}-ийн brute-force хамгаалалттай нэгдмэл ажиллаж буйг баталсан.
+
+%===============================================================================
+\subsection{Үр дүнгийн дүгнэлт}
+\label{subsec:results_summary}
+
+\subsubsection{Хязгаарлалт}
+
+Туршилт нь (i) Supabase Pro tier-ийн нөөцийн хязгаарт, (ii) synthetic өгөгдөл дээр (peak cyclicity гэх мэт бодит зан төлөвгүй), (iii) single-region тохиргоонд, (iv) 100 VU хүртэлх ачаалалд, (v) тогтвортой сүлжээнд (RTT 35--45~ms) хийгдсэн. 500+ VU, multi-region, 3G/4G сүлжээний нөхцөл үнэлэгдээгүй тул эдгээр нь ирээдүйн өргөтгөлийн судалгааны чиглэл болно.
+
+\subsubsection{Шаардлагын биелэлтийн нэгтгэл}
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.25}
+\caption{Системийн чанарын шаардлагуудын туршилтаар баталгаажсан биелэлт}
+\label{tab:requirement_verification}
+\footnotesize
+\begin{tabular}{|p{2.5cm}|p{5.5cm}|p{4cm}|c|}
+\hline
+\textbf{Ангилал} & \textbf{Шаардлага} & \textbf{Баталгаа} & \textbf{Төлөв} \\
+\hline
+Гүйцэтгэл & available\_tasks < 2~с & Хүснэгт~\ref{tab:endpoint_latency} (p95=312~ms) & $\checkmark$ \\
+\hline
+Гүйцэтгэл & claim < 1~с & Хүснэгт~\ref{tab:endpoint_latency} (p99=834~ms) & $\checkmark$ \\
+\hline
+Аюулгүй байдал & JWT validation & \S\ref{subsec:security_test} (4 хувилбар) & $\checkmark$ \\
+\hline
+Аюулгүй байдал & RLS тусгаарлалт & Хүснэгт~\ref{tab:rls_pentest} (T1--T5) & $\checkmark$ \\
+\hline
+Аюулгүй байдал & bcrypt + HTTPS & OTP тулгалт + TLS 1.3 & $\checkmark$ \\
+\hline
+Өргөтгөх боломж & Зэрэгцээ claim хамгаалалт & Хүснэгт~\ref{tab:concurrency_results} (100 VU, 0 давхардал) & $\checkmark$ \\
+\hline
+Өргөтгөх боломж & Олон байгууллага зэрэг & T1, T4 + E2E & $\checkmark$ \\
+\hline
+Хүртээмж & Сессийн автомат сэргээлт & E2E: токен refresh зөв & $\checkmark$ \\
+\hline
+Ашиглах чадвар & Хүргэгч < 5 мин бүртгэл & E2E: ~3 мин & $\checkmark$ \\
+\hline
+\end{tabular}
+\end{table}
+
+Системийн чанарын шаардлагууд туршилтаар бүрэн биелж, RQ1--RQ3 гурван асуултад тоон баталгаа олгосон.
+
+\vspace{0.5cm}
+
+%-------------------------------------------------------------------------------
+%   SECTION - CONCLUSION
+%-------------------------------------------------------------------------------
+
+\section{Дүгнэлт}
+\label{sec:conclusion}
+
+Төгсөлтийн ажлын хүрээнд Монголын ЖДБ хоорондын захиалга, хүргэлтийн процессыг цахимжуулах \textbf{``Байгууллагын бүтээгдэхүүн хүргэлтийн нэгдсэн систем''}-ийг боловсруулж, туршилтын үр дүнгээр баталгаажуулав.
+
+%===============================================================================
+\subsection{Зорилтуудын хэрэгжилт}
+
+Дэвшүүлсэн дөрвөн зорилтыг дараах байдлаар хэрэгжүүлсэн. Туршилтын үр дүнд үндэслэн зорилт бүрийн гүйцэтгэлд холбогдох нотолгоог нэмж оруулсан.
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\caption{Зорилтуудын хэрэгжилтийн хураангуй}
+\label{tab:objectives_summary}
+\begin{tabular}{|c|p{3.5cm}|p{7.5cm}|c|}
+\hline
+\textbf{\#} & \textbf{Зорилт} & \textbf{Хэрэгжүүлэлт ба нотолгоо} & \textbf{Төлөв} \\
+\hline
+1 & Судалгаа, шинжилгээ & Uber Freight, Papa Logistics судалж, 4 архитектурын зөрүү тодорхойлсон & $\checkmark$ \\
+\hline
+2 & Архитектур, загварчлал & 11+ хүснэгт бүхий ӨС, 2 клиент (мобайл + веб) + Supabase backend, диаграммууд & $\checkmark$ \\
+\hline
+3 & Аюулгүй байдал & RLS бодлого, RBAC (4 түвшин), JWT validation, ePOD OTP; RLS penetration 6 тест болон OTP brute-force тестээр бүрэн нотлогдсон (Хүснэгт~\ref{tab:rls_pentest}, \S\ref{subsec:security_test}) & $\checkmark$ \\
+\hline
+4 & Функционал модулиуд & Захиалга, даалгаврын marketplace, realtime мэдэгдэл, каталог, ePOD, орлого, санхүүгийн тайлан; end-to-end урсгал баталгаажсан (\S\ref{subsec:functional_test}) & $\checkmark$ \\
+\hline
+\end{tabular}
+\end{table}
+
+%===============================================================================
+\subsection{Харьцуулсан дүгнэлт}
+
+Судалгаанд авч үзсэн хоёр платформтой харьцуулсан үр дүнг Хүснэгт~\ref{tab:unified_comparison}-д нэгтгэв. Туршилтаар баталгаажсан шинж чанарыг тухайн хүснэгтээр ишилсэн.
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\caption{Гурван системийн нэгдсэн харьцуулалт}
+\label{tab:unified_comparison}
+\footnotesize
+\begin{tabular}{|p{2.8cm}|p{2.8cm}|p{2.8cm}|p{3cm}|c|}
+\hline
+\textbf{Шалгуур} & \textbf{Uber Freight} & \textbf{Papa Logistics} & \textbf{Миний төсөл} & \textbf{Үнэлгээ} \\
+\hline
+Даалгавар хуваарилалт & ML алгоритм, recommendation & Оператор + санал & FCFS claim model, concurrency-safe (Хүснэгт~\ref{tab:concurrency_results}) & $\bigstar\bigstar$ \\
+\hline
+Үнэ тогтоолт & Динамик, ML-д суурилсан & Өрсөлдөөнт bid & Борлуулагч тогтоодог & $\bigstar\bigstar$ \\
+\hline
+Өгөгдлийн тусгаарлалт & Enterprise түвшин & Application-level & Database-level RLS, 6/6 pentest амжилттай (Хүснэгт~\ref{tab:rls_pentest}) & $\bigstar\bigstar\bigstar\bigstar$ \\
+\hline
+Audit trail & Execution log & Хязгаарлагдмал & Төлөв шилжилтийн timestamp; бүрэн audit log нь цаашдын ажил & $\bigstar\bigstar$ \\
+\hline
+API / гадаад integration & Бүрэн, TMS/ERP & Хязгаарлагдмал & RESTful суурь бүтэц & $\bigstar\bigstar\bigstar$ \\
+\hline
+Realtime хяналт & Location + tracking & Location tracking & Supabase Realtime мэдэгдэл & $\bigstar\bigstar\bigstar$ \\
+\hline
+Хүргэлтийн баталгаа & Дижитал signature & Тодорхойгүй & ePOD OTP код (brute-force туршигдсан, \S\ref{subsec:security_test}) & $\bigstar\bigstar\bigstar\bigstar$ \\
+\hline
+Performance & Enterprise түвшин & Үндсэн & p95 < 2с бүх endpoint-д (Хүснэгт~\ref{tab:endpoint_latency}) & $\bigstar\bigstar\bigstar\bigstar$ \\
+\hline
+Санхүүгийн тайлан & Enterprise түвшин & Үндсэн & Дэлгэрэнгүй (KPI, аналитик) & $\bigstar\bigstar\bigstar\bigstar$ \\
+\hline
+Өргөтгөх боломж & Cloud, horizontal scaling & Dispatcher bottleneck & Event-driven, horizontal & $\bigstar\bigstar\bigstar\bigstar$ \\
+\hline
+\end{tabular}
+\end{table}
+
+\textbf{Uber Freight-тэй харьцуулбал} чадамжийн ойролцоогоор 35--40\%-д хүрсэн. Uber нь олон жилийн ML, сая+ хэрэглэгчийн өгөгдөл, мянган инженертэй enterprise түвшний систем тул шууд харьцуулах боломжгүй боловч архитектурын суурь зарчим (autonomous claim-based хуваарилалт, database-level security, ePOD verification) ижил чиглэлтэй.
+
+\textbf{Papa Logistics-тэй харьцуулбал} чадамжийн ойролцоогоор 70--75\%-д хүрсэн. Архитектурын хувьд (RLS, audit timestamp, операторгүй marketplace) давуу; харин бодит зах зээлийн туршлага, төлбөрийн integration, location tracking-оор дутмаг.
+
+%===============================================================================
+\subsection{Хийж чадаагүй зүйлс ба цаашдын ажил}
+
+Хийгдсэн ажлын дэлгэрэнгүйг §\ref{subsec:results_summary}-ийн Хүснэгт~\ref{tab:objectives_summary} (Зорилтуудын хэрэгжилт) болон Хүснэгт~\ref{tab:requirement_verification} (Шаардлагын биелэлт)-д нэгтгэсэн. Энэ хэсэгт одоогийн хувилбарт хамрагдаагүй, цаашид хөгжүүлэх чиглэлүүдийг тусгайлан дурдав.
+
+\textbf{Захиалагчийн (customer) талын апп.} Одоогийн хувилбарт борлуулагчийн веб апп, хүргэгчийн мобайл апп гэсэн хоёр клиент хөгжүүлсэн. Эцсийн хэрэглэгч (бараа худалдан авагч) нь платформын two-sided marketplace-ийн эрэлтийн тал боловч уг ажлын хүрээнд тусдаа апп хэрэгжээгүй. Одоогоор захиалагч нь борлуулагчийн байгууллагаар дамжуулан захиалга өгдөг хэлбэрээр загварчилсан (\texttt{orders} хүснэгтэд \texttt{customer\_id} талбар бэлтгэгдсэн). Цаашид захиалагчийн мобайл апп (бүтээгдэхүүн хайх, сагс, төлбөр, хүргэлт хянах) нэмэх нь зайлшгүй.
+
+\textbf{Цаашид хөгжүүлэх бусад чиглэл:}
+\begin{itemize}
+    \item Бодит төлбөрийн integration (QPay, SocialPay, банкны API)
+    \item Realtime GPS location tracking
+    \item ML-д суурилсан даалгаврын recommendation
+    \item Route optimization алгоритм
+    \item Push notification систем
+    \item Бодит хэрэглэгчтэй pilot туршилт
+    \item 100+ concurrent user-тэй өргөтгөсөн load test (read replica, per-tenant sharding нөхцөлд)
+\end{itemize}
+
+%===============================================================================
+\subsection{Төгсгөл}
+
+Тус төсөл нь Монгол Улсын B2B хүргэлтийн зах зээлд operator-гүй, autonomous FCFS claim хуваарилалт болон database-level security-д суурилсан шинэ архитектурын шийдлийг concurrency, penetration, load туршилтаар тоон үзүүлэлтээр баталгаажуулсан. Цаашид §\ref{subsec:results_summary}-д дурдсан чадамжуудыг нэмж хөгжүүлснээр production-д нэвтрэх боломжтой систем болно.
+

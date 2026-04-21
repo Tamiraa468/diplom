@@ -1,232 +1,1125 @@
 %-------------------------------------------------------------------------------
-%   CHAPTER 3 - METHODOLOGY
-%-------------------------------------------------------------------------------
+\section{Арга зүй}
+\label{sec:methodology}
 
-\section{Судалгааны арга зүй}
+Тус судалгаа нь crowdsourced хүргэгчдийн сүлжээнд суурилсан B2B хүргэлтийн платформ хөгжүүлэхэд чиглэсэн \textbf{практик судалгаа} бөгөөд \textbf{загварчлал, хөгжүүлэлт, туршилт} гэсэн гурван үе шаттайгаар Agile аргачлалаар~\cite{agile2001manifesto} хэрэгжсэн. Iteration бүрд шинэ чадамж нэмж, шалгаж, засах давталттай бүтэцтэй явсан.
 
-\subsection{Хөгжүүлэлтийн арга зүй}
-Програм хангамжийг хөгжүүлэхдээ **Agile** арга зүйг, тэр дундаа **Scrum** фреймворкийг ашигласан. Энэ нь төслийг бага хэмжээний, удирдах боломжтой хэсгүүдэд (Sprints) хувааж, тогтмол хугацаанд үр дүнг гаргах, хэрэглэгчийн санал хүсэлтэд тулгуурлан сайжруулалт хийх боломжийг олгодог.
+Хөгжүүлэлтийн үе шатууд:
+\begin{enumerate}
+  \item \textbf{Шаардлагын шинжилгээ}: бизнесийн логик, хэрэглэгчийн хэрэгцээг тодорхойлох
+  \item \textbf{Архитектурын загварчлал}: системийн бүтэц, өгөгдлийн загвар, технологийн стек сонгох
+  \item \textbf{Өгөгдлийн сангийн хөгжүүлэлт}: хүснэгтүүд, Row Level Security (RLS) бодлого, триггер, RPC функцүүд
+  \item \textbf{Backend тохиргоо}: Supabase authentication, file storage, realtime холболт
+  \item \textbf{Frontend хөгжүүлэлт}: мобайл апп (React Native/Expo), веб апп (Next.js)
+  \item \textbf{Нэгтгэлийн туршилт}: бүрэлдэхүүн хэсгүүдийн хоорондын холболт шалгах
+  \item \textbf{Гүйцэтгэлийн туршилт}: зэрэгцээ хандалт, аюулгүй байдлын тестүүд
+\end{enumerate}
 
-\subsection{Системийн шинжилгээ}
-Системийн шаардлагыг тодорхойлохдоо хэрэглэгчийн түүх (User Stories) болон хэрэглээний тохиолдол (Use Cases) аргуудыг ашигласан.
+%===============================================================================
+\subsection{Системийн үйл ажиллагааны тухай дэлгэрэнгүй}
+\label{subsec:system_overview}
 
-\subsubsection{Хэрэглэгчийн ангилал}
-\begin{itemize}
-    \item \textbf{Захиалагч (Customer):} Бараа захиалах дэлгүүр, ресторан, хувь хүн.
-    \item \textbf{Нийлүүлэгч (Supplier):} Бараа нийлүүлэгч компани, бөөний төв.
-    \item \textbf{Хүргэгч (Courier):} Барааг хүргэх үүрэгтэй ажилтан.
-    \item \textbf{Админ (Admin):} Системийн хэвийн үйл ажиллагааг хангах, хэрэглэгчдийг удирдах.
-\end{itemize}
+Уг систем нь B2B хүргэлтийн нэгдсэн платформ юм. Байгууллагуудын бараа хүргэлтийг crowdsourced хүргэгчдээр гүйцэтгэнэ. Гол зорилго нь байгууллагад хүргэлтийн тусгай баг байлгах шаардлагагүйгээр, бие даасан хүргэгчдийн marketplace-аар үйлчилгээ авах боломж олгох явдал юм.
 
-\subsubsection{Функциональ шаардлага}
-Систем нь дараах үндсэн функциональ шаардлагуудыг хангасан байна.
+\subsubsection{Системийн ерөнхий бүтэц}
 
-\begin{longtable}{|p{1.5cm}|p{4cm}|p{7cm}|}
-\caption{Функциональ шаардлагууд} \label{tab:func_req} \\
-\hline
-\textbf{ID} & \textbf{Шаардлага} & \textbf{Тайлбар} \\
-\hline
-\endfirsthead
-\hline
-\textbf{ID} & \textbf{Шаардлага} & \textbf{Тайлбар} \\
-\hline
-\endhead
-\hline
-\endfoot
-\hline
-\endlastfoot
+Систем нь хоёр бие даасан клиент аппликейшнээс бүрдэх ба тус бүр нь нэг дундын backend-тэй холбогдоно (Зураг~\ref{fig:system_overview}).
 
-FR-01 & Бүртгэл ба Нэвтрэх & Хэрэглэгч утасны дугаар болон имэйлээр бүртгүүлэх, нэвтрэх боломжтой байх. \\
-\hline
-FR-02 & Бараа хайх & Захиалагч барааг нэр, төрөл, үнээр шүүж хайх. \\
-\hline
-FR-03 & Сагс удирдах & Барааг сагсанд нэмэх, тоо хэмжээг өөрчлөх, хасах. \\
-\hline
-FR-04 & Захиалга үүсгэх & Сагсан дахь барааг баталгаажуулж захиалга илгээх. \\
-\hline
-FR-05 & Захиалга хянах & Захиалгын төлөвийг (Pending, Confirmed, Delivering, Delivered) бодит цагт харах. \\
-\hline
-FR-06 & Захиалга удирдах & Нийлүүлэгч ирсэн захиалгыг хүлээн авах эсвэл цуцлах. \\
-\hline
-FR-07 & Хүргэлт хуваарилах & Нийлүүлэгч захиалгыг хүргэгчид хуваарилах. \\
-\hline
-FR-08 & e-POD бүртгэх & Хүргэгч барааг хүлээлгэн өгөхдөө зураг авч, гарын үсэг зуруулж баталгаажуулах. \\
-\hline
-\end{longtable}
+\begin{figure}[H]
+\centering
+\resizebox{0.75\textwidth}{!}{%
+\begin{tikzpicture}[
+  font=\footnotesize,
+  appbox/.style={rectangle, rounded corners=6pt, draw=black!55, thick,
+    minimum width=6.5cm, minimum height=4.6cm, align=left, inner sep=10pt, text width=5.8cm},
+  courierbox/.style={appbox, fill=green!15, draw=green!55!black},
+  merchantbox/.style={appbox, fill=blue!12, draw=blue!55!black},
+  backendbox/.style={rectangle, rounded corners=6pt, draw=black!60, thick, fill=gray!15,
+    minimum width=14.5cm, minimum height=3cm, align=center, inner sep=10pt},
+  subbox/.style={rectangle, rounded corners=4pt, draw=blue!70!black, thick, fill=blue!20,
+    minimum width=3.8cm, minimum height=0.9cm, align=center, font=\small\bfseries, inner sep=5pt},
+  arrow/.style={<->, >=Latex, thick, draw=gray!65},
+  arrlabel/.style={fill=white, inner sep=2pt, font=\scriptsize},
+]
 
-\subsubsection{Функциональ бус шаардлага}
-\begin{itemize}
-    \item \textbf{Найдвартай байдал:} Систем нь 99.9\%-ийн ажиллах хугацаатай (uptime) байна.
-    \item \textbf{Аюулгүй байдал:} Хэрэглэгчийн нууц үг шифрлэгдсэн байх, өгөгдлийн хандалт нь дүрэмд (Security Rules) захирагдах.
-    \item \textbf{Гүйцэтгэл:} Үйлдлийн хариу өгөх хугацаа 2 секундээс хэтрэхгүй байх.
-    \item \textbf{Өргөтгөх боломж:} Хэрэглэгчийн тоо нэмэгдэхэд систем гацахгүй ажиллах (Scalability).
-\end{itemize}
+% ===== Top: Two client apps =====
+\node[courierbox] (courier) at (-4.2, 3.5) {%
+  \begin{center}{\normalsize\bfseries Хүргэгчийн мобайл апп}\end{center}
+  \begin{center}{\scriptsize\itshape\textcolor{black!65}{React Native / Expo}}\end{center}
+  \vspace{2pt}
+  $\bullet$~Бүртгэл ба баталгаажуулалт\\
+  $\bullet$~Нээлттэй даалгавар харах\\
+  $\bullet$~Даалгавар авах (claim)\\
+  $\bullet$~Хүргэлт гүйцэтгэх\\
+  $\bullet$~KYC баримт илгээх};
 
-\subsubsection{Хэрэглээний тохиолдлын диаграмм (Use Case Diagram)}
-Системийн үндсэн хэрэглэгчид болон тэдгээрийн үйлдэл, харилцан хамаарлыг дараах диаграммаар харуулав.
+\node[merchantbox] (merchant) at (4.2, 3.5) {%
+  \begin{center}{\normalsize\bfseries Борлуулагчийн веб апп}\end{center}
+  \begin{center}{\scriptsize\itshape\textcolor{black!65}{Next.js}}\end{center}
+  \vspace{2pt}
+  $\bullet$~Бүтээгдэхүүн удирдах\\
+  $\bullet$~Даалгавар үүсгэх\\
+  $\bullet$~Зах зээлд нийтлэх\\
+  $\bullet$~Гүйцэтгэл хянах\\
+  $\bullet$~Тайлан, аналитик};
 
-\begin{figure}[h]
-    \centering
-    \begin{tikzpicture}[scale=0.8, every node/.style={scale=0.8}]
-        % Actors
-        \node[draw, circle, minimum size=1cm] (customer) at (0, 4) {Customer};
-        \node[draw, circle, minimum size=1cm] (supplier) at (10, 4) {Supplier};
-        \node[draw, circle, minimum size=1cm] (courier) at (5, -2) {Courier};
+% ===== Bottom: Backend =====
+\node[backendbox] (backend) at (0, -2.3) {};
+\node[font=\normalsize\bfseries] at (0, -1.3) {Backend үйлчилгээ (Supabase)};
+\node[font=\scriptsize\itshape, text=black!65] at (0, -1.8) {Нийтлэг API, өгөгдлийн сан, бодит цагийн холболт};
+\node[subbox] at (-5, -2.9) {RESTful API};
+\node[subbox] at (0, -2.9) {PostgreSQL + RLS};
+\node[subbox] at (5, -2.9) {WebSocket сервер};
 
-        % Use Cases
-        \node[draw, ellipse] (login) at (5, 6) {Login/Register};
-        \node[draw, ellipse] (order) at (2, 2) {Place Order};
-        \node[draw, ellipse] (manage) at (8, 2) {Manage Products};
-        \node[draw, ellipse] (accept) at (8, 0) {Accept Order};
-        \node[draw, ellipse] (deliver) at (5, 0) {Deliver Order};
-        \node[draw, ellipse] (track) at (2, 0) {Track Order};
+% ===== Arrows =====
+\draw[arrow] (courier.south) -- node[arrlabel, pos=0.55] {API / WebSocket} ([xshift=-4.2cm]backend.north);
+\draw[arrow] (merchant.south) -- node[arrlabel, pos=0.55] {API / WebSocket} ([xshift=4.2cm]backend.north);
 
-        % Connections
-        \draw (customer) -- (login);
-        \draw (supplier) -- (login);
-        \draw (courier) -- (login);
-        
-        \draw (customer) -- (order);
-        \draw (customer) -- (track);
-        
-        \draw (supplier) -- (manage);
-        \draw (supplier) -- (accept);
-        
-        \draw (courier) -- (deliver);
-        \draw (courier) -- (track);
-    \end{tikzpicture}
-    \caption{Системийн Use Case диаграмм}
-    \label{fig:usecase}
+\end{tikzpicture}
+}
+\caption{Системийн ерөнхий бүтэц: 2 клиент апп + нэгдсэн backend}
+\label{fig:system_overview}
 \end{figure}
 
-\subsubsection{Үйл ажиллагааны диаграмм (Activity Diagram)}
-Захиалга үүсгэхээс эхлээд хүргэгдэх хүртэлх үйл явцыг Activity диаграммаар дүрслэв.
+\textbf{Хүргэгчийн мобайл апп} (React Native/Expo) нь хүргэгчдэд зориулсан гар утасны аппликейшн бөгөөд бүртгэл, KYC баталгаажуулалт, нээлттэй даалгавар харах, даалгавар авах, хүргэлт гүйцэтгэх үндсэн үйлдлүүдийг хийнэ.
 
-\begin{figure}[h]
-    \centering
-    \begin{tikzpicture}[node distance=1.5cm, auto]
-        % Nodes
-        \node[draw, rounded corners] (start) {Start};
-        \node[draw, rectangle, below of=start] (place) {Place Order};
-        \node[draw, diamond, below of=place, aspect=2] (check) {Stock Available?};
-        \node[draw, rectangle, left of=check, node distance=3cm] (cancel) {Cancel Order};
-        \node[draw, rectangle, below of=check, node distance=2cm] (notify) {Notify Supplier};
-        \node[draw, rectangle, below of=notify] (prepare) {Prepare Order};
-        \node[draw, rectangle, below of=prepare] (assign) {Assign Courier};
-        \node[draw, rectangle, below of=assign] (deliver) {Deliver to Customer};
-        \node[draw, rounded corners, below of=deliver] (end) {End};
+\textbf{Борлуулагчийн веб апп} (Next.js) нь байгууллагын админд зориулсан веб аппликейшн бөгөөд бүтээгдэхүүнийг удирдах, хүргэлтийн даалгавар үүсгэх, зах зээлд нийтлэх, гүйцэтгэлийг хянах боломжтой.
 
-        % Edges
-        \draw[->] (start) -- (place);
-        \draw[->] (place) -- (check);
-        \draw[->] (check) -- node {No} (cancel);
-        \draw[->] (check) -- node {Yes} (notify);
-        \draw[->] (notify) -- (prepare);
-        \draw[->] (prepare) -- (assign);
-        \draw[->] (assign) -- (deliver);
-        \draw[->] (deliver) -- (end);
-        \draw[->] (cancel) |- (end);
-    \end{tikzpicture}
-    \caption{Захиалгын үйл явцын Activity диаграмм}
-    \label{fig:activity}
+Хоёр апп нэг дундын Supabase backend-тэй HTTPS (REST API) болон WebSocket протоколоор холбогдоно. Supabase нь PostgreSQL өгөгдлийн сан, authentication, file storage, realtime мэдэгдэл, RPC функцүүдийг нэгтгэсэн Backend-as-a-Service (BaaS) платформ юм~\cite{baldini2017serverless, adzic2017serverless}.
+
+\subsubsection{Системийн үндсэн урсгал}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  font=\scriptsize,
+  node distance=0.25cm,
+  stepbox/.style={rectangle, rounded corners=4pt, draw=green!60!black, fill=green!40,
+    line width=0.9pt, text width=6cm, minimum height=0.65cm, align=center, inner sep=3pt},
+  flowarrow/.style={->, >=stealth, thick, draw=green!60!black, shorten >=1pt, shorten <=1pt}
+]
+
+  \node[stepbox] (s1) {\textbf{1. Байгууллага бүртгүүлэх} \,(Веб апп)};
+  \node[stepbox, below=of s1] (s2) {\textbf{2. Бүтээгдэхүүн нэмэх} \,(Каталог удирдлага)};
+  \node[stepbox, below=of s2] (s3) {\textbf{3. Захиалга хүлээн авах} \,(Хэрэглэгч)};
+  \node[stepbox, below=of s3] (s4) {\textbf{4. Хүргэлтийн даалгавар үүсгэх} \,(Зах зээлд нийтлэх)};
+  \node[stepbox, below=of s4] (s5) {\textbf{5. Даалгавар авах} \,(Атом үйлдэл)};
+  \node[stepbox, below=of s5] (s6) {\textbf{6. Хүргэлт гүйцэтгэх} \,(Бараа хүргэх)};
+  \node[stepbox, below=of s6] (s7) {\textbf{7. ePOD баталгаажуулалт} \,(OTP код)};
+  \node[stepbox, below=of s7] (s8) {\textbf{8. Орлого бүртгэх} \,(Автомат триггер)};
+
+  \draw[flowarrow] (s1) -- (s2);
+  \draw[flowarrow] (s2) -- (s3);
+  \draw[flowarrow] (s3) -- (s4);
+  \draw[flowarrow] (s4) -- (s5);
+  \draw[flowarrow] (s5) -- (s6);
+  \draw[flowarrow] (s6) -- (s7);
+  \draw[flowarrow] (s7) -- (s8);
+
+\end{tikzpicture}
+\caption{Системийн үндсэн үйл ажиллагааны урсгал: бүртгэлээс орлого бүртгэл хүртэлх 8 алхамт үе шат}
+\label{fig:system_flow}
 \end{figure}
 
+\subsubsection{Multi-tenant архитектур}
+
+Систем нь олон байгууллагад зориулагдсан multi-tenant архитектуртай. Байгууллага бүр өөрийн бүтээгдэхүүн, захиалга, даалгаврын өгөгдлийг бүрэн тусгаарлагдсан хэлбэрээр удирдана. Tenant isolation-ыг PostgreSQL-ийн Row Level Security (RLS) бодлого хангаж, өгөгдлийн сангийн түвшинд баталгаажуулна. Тухайн хэрэглэгчийн \texttt{org\_id}-г RPC функцээр тодорхойлж, RLS бодлогод ашиглана.
+
+%===============================================================================
 \subsection{Системийн архитектур}
-"Tdelivery" систем нь орчин үеийн **Serverless** архитектурт суурилсан. Энэ нь сервер талын дэд бүтцийг удирдах шаардлагагүйгээр, зөвхөн бизнесийн логик болон код бичихэд төвлөрөх боломжийг олгодог.
+\label{subsec:system_architecture}
 
-\begin{figure}[h]
-    \centering
-    \begin{tikzpicture}[node distance=2cm]
-        \node[draw, rectangle, minimum width=2.5cm, minimum height=1cm] (app) {Mobile App (React Native)};
-        \node[draw, rectangle, right of=app, node distance=4cm] (auth) {Firebase Auth};
-        \node[draw, rectangle, below of=auth] (firestore) {Cloud Firestore};
-        \node[draw, rectangle, below of=firestore] (functions) {Cloud Functions};
-        \node[draw, cylinder, shape border rotate=90, draw, minimum height=1cm, minimum width=1.5cm, right of=firestore, node distance=4cm] (db) {NoSQL DB};
+\subsubsection{Системийн бүрэлдэхүүн хэсгүүдийн тайлбар}
 
-        \draw[<->] (app) -- (auth);
-        \draw[<->] (app) -- (firestore);
-        \draw[<->] (firestore) -- (functions);
-        \draw[<->] (firestore) -- (db);
-    \end{tikzpicture}
-    \caption{Системийн архитектур}
-    \label{fig:architecture}
+Системийн ерөнхий архитектур нь хоёр клиент аппликейшн (хүргэгчийн React Native/Expo апп болон борлуулагчийн Next.js 16 веб апп), нэгдсэн Supabase backend, болон тэдгээрийг холбосон протокол, үйлчилгээнүүдээс бүрдэнэ. Клиентүүд нь Supabase API gateway-ээр (HTTPS/REST болон WebSocket) дамжуулан backend-тэй холбогдоно.
+
+Supabase платформын үндсэн үйлчилгээнүүд нь дараах байдалтай:
+\begin{itemize}
+  \item \textbf{Auth} — JWT токен үүсгэнэ;
+  \item \textbf{PostgreSQL} — RLS бодлоготой өгөгдлийн сан;
+  \item \textbf{Storage} — KYC баримт хадгална;
+  \item \textbf{Realtime} — WebSocket-д суурилсан мэдэгдэл илгээнэ;
+  \item \textbf{RPC функцүүд} — \texttt{SECURITY DEFINER} эрхтэй бизнесийн логик;
+  \item \textbf{Edge Functions} — имэйл болон ePOD OTP илгээнэ;
+  \item \textbf{Триггерүүд} — төлөв шилжилт, орлогын автомат бүртгэл.
+\end{itemize}
+Эдгээр үйлчилгээ хоорондоо JWT token validation, trigger-RPC холболт, Realtime channel-аар уялдана.
+
+\subsubsection{BaaS-д суурилсан архитектур (BaaS-mediated architecture)}
+\label{subsubsec:baas_architecture}
+
+Уламжлалт \textit{three-tier} загварт бизнесийн логикийг тусдаа application server (Node.js/Express, Spring Boot) дээр байрлуулдаг. Харин тус систем нь тусдаа backend сервер ажиллуулдаггүй. Supabase-ийн BaaS платформ бүх backend үйлчилгээг зуучилдаг. Иймд архитектурыг \textbf{BaaS-mediated architecture}~\cite{jonas2019berkeleyserverless} гэж нэрлэх нь илүү зөв. API давхарга PostgREST-ээр автоматаар үүсгэгдэнэ. Бизнесийн логик нь RPC, триггер, Edge Functions-д тархсан.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  layer/.style={rectangle, rounded corners=4pt, draw=black!50, thick,
+    minimum width=14cm, minimum height=2cm, align=center, font=\small, inner sep=8pt},
+  arrow/.style={-Stealth, thick, draw=gray!60},
+  arrlabel/.style={fill=white, inner sep=2pt, font=\small},
+]
+
+\node[layer, fill=blue!10, draw=blue!55!black] (pres) at (0, 0) {
+  \textbf{Клиент давхарга (Client Layer)}\\[2pt]
+  React Native / Expo (мобайл, хүргэгч) $\cdot$ Next.js 16 (веб, борлуулагч)\\
+  Ant Design $\cdot$ Tailwind CSS $\cdot$ \texttt{@supabase/supabase-js} SDK
+};
+
+\node[layer, fill=orange!10, draw=orange!70!black, minimum height=2.6cm] (baas) at (0, -3.2) {
+  \textbf{BaaS layer (Supabase Backend-as-a-Service)}\\[2pt]
+  PostgREST (auto-REST API) $\cdot$ GoTrue Auth (JWT) $\cdot$ Realtime (WebSocket)\\
+  Storage $\cdot$ Edge Functions (Deno)\\
+  RPC: \texttt{claim\_delivery\_task}, \texttt{verify\_epod\_otp}
+};
+
+\node[layer, fill=green!10, draw=green!55!black, minimum height=1.6cm] (data) at (0, -6.1) {
+  \textbf{Өгөгдлийн давхарга (Data Layer)}\\[2pt]
+  PostgreSQL $\cdot$ RLS бодлого $\cdot$ Триггерүүд $\cdot$ SECURITY DEFINER функцүүд
+};
+
+\draw[arrow] (pres.south) -- node[arrlabel] {HTTPS (REST) / WebSocket} (baas.north);
+\draw[arrow] (baas.south) -- node[arrlabel] {SQL / PL/pgSQL} (data.north);
+
+\end{tikzpicture}
+\caption{BaaS-д суурилсан архитектурын бүтэц}
+\label{fig:layered_architecture}
 \end{figure}
 
-\subsubsection{Технологийн сонголт}
-\begin{itemize}
-    \item \textbf{Frontend (Mobile App):} React Native (Expo SDK). Кросс-платформ хөгжүүлэлт хийхэд тохиромжтой, хурдан, өндөр гүйцэтгэлтэй.
-    \item \textbf{Backend (BaaS):} Google Firebase.
-        \begin{itemize}
-            \item \textbf{Authentication:} Хэрэглэгчийн бүртгэл, нэвтрэх эрх.
-            \item \textbf{Firestore:} NoSQL өгөгдлийн сан.
-            \item \textbf{Cloud Functions:} Сервер талын логик.
-            \item \textbf{Storage:} Зураг, файл хадгалах.
-        \end{itemize}
-\end{itemize}
+\textbf{Client layer} нь хэрэглэгчийн интерфейс, навигаци, маягтын шалгалт, state management (React Context) зэрэг frontend логикийг хариуцна. Мобайл апп нь React Navigation ашиглан дэлгэцүүдийг удирдаж, веб апп нь Next.js-ийн App Router болон middleware ашиглана. Хоёр клиент хоёулаа \texttt{@supabase/supabase-js} SDK-аар дамжуулан BaaS давхаргатай HTTPS болон WebSocket протоколоор холбогдоно.
 
-\subsection{Өгөгдлийн сангийн зохиомж (ERD)}
-Систем нь NoSQL төрлийн Cloud Firestore өгөгдлийн санг ашиглана. Өгөгдлийн хамаарлыг ER диаграммаар харуулав.
+\textbf{BaaS layer} нь системийн API давхаргын үүргийг гүйцэтгэдэг Supabase платформ юм. Түүний хамгийн гол бүрэлдэхүүн нь \textbf{PostgREST} — PostgreSQL schema-г уншиж, бүх хүснэгт, view, функцийг автоматаар RESTful endpoint болгон хувиргах open source сервер. Ингэснээр клиент нь \texttt{POST /rest/v1/rpc/claim\_delivery\_task} зэрэг URL-аар шууд өгөгдлийн сангийн функцийг дуудах боломжтой болно. API-гийн дэргэд GoTrue (JWT authentication), Realtime (PostgreSQL \texttt{WAL}-ээс WebSocket мэдэгдэл), Storage (файл), Edge Functions (Deno runtime дээр ажилладаг имэйл илгээх гэх мэт гадаад integration) зэрэг туслах үйлчилгээнүүд ажиллана.
 
-\begin{figure}[h]
-    \centering
-    \begin{tikzpicture}[node distance=2cm]
-        \node[draw, rectangle] (user) {User};
-        \node[draw, rectangle, right of=user, node distance=4cm] (order) {Order};
-        \node[draw, rectangle, below of=order] (product) {Product};
-        
-        \draw[->] (user) -- node[above] {places} (order);
-        \draw[->] (user) -- node[below] {supplies} (product);
-        \draw[->] (order) -- node[right] {contains} (product);
-    \end{tikzpicture}
-    \caption{Өгөгдлийн сангийн ER диаграмм (Хялбаршуулсан)}
-    \label{fig:erd}
+\textbf{Data layer} нь PostgreSQL өгөгдлийн сан, Row Level Security (RLS), триггерүүд, \texttt{SECURITY DEFINER} RPC функцүүдийг багтаана. Бизнесийн логикийн дийлэнх хэсэг — permission check, state machine, зэрэгцээ хандалтын \texttt{FOR UPDATE SKIP LOCKED} хамгаалалт — нь энэ давхаргад PL/pgSQL кодоор хэрэгжсэн. Энэ нь BaaS-mediated архитектурын өвөрмөц шинж бөгөөд клиент талын логикоос хамааралгүй аюулгүй ажиллана.
+
+\subsubsection{Schema drift-ээс хамгаалах стратеги}
+\label{subsubsec:schema_drift}
+
+BaaS-mediated архитектурын гол сөрөг тал нь клиент аппликейшн PostgREST-ээр дамжуулан schema-тай шууд холбогддог явдал юм. Хүснэгтийн баганын нэр, төрөл өөрчлөгдөх бүрт клиент код зохицож шинэчлэгдэх шаардлагатай. Уг хамаарлыг \textit{schema drift} гэдэг — database-ийн хэлбэр ба клиентийн таамагласан хэлбэрийн хоорондын зөрүү~\cite{fowler2003evolutionary}. Гараар удирдвал runtime-д \texttt{column ``\ldots'' does not exist} алдаа гарч, production-д хагарал үүсгэх эрсдэлтэй.
+
+Уг эрсдэлийг эхнээс нь хаахын тулд дараах \textbf{schema drift prevention strategy}-г төсөлд хэрэгжүүлэв:
+
+\begin{enumerate}
+  \item \textbf{Автомат TypeScript type үүсгэлт.} Supabase CLI-ийн \texttt{supabase gen types typescript --linked} команд нь production-той холбогдсон (linked) төслийн schema-г уншиж, бүх хүснэгт, view, enum, RPC функцийн signature-ийг нэгтгэсэн \texttt{types/database.ts} файлыг үүсгэнэ. Үүнд баганын нэр, төрөл, NOT NULL шинжийг compile-time-д илэрхийлэх \texttt{Database[``public''][``Tables''][``orders''][``Row'']} гэх мэт type-ууд багтана.
+
+  \item \textbf{CI pipeline integration.} Уг командыг GitHub Actions workflow-д шат болгон оруулсан. Pull request нээгдэх бүрт CI нь linked төслөөс шинэ \texttt{database.ts} үүсгэж, commit-логдсон хувилбартай харьцуулна. Зөрүү илэрвэл build унаж, хөгжүүлэгчийг schema migration-ы дараа type-ийг дахин үүсгэж commit-лохыг шаарддаг.
+
+  \item \textbf{Compile-time contract enforcement.} Клиент код нь үүсгэгдсэн типийг импортлоод Supabase client-ийг \texttt{createClient<Database>(url, key)} гэх хэлбэрээр параметерждэг. Ингэснээр \texttt{supabase.from(``orders'').select(``customer\_id, total'')} хэлбэрийн дуудлага бүр статик шалгалтад орж, байхгүй багана эсвэл буруу төрөл дуудахад TypeScript compiler-ээр runtime-аас өмнө илэрнэ.
+
+  \item \textbf{Migration-д суурилсан schema удирдлага.} Өгөгдлийн сангийн бүтцийг зөвхөн \texttt{supabase/migrations/} хавтасны SQL migration файлаар өөрчлөх дүрэм тогтоосон. Supabase Studio эсвэл \texttt{psql}-ээр шууд гараар өөрчлөхийг хориглож, ингэснээр schema-ийн түүх git-ээр бүрэн хянагддаг болгосон.
+\end{enumerate}
+
+Уг стратегийн үр дүнд client–server contract нь compile-time-д баталгаажиж, schema өөрчлөлт runtime-д биш build-time-д илрэнэ. Гэсэн хэдий ч coupling-ийн үндсэн асуудлыг бүрэн шийдэхгүй тул BFF (Backend-for-Frontend) давхарга нэмэх нь цаашдын ажлын чухал чиглэл юм.
+
+\subsubsection{Authentication архитектур}
+\label{subsubsec:auth_architecture}
+
+Систем нь хоёр ялгаатай authentication арга ашиглана — веб аппд серверийн талын (SSR) authentication, мобайл аппд клиент талын authentication.
+
+\textbf{Борлуулагчийн веб апп (Next.js SSR)}
+
+\begin{enumerate}
+  \item Хэрэглэгч имэйл, нууц үгээр нэвтэрнэ
+  \item Supabase Auth сесс үүсгэж, JWT токен олгоно
+  \item Токен серверийн талын cookie-д хадгалагдана
+  \item Next.js middleware нь хүсэлт бүрд сессийг шалгаж, токен шинэчилнэ
+  \item Хамгаалагдсан замууд (\texttt{/dashboard}, \texttt{/tasks}, \texttt{/orders} г.м.) нэвтрээгүй бол нэвтрэх хуудас руу чиглүүлнэ
+  \item Борлуулагчийн layout нь хэрэглэгчийн эрхийн түвшинг (role) шалгаж, зөвхөн зөвшөөрөгдсөн эрхтэй хэрэглэгчийг нэвтрүүлнэ
+\end{enumerate}
+
+\textbf{Хүргэгчийн мобайл апп (React Native)}
+
+\begin{enumerate}
+  \item Хэрэглэгч имэйл, нууц үгээр нэвтэрнэ (Supabase Auth)
+  \item Сесс AsyncStorage-д хадгалагдана (оффлайн хандалтын дэмжлэг)
+  \item CourierAuthContext нь authentication төлвийг нэгдсэн байдлаар удирдана
+  \item Апп эхлэхэд \texttt{restoreSession()} ажиллаж, хүчинтэй сессийг сэргээнэ
+  \item Хүргэгчийн эрхийн түвшин (courier), батламжийн төлөв (pending/approved/blocked) шалгагдана
+  \item Батлагдаагүй бол KYC шаардлагатай эсвэл хүлээж буй дэлгэц харуулна
+  \item Төлөв ``pending'' бол 60 секунд тутам автоматаар шинэчилнэ (админ батлахад шууд шинэчлэгдэнэ)
+\end{enumerate}
+
+\subsubsection{RPC (Remote Procedure Call) архитектур}
+\label{subsubsec:rpc_architecture}
+
+Бизнесийн логикийн гол хэсэг нь PostgreSQL-ийн RPC (Remote Procedure Call) функцүүдэд хэрэгжсэн. Эдгээр функц нь \texttt{SECURITY DEFINER} эрхтэй ажиллаж, RLS бодлогоос үл хамааран бизнесийн дүрмийг нэгдмэл байдлаар хэрэгжүүлнэ.
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.1}
+\caption{Серверийн функцүүдийн (RPC) жагсаалт}
+\footnotesize
+\begin{tabular}{|p{3.8cm}|p{1.7cm}|p{7.5cm}|}
+\hline
+\textbf{Функц} & \textbf{Эрх} & \textbf{Тайлбар} \\
+\hline
+\texttt{claim\_delivery\_task} & SECURITY DEFINER & Хүргэгч даалгавар авах. \texttt{FOR UPDATE SKIP LOCKED} ашиглан зэрэгцээ хандалтаас хамгаалсан. KYC шалгалт, зөвхөн нэг идэвхтэй даалгавартай байх нөхцөл шалгана. \\
+\hline
+\texttt{update\_task\_status} & SECURITY DEFINER & Төлвийн шилжилт: assigned $\rightarrow$ picked\_up $\rightarrow$ delivered. Цагийн тэмдэг автоматаар бүртгэгдэнэ. \\
+\hline
+\texttt{get\_available\_tasks} & SECURITY DEFINER & Нээлттэй даалгаврын жагсаалт. RLS-ийн рекурсив асуудлыг шийдэж, байршлыг хамт буцаана. \\
+\hline
+\texttt{request\_epod\_otp} & SECURITY DEFINER & 6 оронтой OTP үүсгэнэ. Bcrypt хэш, 10 минутын хугацаатай. Энгийн текст нэг удаа буцаана. \\
+\hline
+\texttt{verify\_epod\_otp} & SECURITY DEFINER & OTP шалгах. Bcrypt харьцуулалт, 10 мин хугацаа, 5 оролдлогын хязгаар. Амжилттай бол delivered $\rightarrow$ completed. \\
+\hline
+\texttt{is\_approved\_courier} & SECURITY DEFINER & Батлагдсан хүргэгч эсэхийг шалгана. RLS бодлогод ашиглагдана. \\
+\hline
+\end{tabular}
+\end{table}
+
+
+\subsubsection{Аюулгүй байдлын архитектур}
+\label{subsubsec:security_architecture}
+
+Системийн аюулгүй байдал нь олон давхаргат хамгаалалтаар хэрэгжсэн:
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  layer/.style={rectangle, rounded corners=4pt, draw=black!50, thick,
+    minimum width=14cm, minimum height=1.1cm, align=left, font=\small,
+    inner xsep=12pt, inner ysep=6pt, text width=13cm},
+  arrow/.style={-Stealth, thick, draw=gray!60},
+]
+
+% Semantic color palette: outer (network) → deep (data)
+\node[layer, fill=red!10, draw=red!55!black] (l1) at (0, 0) {%
+  \textbf{1. Сүлжээний давхарга:} HTTPS/TLS шифрлэлт — бүх холболт шифрлэгдсэн};
+\node[layer, fill=orange!10, draw=orange!70!black] (l2) at (0, -1.5) {%
+  \textbf{2. Authentication:} Supabase Auth — JWT токен, сессийн удирдлага, токен шинэчлэл};
+\node[layer, fill=yellow!20, draw=yellow!70!black] (l3) at (0, -3.0) {%
+  \textbf{3. Middleware / Route guard:} Next.js middleware (веб), Navigation guard (мобайл)};
+\node[layer, fill=green!10, draw=green!55!black] (l4) at (0, -4.5) {%
+  \textbf{4. Row Level Security (RLS):} \texttt{org\_id}, \texttt{courier\_id}, \texttt{auth.uid()} дээр суурилсан хандалтын хяналт};
+\node[layer, fill=blue!10, draw=blue!55!black] (l5) at (0, -6.0) {%
+  \textbf{5. RPC функц:} SECURITY DEFINER — бизнесийн дүрмийн хамгаалалт, оролдлогын тоолуур};
+
+\draw[arrow] (l1.south) -- (l2.north);
+\draw[arrow] (l2.south) -- (l3.north);
+\draw[arrow] (l3.south) -- (l4.north);
+\draw[arrow] (l4.south) -- (l5.north);
+
+\end{tikzpicture}
+\caption{Олон давхаргат аюулгүй байдлын архитектур (гаднаас дотогш: сүлжээ → auth → middleware → данн → бизнес логик)}
+\label{fig:security_architecture}
 \end{figure}
 
-\subsubsection{Өгөгдлийн сангийн бүтэц (Schema)}
-Firestore нь схемгүй (schemaless) боловч өгөгдлийн бүрэн бүтэн байдлыг хангахын тулд дараах бүтцийг баримтална.
+\textbf{Row Level Security (RLS) бодлогууд}
 
-\textbf{1. Users Collection}
+Системийн гол хүснэгтүүдэд дараах RLS бодлогууд тохируулагдсан:
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\caption{RLS бодлогуудын хураангуй}
+\begin{tabular}{|p{3cm}|p{3cm}|p{7.5cm}|}
+\hline
+\textbf{Хүснэгт} & \textbf{Бодлого} & \textbf{Нөхцөл} \\
+\hline
+\texttt{profiles} & Өөрийн профайл & \texttt{auth.uid() = id} — зөвхөн өөрийн мэдээлэл унших, засах \\
+\hline
+\texttt{delivery\_tasks} & Хүргэгчийн харах & \texttt{is\_approved\_courier()} бөгөөд \texttt{status = 'published'} эсвэл \texttt{courier\_id = auth.uid()} \\
+\hline
+\texttt{delivery\_tasks} & Борлуулагчийн удирдлага & \texttt{org\_id = get\_user\_org\_id()} — зөвхөн өөрийн байгууллагын даалгавар \\
+\hline
+\texttt{courier\_earnings} & Хүргэгчийн орлого & \texttt{courier\_id = auth.uid()} — зөвхөн өөрийн орлого \\
+\hline
+\texttt{courier\_kyc} & Хүргэгчийн баримт & Хүргэгч өөрийн баримт, админ бүгд \\
+\hline
+\texttt{delivery\_epod\_otps} & ePOD кодууд & Борлуулагч зөвхөн өөрийн байгууллагын даалгаврын OTP \\
+\hline
+\end{tabular}
+\end{table}
+
+\textbf{ePOD OTP аюулгүй байдал}
+
+OTP кодын аюулгүй байдлыг 5 түвшний хамгаалалтаар хангасан (Зураг~\ref{fig:epod_security_layers}).
+
+\begin{figure}[H]
+\centering
+\resizebox{0.95\textwidth}{!}{%
+\begin{tikzpicture}[
+  font=\footnotesize,
+  shieldbox/.style={rectangle, rounded corners=4pt, draw=blue!60!black, thick, fill=blue!8,
+    text width=6.5cm, minimum height=1.1cm, align=left, inner sep=7pt},
+  icon/.style={circle, draw=blue!60!black, thick, fill=blue!25, minimum size=0.95cm, font=\small\bfseries},
+  threatbox/.style={rectangle, rounded corners=3pt, draw=red!55!black, thick, fill=red!10,
+    minimum width=4.2cm, text width=3.8cm, minimum height=1.1cm, align=center, font=\scriptsize, inner sep=5pt},
+  blockarrow/.style={-Latex, very thick, draw=red!60!black},
+  titlebox/.style={font=\small\bfseries, align=center},
+]
+
+% Background stripes
+\begin{scope}[on background layer]
+\node[rectangle, fill=red!3, minimum width=4.2cm, minimum height=8.6cm] at (-5.5, 0) {};
+\node[rectangle, fill=blue!3, minimum width=8.0cm, minimum height=8.6cm] at (3.0, 0) {};
+\end{scope}
+
+% Headers
+\node[titlebox, text=red!55!black] at (-5.5, 3.9) {Халдлагын төрөл};
+\node[titlebox, text=blue!60!black] at (3.0, 3.9) {Хамгаалалтын давхарга};
+
+% Threats (red, left) — all single line for uniformity
+\node[threatbox] (t1) at (-5.5, 2.8) {Brute-force дайралт};
+\node[threatbox] (t2) at (-5.5, 1.4) {Timing attack};
+\node[threatbox] (t3) at (-5.5, 0.0) {Replay attack};
+\node[threatbox] (t4) at (-5.5, -1.4) {Session hijacking};
+\node[threatbox] (t5) at (-5.5, -2.8) {Storage compromise};
+
+% Security layers (blue, right)
+\node[shieldbox] (l1) at (3.0, 2.8) {\textbf{1. Bcrypt hash (cost=10)}\\Plaintext хадгалахгүй, cost=10 үржвэр};
+\node[shieldbox] (l2) at (3.0, 1.4) {\textbf{2. Оролдлогын хязгаар (5)}\\6-р хүсэлт hash-аас өмнө таслагдана};
+\node[shieldbox] (l3) at (3.0, 0.0) {\textbf{3. Expiry 10 мин}\\Хугацаа дууссан код автомат хүчингүй};
+\node[shieldbox] (l4) at (3.0, -1.4) {\textbf{4. Нэг удаагийн буцаалт}\\Plaintext зөвхөн эхний имэйлд гарна};
+\node[shieldbox] (l5) at (3.0, -2.8) {\textbf{5. Давхардлын хяналт}\\Шинэ OTP үүсэхэд өмнөх устгагдана};
+
+% Icons
+\node[icon] at (-1.1, 2.8) {1};
+\node[icon] at (-1.1, 1.4) {2};
+\node[icon] at (-1.1, 0.0) {3};
+\node[icon] at (-1.1, -1.4) {4};
+\node[icon] at (-1.1, -2.8) {5};
+
+% Arrows from threats to icons
+\draw[blockarrow] (t1) -- (-1.6, 2.8);
+\draw[blockarrow] (t2) -- (-1.6, 1.4);
+\draw[blockarrow] (t3) -- (-1.6, 0.0);
+\draw[blockarrow] (t4) -- (-1.6, -1.4);
+\draw[blockarrow] (t5) -- (-1.6, -2.8);
+
+\end{tikzpicture}
+}
+\caption{ePOD OTP-ийн 5 давхаргат хамгаалалт: халдлагын төрөл бүрд харгалзах шийдэл}
+\label{fig:epod_security_layers}
+\end{figure}
+
+
+%===============================================================================
+\subsection{Системийн хэрэглэгчид}
+\label{subsec:system_users}
+
+Платформ нь олон талт зах зээлийн зарчимд суурилсан бөгөөд дараах гурван үндсэн оролцогчийн харилцан үйлчлэлд тулгуурлана.
+
+\subsubsection{Байгууллага (Борлуулагч)}
+Байгууллага нь хүргэлтийн хэрэгцээ шаардлага үүсгэдэг \textbf{эрэлтийн тал} юм. Платформ нь дараах төрлийн байгууллагуудын хүргэлтийг дэмждэг:
 \begin{itemize}
-    \item \texttt{uid} (String): Хэрэглэгчийн ID (PK)
-    \item \texttt{email} (String): Имэйл хаяг
-    \item \texttt{role} (String): 'customer' | 'supplier' | 'courier'
-    \item \texttt{displayName} (String): Нэр
-    \item \texttt{phoneNumber} (String): Утасны дугаар
-    \item \texttt{address} (Map): Хаягийн мэдээлэл (lat, lng, street)
+  \item \textbf{Ресторан}: хоолны хүргэлт
+  \item \textbf{Дэлгүүр}: жижиглэн худалдааны бүтээгдэхүүн
+  \item \textbf{Эмийн сан}: эм, эрүүл мэндийн бүтээгдэхүүн
+  \item \textbf{Агуулах}: том хэмжээний ачаа хүргэлт
 \end{itemize}
 
-\textbf{2. Products Collection}
+Байгууллагын хэрэглэгчийн үндсэн чадамж:
+\begin{enumerate}
+  \item Веб аппаар байгууллагын бүртгэл үүсгэх, мэдээлэл оруулах
+  \item Бүтээгдэхүүний каталог удирдах (нэмэх, засах, устгах)
+  \item Хэрэглэгчээс ирсэн захиалга хүлээн авах, боловсруулах
+  \item Хүргэлтийн даалгавар үүсгэх, хүргэлтийн хураамж тогтоох
+  \item Даалгаврыг зах зээлд нийтлэх (нийтлэгдсэн төлөвт шилжүүлэх)
+  \item Хүргэлтийн явц хянах, гүйцэтгэлийг баталгаажуулах
+\end{enumerate}
+
+Борлуулагч нь веб аппликейшнд дараах хуудсуудыг ашиглана:
 \begin{itemize}
-    \item \texttt{id} (String): Бүтээгдэхүүний ID (PK)
-    \item \texttt{supplierId} (String): Нийлүүлэгчийн ID (FK)
-    \item \texttt{name} (String): Нэр
-    \item \texttt{price} (Number): Үнэ
-    \item \texttt{stock} (Number): Үлдэгдэл
-    \item \texttt{imageUrl} (String): Зургийн зам
-    \item \texttt{category} (String): Ангилал
+  \item \textbf{Хянах самбар (Dashboard)}: гол үзүүлэлтүүд (KPI) — нийт даалгавар, идэвхтэй даалгавар, дууссан даалгавар, орлогын мэдээлэл, өнөөдөр ба өчигдрийн харьцуулалт, бодит цагийн холболтын төлөв
+  \item \textbf{Бүтээгдэхүүн}: бүтээгдэхүүний каталог удирдлага (нэмэх, засах, устгах, боломжтой/боломжгүй хугацаа тохируулах)
+  \item \textbf{Даалгавар}: хүргэлтийн даалгавар үүсгэх, жагсаалт (төлвөөр шүүх, хуудаслалт), дэлгэрэнгүй, олноор нийтлэх (bulk publish), төлвийн шинэчлэл
+  \item \textbf{Захиалга}: захиалгын удирдлага — гурван табтай (``Үйлдэл шаардлагатай'' — төлбөр хийгдсэн захиалгууд, ``Идэвхтэй'' — бэлтгэж буй/бэлэн, ``Түүх'' — дууссан/цуцлагдсан). Захиалга бүрийн дэлгэрэнгүй мэдээлэл, бараа задаргаа, төлвийн шинэчлэл
+  \item \textbf{Санхүүгийн тайлан (Financials)}: өнөөдрийн орлого, өчигдрийн орлого, нийт орлого, хүргэлт бүрийн орлогын задаргаа
+  \item \textbf{Аналитик (Analytics)}: даалгаврын гүйцэтгэлийн шинжилгээ, орлогын чиг хандлага (Recharts график сантай)
+  \item \textbf{Тохиргоо}: байгууллагын мэдээлэл засах, ажлын цагийн тохиргоо
 \end{itemize}
 
-\textbf{3. Orders Collection}
+\subsubsection{Хүргэгч}
+Хүргэгч нь \textbf{нийлүүлэлтийн тал} бөгөөд бие даасан гүйцэтгэгч юм. Хүргэгч нь гар утасны аппликейшн ашиглан системтэй харилцана.
+
+Хүргэгчийн бүртгэлийн болон ажиллагааны үе шатууд:
+\begin{enumerate}
+  \item \textbf{Бүртгүүлэх}: мобайл аппаар имэйл, нууц үгээр бүртгүүлнэ (эрхийн түвшин автоматаар хүргэгч болж тохируулагдана)
+  \item \textbf{Баталгаажуулалтын баримт илгээх}: иргэний үнэмлэхний зураг (урд/ар), тээврийн хэрэгслийн бүртгэл, хувийн зураг
+  \item \textbf{Админ батламж хүлээх}: баримт илгээсний дараа ``илгээсэн'' төлөвт шилжиж, админ шалгана
+  \item \textbf{Батлагдсан}: нээлттэй даалгавар харах, авах эрхтэй болно
+  \item \textbf{Даалгавар авах}: зах зээлээс даалгавар сонгон авна
+  \item \textbf{Хүргэлт гүйцэтгэх}: бараа авах $\rightarrow$ хэрэглэгчид хүргэх
+  \item \textbf{Орлого хянах}: гүйцэтгэсэн хүргэлтийн орлогыг харна
+\end{enumerate}
+
+Хүргэгч мобайл аппын үндсэн хэсгүүд:
 \begin{itemize}
-    \item \texttt{id} (String): Захиалгын ID (PK)
-    \item \texttt{customerId} (String): Захиалагчийн ID (FK)
-    \item \texttt{supplierId} (String): Нийлүүлэгчийн ID (FK)
-    \item \texttt{items} (Array): Захиалсан бараанууд [{productId, quantity, price}]
-    \item \texttt{totalAmount} (Number): Нийт дүн
-    \item \texttt{status} (String): 'pending' | 'confirmed' | 'delivering' | 'delivered' | 'cancelled'
-    \item \texttt{createdAt} (Timestamp): Үүсгэсэн огноо
+  \item \textbf{Нээлттэй даалгавар}: зах зээлийн нээлттэй даалгаврын жагсаалт
+  \item \textbf{Нүүр}: хүргэгчийн хянах самбар, тойм мэдээлэл
+  \item \textbf{Захиалга}: идэвхтэй болон хуваарилагдсан захиалгууд
+  \item \textbf{Орлого}: хүргэлтийн орлогын түүх
+  \item \textbf{Профайл}: хувийн мэдээлэл засах
 \end{itemize}
 
-\subsection{Алгоритм ба Логик шийдэл}
-Системийн үр ашигтай ажиллагааг хангахын тулд хэд хэдэн алгоритм, логик шийдлүүдийг хэрэгжүүлсэн.
+\subsubsection{Админ}
+Админ нь системийн ерөнхий удирдлага хийх давуу эрхтэй хэрэглэгч юм.
+\begin{enumerate}
+  \item Хүргэгчийн баталгаажуулалтын баримтыг шалгах, батлах эсвэл татгалзах
+  \item Хэрэглэгчийн эрхийн түвшин өөрчлөх
+  \item Хүргэгчийн эрх хаах (хоригдсон төлөвт шилжүүлэх)
+  \item Системийн ерөнхий хяналт хийх
+\end{enumerate}
 
-\subsubsection{Атомик Денормализаци (Atomic Denormalization)}
-NoSQL өгөгдлийн санд өгөгдлийг унших хурдыг нэмэгдүүлэхийн тулд денормализаци хийх нь түгээмэл байдаг. Гэвч өгөгдлийн зөрчил үүсэх эрсдэлтэй. Үүнийг шийдэхийн тулд Firestore Transaction ашиглан "Атомик Денормализаци" аргыг хэрэгжүүлсэн.
+%===============================================================================
 
-\subsubsection{Бодит цагийн захиалгын удирдлага}
-Захиалгын төлөв өөрчлөгдөх бүрт хэрэглэгчдэд шууд харагдах ёстой. Үүний тулд \texttt{onSnapshot} сонсогч (listener) ашигласан.
+\begin{figure}[H]
+\centering
+\scalebox{0.85}{%
+\begin{tikzpicture}[
+  font=\scriptsize,
+  entity/.style={rectangle, draw=black, thick, fill=blue!10,
+    minimum width=2.2cm, minimum height=0.9cm, align=center, inner sep=3pt},
+  process/.style={ellipse, draw=green!60!black, very thick, fill=green!15,
+    minimum width=4.0cm, minimum height=2.0cm, align=center, inner sep=3pt},
+  flow/.style={->, >=stealth, thick, shorten >=2pt, shorten <=2pt},
+  flowlabel/.style={font=\tiny, inner sep=2pt, fill=white,
+    rounded corners=1pt, text=black!85, align=center}
+]
+  % ============ ЗАНГИЛААНУУД ============
+  % Төв процесс
+  \node[process] (sys) at (0, 0) {\\[2pt]
+    Байгууллага хоорондын\\хүргэлтийн платформ};
 
-\subsection{Тестлэлт}
-Системийн чанарыг баталгаажуулахын тулд Unit Testing, Integration Testing, User Acceptance Testing (UAT) зэрэг аргуудыг ашигласан.
+  % Гадаад объектуудыг илүү нягт байрлуулав
+  \node[entity] (seller)  at (-7.0, 0)  {\textbf{Борлуулагч}\\(Байгууллага)};
+  \node[entity] (courier) at ( 7.0, 0)  {\textbf{Хүргэгч}};
+  \node[entity] (admin)   at (0, -3.3)  {\textbf{Админ}};
+  \node[entity] (email)   at (0,  3.3)  {\textbf{Имэйл үйлчилгээ}};
 
-\vfill
+  % ============ БОРЛУУЛАГЧ <-> СИСТЕМ ============
+  \draw[flow] ([yshift=7pt]seller.east) -- ([yshift=7pt]sys.west)
+    node[flowlabel, midway, above=0pt]
+    {Бүтээгдэхүүн, даалгавар};
+  \draw[flow] ([yshift=-7pt]sys.west) -- ([yshift=-7pt]seller.east)
+    node[flowlabel, midway, below=0pt]
+    {Гүйцэтгэл, орлогын тайлан};
+
+  % ============ ХҮРГЭГЧ <-> СИСТЕМ ============
+  \draw[flow] ([yshift=7pt]sys.east) -- ([yshift=7pt]courier.west)
+    node[flowlabel, midway, above=0pt]
+    {Нээлттэй даалгавар, OTP};
+  \draw[flow] ([yshift=-7pt]courier.west) -- ([yshift=-7pt]sys.east)
+    node[flowlabel, midway, below=0pt]
+    {KYC, даалгавар, ePOD};
+
+  % ============ АДМИН <-> СИСТЕМ ============
+  \draw[flow] ([xshift=-12pt]admin.north) -- ([xshift=-12pt]sys.south)
+    node[flowlabel, midway, left=0pt]
+    {Батлах шийдвэр,\\бодлого};
+  \draw[flow] ([xshift=12pt]sys.south) -- ([xshift=12pt]admin.north)
+    node[flowlabel, midway, right=0pt]
+    {KYC хүсэлт,\\хяналт};
+
+  % ============ ИМЭЙЛ <-> СИСТЕМ ============
+  \draw[flow] ([xshift=-12pt]sys.north) -- ([xshift=-12pt]email.south)
+    node[flowlabel, midway, left=0pt]
+    {OTP, мэдэгдэл\\илгээх};
+  \draw[flow] ([xshift=12pt]email.south) -- ([xshift=12pt]sys.north)
+    node[flowlabel, midway, right=0pt]
+    {Илгээлтийн\\баталгаа};
+
+\end{tikzpicture}%
+}
+\caption{Өгөгдлийн урсгалын диаграмм — Level 0 (контекст диаграмм)}
+\label{fig:dfd_level0}
+\end{figure}
+
+\subsection{Системийн шаардлага}
+\label{subsec:functional_requirements}
+
+Энэ хэсэгт системийн шаардлагуудыг модуль бүрээр задалж тодорхойлно.
+
+%-------------------------------------------------------------------------------
+\subsubsection{Нэвтрэх ба authentication систем}
+
+Систем нь Supabase Auth-ийн дэд бүтэц дээр суурилсан. Хэрэглэгч бүртгүүлэх үед апп-аас хамаарч эрх автомат тохируулагдана (хүргэгчийн апп — хүргэгч, веб — борлуулагч); түвшин өөрчлөх зөвхөн админд боломжтой. Техникийн хэрэгжүүлэлтийг (JWT, сесс, триггер) \ref{subsubsec:auth_architecture}-р хэсэгт тодорхойлсон.
+
+Хүргэгчийн KYC процесс нь \textbf{Хүлээгдэж буй} → \textbf{Баримт илгээсэн} → \textbf{Батлагдсан} (эсвэл \textbf{Хоригдсон}) гэсэн төлвийн шилжилтээр явагдана. Илгээх баримт: иргэний үнэмлэх (урд/ар), тээврийн хэрэгслийн бүртгэл, хувийн зураг, тээврийн хэрэгслийн мэдээлэл (Supabase Storage-д RLS-ээр хамгаалагдан хадгалагдана).
+
+%-------------------------------------------------------------------------------
+\subsubsection{Байгууллагын удирдлага}
+
+\textbf{Олон байгууллагын өгөгдлийн тусгаарлалт}
+
+Олон байгууллага нэг системд зэрэг ажиллах боловч байгууллага бүрийн өгөгдөл бүрэн тусгаарлагдсан байна (тусгаарлалтын RLS бодлогуудыг \ref{subsubsec:security_architecture}-р хэсэгт тодорхойлсон).
+\begin{itemize}
+  \item Байгууллагын хүснэгт: дугаар, нэр, төрөл (ресторан, дэлгүүр, эмийн сан, агуулах), үүсгэсэн огноо
+  \item Хэрэглэгч-байгууллагын холбоос: профайл дахь байгууллагын дугаар (хүргэгч, хэрэглэгчид хамаарахгүй)
+\end{itemize}
+
+\textbf{Байгууллагын бүртгэлийн урсгал (Onboarding)}
+
+Шинэ борлуулагч бүртгүүлэх үед дараах үе шатуудыг дамжина:
+\begin{enumerate}
+  \item Имэйл, нууц үгээр хэрэглэгчийн бүртгэл үүсгэх
+  \item Байгууллагын мэдээлэл оруулах — нэр, төрөл (ресторан, дэлгүүр, эмийн сан, агуулах), хаяг, холбоо барих мэдээлэл
+  \item Амжилттай бүртгэл дууссаны дараа хянах самбар руу шилжинэ
+\end{enumerate}
+
+Нууц үг мартсан тохиолдолд имэйлээр нууц үг сэргээх (forgot password / reset) боломж хэрэгжсэн. Supabase-ийн сэргээлтийн линк илгээх механизмыг ашиглав.
+
+\textbf{Бүтээгдэхүүний каталог удирдлага}
+
+Байгууллага өөрийн бүтээгдэхүүнүүдийг нэмэх, засах, устгах, харах үйлдлээр удирдана. Бүтээгдэхүүн бүр тухайн байгууллагын дугаартай холбоотой бөгөөд Row Level Security (RLS)-ээр тусгаарлагдсан.
+
+%-------------------------------------------------------------------------------
+\subsubsection{Захиалгын удирдлагын систем}
+
+Захиалгын амьдралын мөчлөг нь \textbf{Төлбөр хүлээгдэж буй} $\rightarrow$ \textbf{Төлбөр хийгдсэн} $\rightarrow$ \textbf{Бэлтгэж буй} $\rightarrow$ \textbf{Хүргэлтэд бэлэн} $\rightarrow$ \textbf{Бараа авсан} $\rightarrow$ \textbf{Хүргэгдсэн} шилжилтээр явагдана; тодорхой төлвүүдээс \textbf{Цуцлагдсан} төлөвт шилжих боломжтой. Төлбөрийн баталгаажуулалт нь ӨС-гийн триггерээр нэгдмэл байдлаар хийгдэж, төлбөрийг гараар өөрчлөх боломжгүй.
+
+Борлуулагчийн веб апп нь захиалгыг гурван табтай бүтэцэд харуулна: ``Үйлдэл шаардлагатай'' (төлбөр хийгдсэн боловч бэлтгэгдээгүй), ``Идэвхтэй'' (бэлтгэж буй/бэлэн), ``Түүх'' (хүргэгдсэн/цуцлагдсан). Захиалга бүрийг дэлгэрэнгүй харах, баталгаажуулалтын цонхоор төлөв шилжүүлэх боломжтой.
+
+%-------------------------------------------------------------------------------
+\subsubsection{Хүргэлтийн даалгаврын систем}
+
+Энэ модуль нь системийн \textbf{үндсэн шинэлэг шийдэл} болох зах зээлд суурилсан хүргэлтийн хуваарилалтыг хэрэгжүүлнэ. Байгууллага хүргэлтийн даалгавар үүсгэхдээ авах/хүргэх байршил (хаяг, координат), хүргэлтийн хураамж, тайлбарыг оруулна; даалгаврыг ``нийтлэгдсэн'' төлөвт шилжүүлснээр зах зээлд бүх батлагдсан хүргэгчид харагдана.
+
+Даалгаврын төлвийн шилжилт: \textbf{Ноорог} $\rightarrow$ \textbf{Нийтлэгдсэн} $\rightarrow$ \textbf{Хуваарилагдсан} $\rightarrow$ \textbf{Бараа авсан} $\rightarrow$ \textbf{Хүргэгдсэн} (ePOD хүлээж буй) $\rightarrow$ \textbf{Дууссан} (орлого бүртгэгдэнэ); тусдаа \textbf{Цуцлагдсан} төлөв байна. Олон хүргэгч нэг даалгаврыг зэрэг авахыг оролдоход \texttt{claim\_delivery\_task} функц \ref{subsubsec:rpc_architecture}-р хэсэгт тайлбарласан атомик түгжээний механизмаар зөвхөн нэгийг нь амжилттай болгоно. Төлөв өөрчлөгдөх бүрт холбогдсон талуудад Supabase Realtime мэдэгдэл очно.
+
+%-------------------------------------------------------------------------------
+\subsubsection{Цахим хүргэлтийн баталгаа (ePOD) ба орлогын систем}
+\label{subsubsec:epod_system}
+
+ePOD нь хүргэлт амжилттай гүйцэтгэгдсэнийг нотлох OTP суурилсан дижитал баталгаажуулалт юм. Ажиллагааны урсгал:
+
+\begin{enumerate}
+  \item Хүргэгч ``хүргэгдсэн'' төлөвт шилжүүлнэ
+  \item Систем 6 оронтой OTP үүсгэж хүлээн авагчид илгээнэ
+  \item Хүлээн авагч кодыг хүргэгчид хэлж, хүргэгч мобайл аппд оруулна
+  \item Амжилттай бол даалгавар ``дууссан'' төлөвт шилжиж, хүргэгчийн орлого автоматаар \texttt{courier\_earnings} хүснэгтэд бүртгэгдэнэ
+\end{enumerate}
+
+Техникийн хэрэгжүүлэлтийн дэлгэрэнгүй мэдээллийг (RPC функцүүд, аюулгүй байдлын механизм) \ref{subsubsec:rpc_architecture}-р хэсэгт тодорхойлсон болно.
+
+Хүргэгч мобайл аппын ``Орлого'' хэсгээр нийт орлого, хүргэлт бүрийн задаргаа, дууссан хүргэлтийн түүхийг харна.
+
+%===============================================================================
+\subsection{Ашигласан технологи}
+\label{subsec:technology_stack}
+
+Системийн хөгжүүлэлтэд ашигласан үндсэн технологи, хэрэгслүүдийг дараах хүснэгтэд нэгтгэн харууллаа.
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.2}
+\caption{Системийн технологийн стек}
+\footnotesize
+\begin{tabular}{|p{3.2cm}|p{3.5cm}|p{7cm}|}
+\hline
+\textbf{Хэсэг} & \textbf{Технологи} & \textbf{Зориулалт / Хувилбар} \\
+\hline
+Хүргэгчийн мобайл апп & React Native~\cite{react_native} + Expo, TypeScript & Гар утасны frontend framework (Expo 54, TS 5.9). React Navigation, React Hook Form + Zod, AsyncStorage, Reanimated ашиглана. \\
+\hline
+Борлуулагчийн веб апп & Next.js, React, TypeScript & SSR дэмжсэн веб апп (Next.js 16.1, React 19.2). Ant Design + Tailwind CSS-ээр UI, middleware-ээр сесс, замын хамгаалалт. \\
+\hline
+Backend & Supabase & PostgreSQL 15+, authentication (JWT), file storage, RPC функц, триггер, RLS. \\
+\hline
+Хөгжүүлэлтийн хэрэгсэл & VS Code, Git, Node.js, Supabase CLI, Expo CLI & Код бичих, хувилбарын удирдлага, багц, шилжүүлэлт, мобайл бүтээлт. \\
+\hline
+\end{tabular}
+\end{table}
+
+%===============================================================================
+\subsection{Юзкейс диаграммууд}
+\label{subsec:usecase_diagrams}
+
+Энэ хэсэгт системийн үндсэн оролцогч тус бүрийн хэрэглээний тохиолдлыг (use case) диаграммаар дүрсэлнэ.
+
+% UML stick man actor command: #1=node name, #2=position, #3=label
+\newcommand{\stickman}[3]{%
+  \coordinate (#1) at #2;
+  \draw[thick] ([yshift=9mm]#1) circle (2.5mm);
+  \draw[thick] ([yshift=6.5mm]#1) -- ([yshift=0mm]#1);
+  \draw[thick] ([yshift=4mm,xshift=-4mm]#1) -- ([yshift=4mm,xshift=4mm]#1);
+  \draw[thick] ([yshift=0mm]#1) -- ([yshift=-5mm,xshift=-3mm]#1);
+  \draw[thick] ([yshift=0mm]#1) -- ([yshift=-5mm,xshift=3mm]#1);
+  \coordinate (#1-hand) at ([yshift=4mm,xshift=4mm]#1);
+  \node[below=6mm, font=\small] at (#1) {#3};
+}
+
+\subsubsection{Хүргэгчийн юзкейс диаграмм}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  actor/.style={},
+  usecase/.style={draw, ellipse, minimum width=3.8cm, minimum height=1cm, align=center, font=\small},
+  systembox/.style={draw, dashed, rounded corners, inner sep=15pt},
+]
+
+% Actor — stick man
+\stickman{courier}{(-5.5, -3.5)}{Хүргэгч}
+
+% Use cases
+\node[usecase] (uc1) at (1, 0) {Бүртгүүлэх};
+\node[usecase] (uc2) at (1, -1.5) {Нэвтрэх};
+\node[usecase] (uc3) at (1, -3) {Баримт\\илгээх};
+\node[usecase] (uc4) at (1, -4.5) {Нээлттэй даалгавар\\харах};
+\node[usecase] (uc5) at (1, -6) {Даалгавар\\авах};
+\node[usecase] (uc6) at (1, -7.5) {Хүргэлт\\гүйцэтгэх};
+\node[usecase] (uc7) at (1, -9) {ePOD\\баталгаажуулах};
+\node[usecase] (uc8) at (1, -10.5) {Орлого харах};
+
+% System boundary
+\node[systembox, fit=(uc1)(uc2)(uc3)(uc4)(uc5)(uc6)(uc7)(uc8), label={[font=\small\bfseries]above:Хүргэгчийн систем}] {};
+
+% Connections
+\draw (courier-hand) -- (uc1);
+\draw (courier-hand) -- (uc2);
+\draw (courier-hand) -- (uc3);
+\draw (courier-hand) -- (uc4);
+\draw (courier-hand) -- (uc5);
+\draw (courier-hand) -- (uc6);
+\draw (courier-hand) -- (uc7);
+\draw (courier-hand) -- (uc8);
+
+\end{tikzpicture}
+\caption{Хүргэгчийн юзкейс диаграмм}
+\label{fig:courier_usecase}
+\end{figure}
+
+\subsubsection{Борлуулагчийн юзкейс диаграмм}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  actor/.style={},
+  usecase/.style={draw, ellipse, minimum width=3.8cm, minimum height=1cm, align=center, font=\small},
+  systembox/.style={draw, dashed, rounded corners, inner sep=15pt},
+]
+
+% Actor — stick man
+\stickman{merchant}{(-5.5, -4.5)}{Борлуулагч}
+
+% Use cases
+\node[usecase] (uc1) at (1, 0) {Бүртгүүлэх /\\Нэвтрэх};
+\node[usecase] (uc2) at (1, -1.5) {Байгууллага\\бүртгэх};
+\node[usecase] (uc3) at (1, -3) {Бүтээгдэхүүн\\удирдах};
+\node[usecase] (uc4) at (1, -4.5) {Захиалга\\удирдах};
+\node[usecase] (uc5) at (1, -6) {Хүргэлтийн даалгавар\\үүсгэх, нийтлэх};
+\node[usecase] (uc6) at (1, -7.5) {Хүргэлтийн явц\\хянах};
+\node[usecase] (uc7) at (1, -9) {Санхүүгийн тайлан,\\аналитик харах};
+\node[usecase] (uc8) at (1, -10.5) {Тохиргоо\\удирдах};
+
+% System boundary
+\node[systembox, fit=(uc1)(uc2)(uc3)(uc4)(uc5)(uc6)(uc7)(uc8), label={[font=\small\bfseries]above:Борлуулагчийн систем}] {};
+
+% Connections
+\draw (merchant-hand) -- (uc1);
+\draw (merchant-hand) -- (uc2);
+\draw (merchant-hand) -- (uc3);
+\draw (merchant-hand) -- (uc4);
+\draw (merchant-hand) -- (uc5);
+\draw (merchant-hand) -- (uc6);
+\draw (merchant-hand) -- (uc7);
+\draw (merchant-hand) -- (uc8);
+
+\end{tikzpicture}
+\caption{Борлуулагчийн юзкейс диаграмм}
+\label{fig:merchant_usecase}
+\end{figure}
+
+
+\subsubsection{Админы юзкейс диаграмм}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  actor/.style={},
+  usecase/.style={draw, ellipse, minimum width=3.8cm, minimum height=1cm, align=center, font=\small},
+  systembox/.style={draw, dashed, rounded corners, inner sep=15pt},
+]
+
+% Actor — stick man
+\stickman{admin}{(-5.5, -3.5)}{Админ}
+
+% Use cases
+\node[usecase] (uc1) at (1, 0) {Нэвтрэх};
+\node[usecase] (uc2) at (1, -1.5) {KYC баримт\\шалгах};
+\node[usecase] (uc3) at (1, -3) {Хүргэгч батлах /\\татгалзах};
+\node[usecase] (uc4) at (1, -4.5) {Хэрэглэгчийн эрхийн\\түвшин удирдах};
+\node[usecase] (uc5) at (1, -6) {Хүргэгчийн эрх хаах\\(blocked төлөв)};
+\node[usecase] (uc6) at (1, -7.5) {Байгууллагын\\бүртгэл хянах};
+\node[usecase] (uc7) at (1, -9) {Системийн лог,\\статистик харах};
+
+% System boundary
+\node[systembox, fit=(uc1)(uc2)(uc3)(uc4)(uc5)(uc6)(uc7), label={[font=\small\bfseries]above:Админы систем}] {};
+
+% Connections
+\draw (admin-hand) -- (uc1);
+\draw (admin-hand) -- (uc2);
+\draw (admin-hand) -- (uc3);
+\draw (admin-hand) -- (uc4);
+\draw (admin-hand) -- (uc5);
+\draw (admin-hand) -- (uc6);
+\draw (admin-hand) -- (uc7);
+
+\end{tikzpicture}
+\caption{Админы юзкейс диаграмм}
+\label{fig:admin_usecase}
+\end{figure}
+
+Админы үндсэн үүрэг нь платформын найдвартай ажиллагаа, KYC процессийн чанар, хэрэглэгчийн эрхийн удирдлагыг хангах юм. Админ нь бусад хэрэглэгчээс ялгаатай нь **админ эрхтэй** (\texttt{role = 'admin'}) тусгай хэрэглэгч бөгөөд RLS bypass шинжтэй \texttt{SECURITY DEFINER} функцээр KYC баримтуудад бүрэн хандана.
+
+
+%===============================================================================
+\subsection{Дараалал диаграммууд (Sequence Diagrams)}
+\label{subsec:sequence_diagrams}
+
+Энэ хэсэгт системийн гол үйл явцуудыг дараалал диаграммаар дүрсэлнэ. Дараалал диаграмм нь оролцогчид хоорондын харилцан үйлчлэлийн цаг хугацааны дарааллыг харуулна.
+
+%-------------------------------------------------------------------------------
+\subsubsection{Хүргэгчийн бүртгэл ба баталгаажуулалтын дараалал}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  entity/.style={draw, rectangle, minimum width=2.2cm, minimum height=0.7cm, fill=blue!10, font=\footnotesize\bfseries},
+  msg/.style={->, >=stealth, thick},
+  rmsg/.style={->, >=stealth, thick, dashed},
+  note/.style={draw, rectangle, fill=yellow!15, font=\scriptsize, align=left, rounded corners=2pt},
+]
+
+% Entities
+\node[entity] (courier) at (0, 0) {Хүргэгч};
+\node[entity] (app) at (3.5, 0) {Мобайл апп};
+\node[entity] (auth) at (7, 0) {Supabase Auth};
+\node[entity] (db) at (10.5, 0) {PostgreSQL};
+\node[entity] (admin) at (14, 0) {Админ};
+
+% Lifelines
+\draw[dashed, gray] (courier) -- ++(0, -14);
+\draw[dashed, gray] (app) -- ++(0, -14);
+\draw[dashed, gray] (auth) -- ++(0, -14);
+\draw[dashed, gray] (db) -- ++(0, -14);
+\draw[dashed, gray] (admin) -- ++(0, -14);
+
+% Step 1: Register
+\draw[msg] (0, -1) -- node[above, font=\scriptsize] {Бүртгүүлэх} (3.5, -1);
+\draw[msg] (3.5, -1.6) -- node[above, font=\scriptsize] {signUp(email, pwd)} (7, -1.6);
+\draw[rmsg] (7, -2.2) -- node[above, font=\scriptsize] {Токен} (3.5, -2.2);
+\draw[msg] (7, -2.8) -- node[above, font=\scriptsize] {Триггер: профайл үүсгэх} (10.5, -2.8);
+
+% Step 2: Upload documents
+\draw[msg] (0, -4) -- node[above, font=\scriptsize] {Баримт илгээх} (3.5, -4);
+\draw[msg] (3.5, -4.6) -- node[above, font=\scriptsize] {upload(зургууд)} (10.5, -4.6);
+\draw[msg] (3.5, -5.2) -- node[above, font=\scriptsize] {Төлөв: ``илгээсэн''} (10.5, -5.2);
+\draw[rmsg] (3.5, -5.8) -- node[above, font=\scriptsize] {Амжилттай} (0, -5.8);
+
+% Step 3: Admin review
+\draw[msg] (14, -7) -- node[above, font=\scriptsize] {Баримт шалгах} (10.5, -7);
+\draw[rmsg] (10.5, -7.6) -- node[above, font=\scriptsize] {Баримтын мэдээлэл} (14, -7.6);
+\draw[msg] (14, -8.5) -- node[above, font=\scriptsize] {Батлах / Татгалзах} (10.5, -8.5);
+
+% Step 4: Status update
+\draw[msg] (10.5, -9.5) -- node[above, font=\scriptsize] {Төлөв: ``батлагдсан''} (3.5, -9.5);
+\draw[rmsg] (3.5, -10.1) -- node[above, font=\scriptsize] {Батлагдсан мэдэгдэл} (0, -10.1);
+
+% Annotations
+\node[note] at (1.7, -3.2) {1. Бүртгэл};
+\node[note] at (1.7, -6.5) {2. Баримт};
+\node[note] at (12.2, -9) {3. Батламж};
+
+\end{tikzpicture}
+\caption{Хүргэгчийн бүртгэл ба баталгаажуулалтын дараалал диаграмм}
+\label{fig:seq_courier_registration}
+\end{figure}
+
+%-------------------------------------------------------------------------------
+\subsubsection{Хүргэлтийн даалгавар үүсгэх ба нийтлэх дараалал}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  entity/.style={draw, rectangle, minimum width=2.2cm, minimum height=0.7cm, fill=blue!10, font=\footnotesize\bfseries},
+  msg/.style={->, >=stealth, thick},
+  rmsg/.style={->, >=stealth, thick, dashed},
+  note/.style={draw, rectangle, fill=yellow!15, font=\scriptsize, align=left, rounded corners=2pt},
+]
+
+% Entities
+\node[entity] (merchant) at (0, 0) {Борлуулагч};
+\node[entity] (web) at (3.5, 0) {Веб апп};
+\node[entity] (supa) at (7, 0) {Supabase};
+\node[entity] (db) at (10.5, 0) {PostgreSQL};
+\node[entity] (courier) at (14, 0) {Хүргэгч апп};
+
+% Lifelines
+\draw[dashed, gray] (merchant) -- ++(0, -13);
+\draw[dashed, gray] (web) -- ++(0, -13);
+\draw[dashed, gray] (supa) -- ++(0, -13);
+\draw[dashed, gray] (db) -- ++(0, -13);
+\draw[dashed, gray] (courier) -- ++(0, -13);
+
+% Step 1: Create task
+\draw[msg] (0, -1) -- node[above, font=\scriptsize] {Даалгавар үүсгэх} (3.5, -1);
+\draw[msg] (3.5, -1.6) -- node[above, font=\scriptsize] {insert(task)} (7, -1.6);
+\draw[msg] (7, -2.2) -- node[above, font=\scriptsize] {INSERT delivery\_tasks} (10.5, -2.2);
+\draw[rmsg] (10.5, -2.8) -- node[above, font=\scriptsize] {Ноорог төлөвтэй} (7, -2.8);
+\draw[rmsg] (7, -3.4) -- node[above, font=\scriptsize] {Даалгавар үүссэн} (3.5, -3.4);
+
+% Step 2: Publish
+\draw[msg] (0, -4.5) -- node[above, font=\scriptsize] {Нийтлэх} (3.5, -4.5);
+\draw[msg] (3.5, -5.1) -- node[above, font=\scriptsize] {update(status=published)} (7, -5.1);
+\draw[msg] (7, -5.7) -- node[above, font=\scriptsize] {UPDATE + Триггер} (10.5, -5.7);
+
+% Trigger sync to available_tasks
+\node[note] at (8.7, -6.6) {\parbox{3cm}{\scriptsize Триггер: available\_tasks хүснэгтэд синхрончлох}};
+\draw[rmsg] (10.5, -8) -- node[above, font=\scriptsize] {Нийтлэгдсэн} (7, -8);
+
+% Step 3: Courier sees task via realtime
+\draw[msg] (10.5, -9) -- node[above, font=\scriptsize] {Бодит цагийн мэдэгдэл} (14, -9);
+\draw[rmsg] (7, -9.8) -- node[above, font=\scriptsize] {Амжилттай} (3.5, -9.8);
+\draw[rmsg] (3.5, -10.5) -- node[above, font=\scriptsize] {Нийтлэгдсэн} (0, -10.5);
+
+% Annotations
+\node[note] at (1.7, -3.8) {1. Үүсгэх};
+\node[note] at (1.7, -8.5) {2. Нийтлэх};
+
+\end{tikzpicture}
+\caption{Хүргэлтийн даалгавар үүсгэх ба нийтлэх дараалал диаграмм}
+\label{fig:seq_task_create_publish}
+\end{figure}
+
+%-------------------------------------------------------------------------------
+\subsubsection{Даалгавар авах дараалал (зэрэгцээ хандалтын хамгаалалт)}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  entity/.style={draw, rectangle, minimum width=2cm, minimum height=0.7cm, fill=blue!10, font=\footnotesize\bfseries},
+  msg/.style={->, >=stealth, thick},
+  rmsg/.style={->, >=stealth, thick, dashed},
+  note/.style={draw, rectangle, fill=yellow!15, font=\scriptsize, align=left, rounded corners=2pt},
+  failmsg/.style={->, >=stealth, thick, dashed, red},
+]
+
+% Entities
+\node[entity] (c1) at (0, 0) {Хүргэгч А};
+\node[entity] (c2) at (3.5, 0) {Хүргэгч Б};
+\node[entity] (app) at (7, 0) {Supabase};
+\node[entity] (func) at (10.5, 0) {claim\_task()};
+\node[entity] (db) at (14, 0) {PostgreSQL};
+
+% Lifelines
+\draw[dashed, gray] (c1) -- ++(0, -13);
+\draw[dashed, gray] (c2) -- ++(0, -13);
+\draw[dashed, gray] (app) -- ++(0, -13);
+\draw[dashed, gray] (func) -- ++(0, -13);
+\draw[dashed, gray] (db) -- ++(0, -13);
+
+% Both see available task
+\draw[msg] (0, -1) -- node[above, font=\scriptsize] {Даалгавар авах} (7, -1);
+\draw[msg] (3.5, -1.6) -- node[above, font=\scriptsize] {Даалгавар авах} (7, -1.6);
+
+% Supabase calls function
+\draw[msg] (7, -2.5) -- node[above, font=\scriptsize] {rpc(claim\_task)} (10.5, -2.5);
+\draw[msg] (7, -3.1) -- node[above, font=\scriptsize] {rpc(claim\_task)} (10.5, -3.1);
+
+% Atomic update
+\draw[msg] (10.5, -4) -- node[above, font=\scriptsize, align=center] {UPDATE ... WHERE\\status=published} (14, -4);
+
+% Row lock
+\node[note] at (12.2, -5.2) {\parbox{3.2cm}{\scriptsize PostgreSQL мөр түвшний түгжээ: зөвхөн нэг гүйлгээ амжилттай}};
+
+% First succeeds
+\draw[rmsg, green!60!black] (14, -6.5) -- node[above, font=\scriptsize] {1 мөр шинэчлэгдсэн} (10.5, -6.5);
+\draw[rmsg, green!60!black] (10.5, -7.1) -- node[above, font=\scriptsize] {Амжилттай} (7, -7.1);
+\draw[rmsg, green!60!black] (7, -7.7) -- node[above, font=\scriptsize] {Даалгавар авсан} (0, -7.7);
+
+% Second fails
+\draw[rmsg, red] (14, -8.5) -- node[above, font=\scriptsize, red] {0 мөр шинэчлэгдсэн} (10.5, -8.5);
+\draw[failmsg] (10.5, -9.1) -- node[above, font=\scriptsize, red] {Аль хэдийн авагдсан} (7, -9.1);
+\draw[failmsg] (7, -9.7) -- node[above, font=\scriptsize, red] {Алдаа: авагдсан} (3.5, -9.7);
+
+\end{tikzpicture}
+\caption{Даалгавар авах дараалал диаграмм (зэрэгцээ хандалтын хамгаалалт)}
+\label{fig:seq_task_claim}
+\end{figure}
+
+%===============================================================================
+\subsection{Өгөгдлийн сангийн ерөнхий загвар}
+\label{subsec:database_overview}
+
+Системийн өгөгдлийн загвар PostgreSQL дээр суурилж, multi-tenant архитектурыг дэмжих зориулалттай. Сан нь нийт 11 хүснэгтээс бүрдэнэ. Доорх ERD-д цөм болох 9 үндсэн хүснэгтийг (\texttt{auth.users}, \texttt{profiles}, \texttt{organizations}, \texttt{locations}, \texttt{orders}, \texttt{payments}, \texttt{delivery\_tasks}, \texttt{task\_assignments}, \texttt{courier\_kyc}) харилцаа холбоогоор дүрсэлсэн. Үлдсэн хоёр хүснэгт (\texttt{courier\_earnings}, \texttt{epod\_otps}) нь туслах хэлбэрийнх болно.
+
+\subsubsection{Үндсэн хүснэгтүүд ба харилцаа холбоо}
+
+\begin{figure}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[
+  entity/.style={
+    rectangle split,
+    rectangle split parts=2,
+    rectangle split part fill={blue!15, white},
+    draw=black!60,
+    rounded corners=2pt,
+    font=\ttfamily\scriptsize,
+    text width=4.2cm,
+    drop shadow={shadow xshift=0.5mm, shadow yshift=-0.5mm, opacity=0.35},
+    inner sep=5pt,
+    align=left,
+    line width=0.6pt,
+  },
+  rel/.style={
+    draw=black!65,
+    -{Latex[length=2.2mm]},
+    thick,
+    rounded corners=4pt,
+  },
+  card/.style={
+    font=\footnotesize\sffamily,
+    fill=white,
+    inner sep=2pt,
+  }
+]
+
+% ROW 1: Identity & Organization
+\node[entity] (auth) at (0, 0) {%
+  \textbf{auth.users}
+  \nodepart{two}
+  \underline{id} : uuid\\
+  email : text\\
+  created\_at : timestamp
+};
+
+\node[entity] (profiles) at (5.5, 0) {%
+  \textbf{profiles}
+  \nodepart{two}
+  \underline{id} : uuid (PK/FK)\\
+  full\_name : text\\
+  \textit{org\_id} : uuid (FK)\\
+  role : enum\\
+  status : enum\\
+  created\_at : timestamp
+};
+
+\node[entity] (orgs) at (11, 0) {%
+  \textbf{organizations}
+  \nodepart{two}
+  \underline{id} : uuid\\
+  name : text\\
+  org\_type : enum\\
+  created\_at : timestamp
+};
+
+\node[entity] (locations) at (16.5, 0) {%
+  \textbf{locations}
+  \nodepart{two}
+  \underline{id} : uuid\\
+  \textit{org\_id} : uuid (FK)\\
+  address\_text : text\\
+  lat, lng : float\\
+  label : text
+};
+
+% ROW 2: Orders & Payments
+\node[entity] (orders) at (5.5, -6) {%
+  \textbf{orders}
+  \nodepart{two}
+  \underline{id} : uuid\\
+  \textit{org\_id} : uuid (FK)\\
+  \textit{customer\_id} : uuid (FK)\\
+  status : enum\\
+  total\_amount : numeric\\
+  delivery\_fee : numeric\\
+  created\_at : timestamp
+};
+
+\node[entity] (payments) at (11, -6) {%
+  \textbf{payments}
+  \nodepart{two}
+  \underline{id} : uuid\\
+  \textit{order\_id} : uuid (FK unique)\\
+  provider : enum\\
+  status : enum\\
+  amount : numeric\\
+  paid\_at : timestamp
+};
+
+% ROW 3: Delivery Operations
+\node[entity] (tasks) at (5.5, -12) {%
+  \textbf{delivery\_tasks}
+  \nodepart{two}
+  \underline{id} : uuid\\
+  \textit{org\_id} : uuid (FK)\\
+  \textit{order\_id} : uuid (FK)\\
+  \textit{courier\_id} : uuid (FK)\\
+  \textit{pickup\_location\_id} : uuid (FK)\\
+  \textit{dropoff\_location\_id} : uuid (FK)\\
+  status : enum\\
+  delivery\_fee : numeric\\
+  published\_at : timestamp
+};
+
+\node[entity] (assign) at (11, -12) {%
+  \textbf{task\_assignments}
+  \nodepart{two}
+  \underline{id} : uuid\\
+  \textit{task\_id} : uuid (FK)\\
+  \textit{courier\_id} : uuid (FK)\\
+  is\_active : boolean\\
+  assigned\_at : timestamp
+};
+
+\node[entity] (kyc) at (16.5, -12) {%
+  \textbf{courier\_kyc}
+  \nodepart{two}
+  \underline{id} : uuid\\
+  \textit{courier\_id} : uuid (FK unique)\\
+  front\_url : text\\
+  vehicle\_type : text\\
+  status : enum\\
+  \textit{reviewer\_id} : uuid (FK)
+};
+
+% ROW 1 horizontal relations
+\draw[rel] (auth.east) -- node[card, above] {1 : 1} (profiles.west);
+\draw[rel] (profiles.east) -- node[card, above] {N : 1} (orgs.west);
+\draw[rel] (orgs.east) -- node[card, above] {1 : N} (locations.west);
+
+% ROW 2 horizontal
+\draw[rel] (orders.east) -- node[card, above] {1 : N} (payments.west);
+
+% ROW 3 horizontal
+\draw[rel] (tasks.east) -- node[card, above] {1 : N} (assign.west);
+
+% orgs -> orders (vertical with bend)
+\draw[rel] (orgs.south) |- ([yshift=0.8cm]orders.north)
+  node[card, pos=0.75, above] {1 : N} -- (orders.north);
+
+% orders -> delivery_tasks (straight down)
+\draw[rel] (orders.south) -- node[card, right] {1 : 0..1} (tasks.north);
+
+% locations -> delivery_tasks (right channel)
+\draw[rel] (locations.south) |- ([xshift=1.2cm, yshift=0.6cm]tasks.north)
+  node[card, pos=0.85, above] {1 : N} -- ([xshift=1.2cm]tasks.north);
+
+% payments -> courier_kyc (1:1 via right channel)
+\draw[rel] (payments.east) -| node[card, pos=0.25, above] {1 : 1} (kyc.north);
+
+\end{tikzpicture}
+}% end resizebox
+\caption{Системийн өгөгдлийн сангийн үндсэн ERD}
+\label{fig:core_erd}
+\end{figure}
+
+\subsubsection{Хүснэгтүүдийн тайлбар}
+
+\begin{itemize}
+  \item \textbf{auth.users, profiles, organizations}: Хэрэглэгчийн нэвтрэлт, профайл (role, status) болон олон байгууллагын (multi-tenant) тусгаарлалт.
+  \item \textbf{orders, payments}: Захиалга ба төлбөр (qpay / stripe / bank / cash).
+  \item \textbf{locations, delivery\_tasks, task\_assignments}: Авах/хүргэх байршил, даалгаврын үндсэн хүснэгт (status: draft $\rightarrow$ published $\rightarrow$ assigned $\rightarrow$ picked\_up $\rightarrow$ delivered $\rightarrow$ completed), хуваарилалтын audit trail.
+  \item \textbf{courier\_kyc, courier\_earnings}: Хүргэгчийн KYC баримт ба ePOD амжилттай дууссан үед автомат бүртгэгдэх орлого.
+  \item \textbf{epod\_otps}: Хүргэлтийн OTP код — \texttt{generate\_epod\_otp()} / \texttt{verify\_epod\_otp()} функцээр удирдагдана.
+\end{itemize}
+
+\subsubsection{Өгөгдлийн бүрэн бүтэн байдлын дүрмүүд ба \texttt{available\_tasks} VIEW}
+
+Бүх хүснэгт uuid төрлийн primary key, foreign key constraint, enum-д суурилсан check constraint ашиглана. Уникал хязгаарлалтууд: \texttt{payments.order\_id}, \texttt{delivery\_tasks.order\_id}, \texttt{courier\_kyc.courier\_id}. Олон байгууллагын тусгаарлалтыг \texttt{org\_id} талбараар RLS бодлогоор, зэрэгцээ хандалтыг \texttt{FOR UPDATE SKIP LOCKED} түгжээгээр хангана~\cite{postgresql2024locking, kleppmann2017ddia}. Захиалга устгахад холбоотой \texttt{order\_items}, \texttt{payments}, \texttt{delivery\_tasks} каскадаар устгагдана.
+
+Нээлттэй даалгаврууд нь \texttt{available\_tasks} VIEW-ээр зах зээлд харагдана — шүүлт нь \texttt{status = 'published'} ба \texttt{courier\_id IS NULL}, мөн хүргэгч нь захиалагч байгууллагад харьяалагдахгүй байх нөхцөлийг хангана.
+

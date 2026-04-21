@@ -1,1406 +1,321 @@
 %-------------------------------------------------------------------------------
-%   CHAPTER 2 - RESEARCH
+%   CHAPTER 2 - RESEARCH (SHORTENED)
 %-------------------------------------------------------------------------------
 
-\section{Онолын болон харьцуулсан судалгаа}
+\section{Судалгааны сэдвийн онол, өнөөгийн байдал}
+\label{sec:background}
 
-\subsection{Онолын судалгаа}
-Энэ хэсэгт B2B түгээлтийн бизнесийн процесс, логистик систем, маршрутын оновчлол, болон гар утасны хөгжүүлэлтийн технологиудын талаарх онолын ойлголтуудыг дэлгэрэнгүй авч үзнэ.
+Тус бүлэгт B2B crowdsourced хүргэлтийн системийн онолын суурь, одоогийн платформуудын шинжилгээ, архитектурын шаардлагыг таван багцад нэгтгэв: (i) last-mile логистик, (ii) two-sided marketplace, (iii) multi-tenant isolation, (iv) concurrency control, (v) BaaS архитектур.
 
-\subsubsection{Нийлүүлэлтийн сүлжээний удирдлага (SCM)}
-Нийлүүлэлтийн сүлжээний удирдлага (Supply Chain Management - SCM) нь түүхий эд бэлтгэн нийлүүлэгчээс эхлээд эцсийн хэрэглэгч хүртэлх бараа, үйлчилгээ, мэдээлэл, санхүүгийн урсгалыг төлөвлөх, хэрэгжүүлэх, хянах цогц үйл ажиллагаа юм. Орчин үед SCM нь зөвхөн ложистик бус, мэдээллийн технологитой нягт уялдаж, "Ухаалаг нийлүүлэлтийн сүлжээ" (Smart Supply Chain) болон хөгжиж байна. SCM-ийн үндсэн зорилго нь нийлүүлэлтийн сүлжээний нийт зардлыг бууруулахын зэрэгцээ хэрэглэгчийн сэтгэл ханамжийг дээд зэргээр хангахад оршино.
+%-------------------------------------------------------------------------------
+\subsection{Онол, технологийн үндэс}
+\label{subsec:theory_foundation}
 
-\textbf{SCM-ийн үндсэн бүрэлдэхүүн хэсгүүд:}
-\begin{itemize}
-    \item \textbf{Төлөвлөлт (Planning):} Эрэлтийг таамаглах, нөөцийг төлөвлөх.
-    \item \textbf{Худалдан авалт (Sourcing):} Нийлүүлэгчийг сонгох, гэрээ байгуулах.
-    \item \textbf{Үйлдвэрлэл (Making):} Түүхий эдийг бэлэн бүтээгдэхүүн болгох.
-    \item \textbf{Түгээлт (Delivering):} Логистик, агуулах, тээвэрлэлт.
-    \item \textbf{Буцаалт (Returning):} Гэмтэлтэй эсвэл илүүдэл барааг буцаах үйл явц.
-\end{itemize}
+\subsubsection{Last-mile логистик ба crowdsourced загвар}
+\label{subsubsec:lastmile}
 
-\subsubsection{B2B Түгээлтийн процесс ба онцлог}
-B2B (Business-to-Business) түгээлт нь үйлдвэрлэгчээс бөөний худалдаачид, эсвэл бөөний худалдаачдаас жижиглэн худалдаачид руу бараа нийлүүлэх үйл явц юм. B2C (Business-to-Consumer) хүргэлтээс ялгаатай нь:
-\begin{itemize}
-    \item \textbf{Захиалгын хэмжээ:} B2B захиалга нь ихэвчлэн тоо хэмжээний хувьд их, овор хэмжээ томтой байдаг.
-    \item \textbf{Давтамж:} Тогтмол хуваарийн дагуу, давтагдах шинж чанартай (жишээ нь: долоо хоног бүрийн Даваа гарагт).
-    \item \textbf{Харилцаа:} Урт хугацааны гэрээт харилцаанд суурилдаг бөгөөд итгэлцэл чухал үүрэгтэй.
-    \item \textbf{Шийдвэр гаргалт:} Олон шат дамжлагатай, оновчтой байдлыг чухалчилдаг. Худалдан авалтын шийдвэрийг сэтгэл хөдлөлөөр бус, үр ашгийн тооцооллоор гаргадаг.
-\end{itemize}
+Логистикийн сүлжээний хамгийн өндөр зардалтай үе шат нь last-mile хүргэлт бөгөөд зарим судалгаагаар нийт тээврийн зардлын 13--75\%-ийг эзэлдэг~\cite{savelsbergh2016city, lim2018lastmile}. Уламжлалт, өөрийн парктай загвар нь найдвартай боловч өндөр зардалтай, уян хатан бус, өргөтгөхөд хүндрэлтэй~\cite{chopra2019supply, mckinnon2015greenlogistics}. Эдгээр хязгаарлалтыг даван туулахын тулд crowdsourced delivery буюу бие даасан гүйцэтгэгчдийг платформоор холбох загвар бий болжээ~\cite{rouges2014crowdsourcing}.
 
-\subsubsection{Last-Mile Delivery (Сүүлийн цэгийн хүргэлт)}
-"Last-Mile Delivery" гэдэг нь барааг түгээлтийн төвөөс эцсийн хэрэглэгч (дэлгүүр эсвэл хувь хүн) хүртэл хүргэх логистикийн сүүлийн үе шатыг хэлнэ. Энэ нь нийлүүлэлтийн сүлжээний хамгийн өндөр зардалтай (нийт зардлын 53\% хүртэл), хамгийн их цаг хугацаа шаардсан, хамгийн төвөгтэй хэсэгт тооцогддог. Улаанбаатар хотын нөхцөлд замын түгжрэл, хаягжилтын асуудал нь Last-Mile Delivery-ийн үр ашгийг эрс бууруулдаг.
+Alnaggar нар (2021) 40 гаруй эрдэм шинжилгээний эх сурвалжийг нэгтгэж crowdsourced загварыг ажилтны ангилал, даалгавар хуваарилалтын механизм, урамшууллын бүтэц гэсэн гурван хэмжээсээр тоймложээ~\cite{alnaggar2021crowdsourced}. Mancini ба Gansterer (2022) даалгавар багцлах алгоритмаар тээврийн зардлыг ойролцоогоор 10\%-иар бууруулж болохыг харуулсан~\cite{mancini2022bundle}. Эдгээр ажил нь ихэвчлэн оновчлол (optimization)-д чиглэсэн боловч claim model-ын зөв байдал нь тэрхүү оновчлолын суурь тавцанг бүрдүүлдэг. Тус судалгаа оновчлолд биш, \emph{claim model-ын correctness давхаргыг бэхжүүлэх} шийдэлд чиглэсэн тул optimization давхаргыг future work-т үлдээв.
 
-\subsubsection{Маршрутын оновчлол (Route Optimization)}
-Хүргэлтийн зардлыг бууруулах, цаг хугацааг хэмнэхэд маршрутын оновчлол чухал үүрэгтэй. Энэ нь "Traveling Salesman Problem" (TSP) буюу олон цэгт хүргэлт хийх хамгийн дөт, үр ашигтай замыг тооцоолох математик аргачлал дээр суурилдаг. Орчин үед Google Maps API, Mapbox зэрэг технологиудыг ашиглан замын түгжрэл, цаг агаар, тээврийн хэрэгслийн даац зэрэг олон хүчин зүйлийг тооцон маршрутыг динамикаар төлөвлөх боломжтой болсон.
+\subsubsection{Платформ эдийн засаг ба олон талт зах зээл}
+\label{subsubsec:platform_economics}
 
-\subsubsection{Электрон баримт бичиг (e-POD)}
-Electronic Proof of Delivery (e-POD) буюу Цахим хүргэлтийн баталгаажуулалт нь цаасан баримтыг халж, дижитал хэлбэрээр хүргэлтийг баталгаажуулах стандарт юм. e-POD систем нь дараах мэдээллийг агуулдаг:
-\begin{itemize}
-    \item Хүлээн авагчийн цахим гарын үсэг.
-    \item Хүргэгдсэн барааны зураг.
-    \item Хүргэлт хийгдсэн газарзүйн байршил (GPS координат).
-    \item Хүргэлт хийгдсэн цаг хугацаа (Timestamp).
-\end{itemize}
-Энэ нь маргаантай асуудлыг шийдвэрлэх, төлбөр тооцоог хурдасгахад чухал ач холбогдолтой.
+Хүргэлтийн платформ нь борлуулагч–хүргэгч гэсэн өөр өөр талуудыг холбодог учир олон талт (two-sided) зах зээлийн ангилалд хамаарна. Rochet ба Tirole (2003) нарын загвараар платформын тэнцвэрт үнийн \emph{бүтцийн хуваарилалт} нь нийт үнийн түвшнээс илүү чухал~\cite{rochet2003platform}. Parker нар (2016) болон Evans, Schmalensee (2016) сүлжээний эффект (network effect), матч хийх үр ашиг, cold-start асуудлыг платформын гол хөдөлгөгчүүд гэж тодорхойлсон~\cite{parker2016platform, evans2016matchmakers}.
 
-\subsection{Технологийн судалгаа}
-Энэхүү төслийг хэрэгжүүлэхэд ашигласан үндсэн технологиудын онцлог, давуу талуудыг судлав. Tdelivery системийн хөгжүүлэлтэд ашигласан технологиудыг дараах ангиллаар танилцуулав. Орчин үеийн гар утасны аппликейшн хөгжүүлэлтэд олон технологи хамтран ажилладаг бөгөөд тус бүрийн үүрэг, ач холбогдлыг дэлгэрэнгүй авч үзье.
+Эдгээр онолын үүднээс B2B хүргэлтийн платформын гол саад нь \emph{хүргэгч талын liquidity} болдог. Иймээс cold-start шатанд даалгавар claim хийх хугацааг богиносгох FCFS загвар нь dispatcher-д суурилсан bid хэлбэртэй харьцуулахад давуу талтай. Платформ томрох тусам priority scoring, route optimization гэх мэт алгоритмын давхаргыг үе шаттайгаар нэмэх боломжтой.
 
-\subsubsection{Програмчлалын хэл}
-Системийг хөгжүүлэхэд дараах програмчлалын хэлүүдийг ашигласан. Програмчлалын хэл нь аппликейшний суурь болох бөгөөд зөв сонголт хийх нь төслийн амжилтад шийдвэрлэх нөлөөтэй.
+\subsubsection{Multi-tenant архитектур ба өгөгдлийн тусгаарлалт}
+\label{subsubsec:multitenancy}
 
-\begin{table}[H]
-\centering
-\caption{Програмчлалын хэлүүд}
-\label{tab:programming-languages}
-\begin{tabular}{|l|l|p{7cm}|}
-\hline
-\textbf{Технологи} & \textbf{Хувилбар} & \textbf{Тайлбар} \\
-\hline
-TypeScript & \textasciitilde5.9.2 & Үндсэн програмчлалын хэл. JavaScript-ийн супер сет бөгөөд статик төрөл шалгалттай. \\
-\hline
-JavaScript (ES6+) & - & React Native-ийн суурь хэл \\
-\hline
-JSX/TSX & - & UI компонентуудыг тодорхойлох синтакс \\
-\hline
-CSS & - & Стиль (Tailwind CSS-ээр дамжуулан) \\
-\hline
-\end{tabular}
-\end{table}
-
-\textbf{TypeScript гэж юу вэ?}
-
-TypeScript нь Microsoft компаниас 2012 онд хөгжүүлсэн програмчлалын хэл бөгөөд JavaScript-ийн "супер сет" (superset) юм. Энэ нь JavaScript-ийн бүх боломжийг агуулахын зэрэгцээ статик төрөл шалгалт (static type checking), интерфэйс (interfaces), энумераци (enums), женерик (generics) зэрэг нэмэлт боломжуудыг санал болгодог. TypeScript код нь компайл хийгдэж цэвэр JavaScript болдог тул аль ч JavaScript орчинд ажиллах боломжтой.
-
-\textbf{TypeScript-ийн давуу талууд:}
-\begin{itemize}
-    \item \textbf{Статик төрөл шалгалт (Static Type Checking):} Компайл хийх үед алдааг илрүүлж, runtime алдааг багасгадаг. Жишээ нь: \texttt{let count: number = "hello"} гэж бичвэл компайл хийх үед алдаа гарна. Энэ нь runtime үед гарах алдааг урьдчилан сэргийлдэг.
-    \item \textbf{Код дахин ашиглалт:} Interface болон Type-ууд нь кодын бүтцийг тодорхой болгож, дахин ашиглах боломжийг нэмэгдүүлдэг. Жишээ нь захиалгын бүтцийг нэг удаа тодорхойлоод бүх газар ашиглах боломжтой.
-    \item \textbf{IDE дэмжлэг:} VS Code зэрэг орчин үеийн IDE-үүдэд автомат бөглөлт (IntelliSense), алдаа илрүүлэлт, рефакторинг зэрэг боломжуудыг сайн дэмждэг. Энэ нь хөгжүүлэлтийн бүтээмжийг 20-30\% нэмэгдүүлдэг гэж үздэг.
-    \item \textbf{Том төслийн удирдлага:} Олон хөгжүүлэгчтэй төсөлд кодын чанарыг хадгалахад тустай. Төрлийн тодорхойлолт нь баримт бичиг шиг үүрэг гүйцэтгэдэг.
-    \item \textbf{Алдааг эрт илрүүлэх:} JavaScript-д runtime үед гардаг алдаануудын 15\% орчимыг компайл хийх үед илрүүлдэг.
-\end{itemize}
-
-\textbf{JavaScript (ES6+) ба JSX/TSX}
-
-JavaScript нь вэб болон гар утасны аппликейшн хөгжүүлэлтийн хамгийн түгээмэл хэл бөгөөд ES6 (ECMAScript 2015) хувилбараас хойш олон чухал шинэчлэлтүүд нэмэгдсэн:
-\begin{itemize}
-    \item \textbf{Arrow Functions:} Богино синтаксээр функц тодорхойлох (\texttt{const add = (a, b) => a + b})
-    \item \textbf{Async/Await:} Асинхрон кодыг синхрон маягаар бичих боломж
-    \item \textbf{Destructuring:} Объект болон массивын утгуудыг задлах (\texttt{const \{name, age\} = user})
-    \item \textbf{Spread Operator:} Массив, объектыг тараах (\texttt{[...arr1, ...arr2]})
-    \item \textbf{Template Literals:} Тэмдэгт мөрийг динамикаар үүсгэх (\texttt{`Hello \$\{name\}`})
-\end{itemize}
-
-JSX (JavaScript XML) нь React-д UI компонентуудыг HTML-тэй төстэй синтаксээр бичих боломжийг олгодог. TSX нь TypeScript дээр JSX ашиглах өргөтгөл юм. Жишээ нь:
-\begin{lstlisting}[language=JavaScript]
-// TSX жишээ
-const OrderCard: React.FC<{order: Order}> = ({order}) => (
-  <View style={styles.card}>
-    <Text>{order.customerName}</Text>
-    <Text>{order.totalAmount}</Text>
-  </View>
-);
-\end{lstlisting}
-
-\subsubsection{Framework ба Platform}
-React Native болон Expo платформ нь гар утасны аппликейшн хөгжүүлэлтийн үндэс болсон. Эдгээр технологиуд нь нэг кодын баазаар олон платформд ажиллах боломжийг олгодог.
-
-\begin{table}[H]
-\centering
-\caption{Framework ба Platform}
-\label{tab:framework-platform}
-\begin{tabular}{|l|l|p{7cm}|}
-\hline
-\textbf{Технологи} & \textbf{Хувилбар} & \textbf{Тайлбар} \\
-\hline
-React Native & 0.81.5 & Гар утасны апп хөгжүүлэлтийн фреймворк \\
-\hline
-React & 19.1.0 & UI компонент сан \\
-\hline
-Expo & \textasciitilde54.0.20 & React Native хөгжүүлэлтийн платформ \\
-\hline
-React Native Web & \textasciitilde0.21.0 & Веб дэмжлэг \\
-\hline
-\end{tabular}
-\end{table}
-
-\textbf{React Native гэж юу вэ?}
-
-React Native нь Facebook (Meta) компаниас 2015 онд нээлттэй эх болгон гаргасан гар утасны аппликейшн хөгжүүлэлтийн фреймворк юм. React Native нь JavaScript ашиглан бичигдсэн кодыг native компонентууд руу хөрвүүлдэг тул бусад hybrid шийдлүүдээс (Cordova, Ionic) илүү өндөр гүйцэтгэлтэй. 
-
-\textbf{React Native-ийн ажиллах зарчим:}
-\begin{enumerate}
-    \item JavaScript код нь JavaScript Engine (Hermes эсвэл JSC) дээр ажиллана.
-    \item Bridge (гүүр) нь JavaScript болон Native код хооронд мэдээлэл дамжуулна.
-    \item Native модулиуд нь төхөөрөмжийн боломжуудад (камер, GPS, гэх мэт) хандана.
-    \item UI компонентууд нь жинхэнэ native элементүүд рүү хөрвүүлэгдэнэ.
-\end{enumerate}
-
-\textbf{React Native-ийн давуу талууд:}
-\begin{itemize}
-    \item \textbf{Cross-Platform (Олон платформ):} Нэг кодын баазаар iOS болон Android үйлдлийн системд зэрэг хөгжүүлэлт хийх боломжтой. Судалгаагаар кодын 80-90\%-ийг дахин ашиглах боломжтой. Энэ нь хөгжүүлэлтийн цаг болон зардлыг 40-50\% хэмнэдэг.
-    \item \textbf{Performance (Гүйцэтгэл):} Native компонентүүдийг ашигладаг тул Hybrid аппликейшнүүдтэй (WebView суурьтай) харьцуулахад 60 FPS гүйцэтгэлтэй, анимаци гөлгөр ажилладаг.
-    \item \textbf{Hot Reloading (Халуун дахин ачаалалт):} Кодод өөрчлөлт оруулахад аппликейшнийг дахин ачаалахгүйгээр үр дүнг шууд харах боломжтой. Энэ нь хөгжүүлэлтийн хурдыг 2-3 дахин нэмэгдүүлдэг.
-    \item \textbf{Том коммьюнити:} Дэлхий даяар 2 сая гаруй хөгжүүлэгч ашигладаг тул тусламж, бэлэн сангууд (npm дээр 400,000+ package) ихтэй.
-    \item \textbf{Код дахин ашиглалт:} Бизнес логик, утилит функцууд, төлөв удирдлага зэрэг кодыг iOS, Android, Web хооронд бүрэн дахин ашиглах боломжтой.
-\end{itemize}
-
-\textbf{React гэж юу вэ?}
-
-React нь хэрэглэгчийн интерфэйс (UI) бүтээхэд зориулагдсан JavaScript сан бөгөөд Facebook-аас 2013 онд гаргасан. React-ийн гол онцлог нь компонент суурьтай архитектур юм. UI-г жижиг, дахин ашиглагдах компонентуудад хуваан зохион байгуулдаг.
-
-\textbf{React-ийн гол ойлголтууд:}
-\begin{itemize}
-    \item \textbf{Virtual DOM:} Бодит DOM-ийг шууд өөрчлөхийн оронд виртуал DOM дээр өөрчлөлт хийгээд зөвхөн өөрчлөгдсөн хэсгийг бодит DOM-д шинэчилдэг. Энэ нь гүйцэтгэлийг эрс нэмэгдүүлдэг.
-    \item \textbf{Component Lifecycle:} Компонент үүсэх, шинэчлэгдэх, устах үеийн амьдралын мөчлөгийн удирдлага.
-    \item \textbf{Hooks:} \texttt{useState}, \texttt{useEffect}, \texttt{useContext} зэрэг функцууд нь функциональ компонентуудад төлөв болон хажуугийн нөлөө (side effects) удирдах боломжийг олгодог.
-    \item \textbf{Props ба State:} Props нь эцэг компонентоос хүүхэд компонент руу дамжуулагдах өгөгдөл, State нь компонентын дотоод төлөв юм.
-\end{itemize}
-
-\textbf{Expo гэж юу вэ?}
-
-Expo нь React Native дээр суурилсан платформ бөгөөд гар утасны аппликейшн хөгжүүлэлтийг илүү хялбар болгодог. Expo нь "managed workflow" болон "bare workflow" гэсэн хоёр төрлийн хөгжүүлэлтийн загварыг санал болгодог.
-
-\textbf{Expo-ийн давуу талууд:}
-\begin{itemize}
-    \item \textbf{Хялбар эхлэл:} Xcode (iOS) эсвэл Android Studio (Android) суулгахгүйгээр хөгжүүлэлт эхлүүлэх боломжтой. \texttt{npx create-expo-app} командаар шинэ төсөл үүсгэхэд 2 минут хангалттай.
-    \item \textbf{Expo Go апп:} Бодит төхөөрөмж дээр шууд туршилт хийх боломжтой. QR код уншуулахад л хангалттай.
-    \item \textbf{Бэлэн SDK:} Камер, байршил (GPS), мэдэгдэл (Push Notifications), файл систем, биометрик баталгаажуулалт зэрэг 50 гаруй бэлэн модуль байдаг. Энэ нь native код бичих шаардлагагүй болгодог.
-    \item \textbf{OTA Updates (Over-The-Air):} App Store/Google Play-д дахин илгээхгүйгээр JavaScript кодын шинэчлэлтийг хэрэглэгчдэд шууд хүргэх боломжтой. Энэ нь засвар хийх хугацааг хэдэн өдрөөс хэдэн минут болгон багасгадаг.
-    \item \textbf{EAS Build:} Үүлэн дээр build хийх боломжтой тул локал машинд Xcode/Android Studio суулгах шаардлагагүй.
-    \item \textbf{Expo Router:} Файлын бүтцэд суурилсан навигаци систем нь Next.js-тэй төстэй routing боломжийг санал болгодог.
-\end{itemize}
-
-\textbf{React Native Web}
-
-React Native Web нь React Native компонентуудыг вэб хөтөч дээр ажиллуулах боломжийг олгодог. Энэ нь нэг кодоор гар утас (iOS, Android) болон вэб аппликейшн хөгжүүлэх боломжийг бүрдүүлдэг. Twitter, Uber Eats зэрэг томоохон компаниуд энэ аргачлалыг ашигладаг.
-
-\subsubsection{Database ба Backend (Firebase)}
-Firebase нь Google-ийн үүлэн тооцооллын платформ бөгөөд гар утас болон вэб аппликейшн хөгжүүлэхэд зориулагдсан цогц шийдэл юм. "Backend-as-a-Service" (BaaS) загвараар ажилладаг бөгөөд энэ нь сервер талын инфраструктурыг бүрэн удирдах шаардлагагүй болгодог.
-
-\begin{table}[H]
-\centering
-\caption{Firebase үйлчилгээнүүд}
-\label{tab:firebase-services}
-\begin{tabular}{|l|p{9cm}|}
-\hline
-\textbf{Үйлчилгээ} & \textbf{Зориулалт} \\
-\hline
-Firebase (v12.4.0) & Backend-as-a-Service платформ \\
-\hline
-Cloud Firestore & NoSQL өгөгдлийн сан, бодит цагийн синхрончлол \\
-\hline
-Firebase Authentication & Хэрэглэгчийн баталгаажуулалт (Утас, Email) \\
-\hline
-Firebase Storage & Файл хадгалах (зураг гэх мэт) \\
-\hline
-Firebase Realtime Database & Бодит цагийн өгөгдөл \\
-\hline
-\end{tabular}
-\end{table}
-
-\textbf{Firebase гэж юу вэ?}
-
-Firebase нь анх 2011 онд стартап компани болон байгуулагдсан бөгөөд 2014 онд Google компани худалдан авсан. Өнөөдөр Firebase нь Google Cloud Platform-ийн нэг хэсэг бөгөөд дэлхий даяар 3 сая гаруй апп ашигладаг. Firebase нь "Serverless" архитектурыг дэмждэг тул хөгжүүлэгч сервер удирдах, scale хийх зэрэг асуудлуудаар толгой өвдөхгүй.
-
-\textbf{Cloud Firestore - NoSQL Өгөгдлийн сан}
-
-Cloud Firestore нь Firebase-ийн хамгийн чухал үйлчилгээ бөгөөд NoSQL документ-суурьтай (document-oriented) өгөгдлийн сан юм. Firestore нь өгөгдлийг collection (цуглуулга) болон document (баримт) бүтцээр хадгалдаг.
-
-\textbf{Firestore-ийн өгөгдлийн бүтэц:}
-\begin{lstlisting}[language=JavaScript]
-// Firestore өгөгдлийн бүтцийн жишээ
-orders (collection)
-  |-- orderId1 (document)
-  |     |-- customerId: "cust123"
-  |     |-- items: [{name: "Product A", qty: 10}]
-  |     |-- status: "pending"
-  |     |-- createdAt: Timestamp
-  |-- orderId2 (document)
-        |-- ...
-\end{lstlisting}
-
-\textbf{Cloud Firestore-ийн онцлог:}
-\begin{itemize}
-    \item \textbf{Real-time синхрончлол:} Өгөгдөл өөрчлөгдөхөд бүх холбогдсон клиентүүдэд шууд мэдэгддэг. \texttt{onSnapshot()} функцээр бодит цагийн сонсогч (listener) тохируулж болно. Энэ нь захиалгын төлөв өөрчлөгдөхөд хэрэглэгчид шууд мэдэгдэх боломжийг олгодог.
-    \item \textbf{Offline Persistence (Оффлайн дэмжлэг):} Интернэт холболтгүй үед ч аппликейшн ажиллах чадвартай. Өгөгдөл локал кэшэд хадгалагдаж, холболт сэргэхэд автоматаар синхрончлогддог. Энэ нь хүргэлтийн жолооч интернэтгүй газарт явах үед маш чухал.
-    \item \textbf{Scalability (Өргөтгөх чадвар):} Хэрэглэгчийн тоо нэмэгдэхэд автоматаар scale хийгддэг. Google-ийн дэд бүтцийг ашигладаг тул сая сая хэрэглэгчид үйлчлэх боломжтой.
-    \item \textbf{Security Rules (Аюулгүй байдлын дүрмүүд):} Нарийвчилсан хандалтын эрхийн удирдлага. Хэн ямар өгөгдөлд хандаж болохыг тодорхойлох боломжтой. Жишээ нь: хэрэглэгч зөвхөн өөрийн захиалгыг үзэх боломжтой.
-    \item \textbf{Query боломжууд:} Compound query (олон нөхцөлтэй хайлт), ordering, pagination зэрэг боломжууд бий. Гэхдээ SQL шиг JOIN үйлдэл хийх боломжгүй.
-\end{itemize}
-
-\textbf{Firebase Authentication - Баталгаажуулалт}
-
-Firebase Authentication нь хэрэглэгчийн бүртгэл, нэвтрэлтийг удирдах бэлэн шийдэл юм. Дараах аргуудыг дэмждэг:
-\begin{itemize}
-    \item \textbf{Имэйл/Нууц үг:} Уламжлалт бүртгэлийн арга
-    \item \textbf{Утасны дугаар (SMS):} OTP код илгээж баталгаажуулах. Монголд маш түгээмэл.
-    \item \textbf{Social Login:} Google, Facebook, Apple, Twitter зэрэг нийгмийн сүлжээгээр нэвтрэх
-    \item \textbf{Anonymous:} Бүртгэлгүйгээр түр зуурын хэрэглэгч үүсгэх
-\end{itemize}
-
-Tdelivery системд утасны дугаараар баталгаажуулалт (Phone Authentication) ашигласан. Энэ нь Монголын хэрэглэгчдэд илүү тохиромжтой - имэйл хаяг байнга ашигладаггүй хүмүүст ч хялбар.
-
-\textbf{Firebase Storage - Файл хадгалалт}
-
-Firebase Storage нь зураг, видео, аудио зэрэг файлуудыг үүлэн дээр хадгалах үйлчилгээ юм. Google Cloud Storage дээр суурилсан тул өндөр найдвартай, хурдан байдаг. Tdelivery системд дараах зориулалтаар ашигласан:
-\begin{itemize}
-    \item Бүтээгдэхүүний зураг хадгалах
-    \item Хүргэлтийн баталгаажуулалтын зураг (e-POD)
-    \item Хэрэглэгчийн профайл зураг
-\end{itemize}
-
-\textbf{Firebase-ийн үнийн бодлого}
-
-Firebase нь "Spark" (үнэгүй) болон "Blaze" (pay-as-you-go) гэсэн хоёр үнийн төлөвлөгөөтэй. Spark төлөвлөгөө нь жижиг төсөл, сурах зориулалтаар хангалттай:
-\begin{itemize}
-    \item Firestore: 1GB хадгалалт, 50,000 унших, 20,000 бичих өдөрт
-    \item Authentication: Хязгааргүй хэрэглэгч
-    \item Storage: 5GB хадгалалт
-\end{itemize}
-
-\subsubsection{NoSQL ба Atomic Denormalization}
-Уламжлалт RDBMS (Relational Database Management System) -ээс ялгаатай нь NoSQL өгөгдлийн сан нь өгөгдлийг баримт (Document) хэлбэрээр хадгалдаг. Энэ хэсэгт NoSQL-ийн онцлог, давуу тал, сул тал болон Firestore-д ашигладаг denormalization аргачлалыг дэлгэрэнгүй авч үзнэ.
-
-\textbf{SQL vs NoSQL харьцуулалт}
-
-\begin{table}[H]
-\centering
-\caption{SQL ба NoSQL харьцуулалт}
-\label{tab:sql-nosql}
-\begin{tabular}{|l|p{5.5cm}|p{5.5cm}|}
-\hline
-\textbf{Шалгуур} & \textbf{SQL (RDBMS)} & \textbf{NoSQL (Document DB)} \\
-\hline
-Өгөгдлийн бүтэц & Хүснэгт, мөр, багана (Table, Row, Column) & Collection, Document, Field \\
-\hline
-Схем & Хатуу схемтэй (Rigid Schema) & Уян хатан схем (Flexible Schema) \\
-\hline
-Холбоос & JOIN үйлдлээр холбогдсон хүснэгтүүд & Embedded documents, References \\
-\hline
-Scale & Вертикал (илүү хүчтэй сервер) & Хоризонтал (илүү олон сервер) \\
-\hline
-ACID & Бүрэн дэмждэг & Хязгаарлагдмал (document түвшинд) \\
-\hline
-Хэрэглээ & Банк, санхүү, нарийн холбоостой өгөгдөл & Вэб апп, гар утас, бодит цагийн апп \\
-\hline
-\end{tabular}
-\end{table}
-
-\textbf{NoSQL-ийн давуу талууд гар утасны аппд:}
-\begin{itemize}
-    \item \textbf{Уян хатан бүтэц:} Схем өөрчлөхөд migration хийх шаардлагагүй. Шинэ field нэмэхэд хуучин өгөгдөлд нөлөөлөхгүй.
-    \item \textbf{Бодит цагийн синхрончлол:} WebSocket-ээр өгөгдөл шууд push хийгддэг.
-    \item \textbf{Оффлайн дэмжлэг:} Локал кэш, conflict resolution бэлэн.
-    \item \textbf{JSON формат:} JavaScript/TypeScript-тэй шууд нийцтэй.
-\end{itemize}
-
-\textbf{Atomic Denormalization гэж юу вэ?}
-
-Firebase Firestore-д өгөгдлийн унших хурдыг нэмэгдүүлэхийн тулд "Denormalization" аргыг ашигладаг. Энэ нь нэг өгөгдлийг олон газар хувилж хадгалах арга бөгөөд JOIN үйлдэл хийх шаардлагагүй болгож, query-ийн хурдыг эрс нэмэгдүүлдэг.
-
-\textbf{Denormalization-ийн жишээ:}
-
-SQL-д захиалгын мэдээлэл авахад 3 хүснэгтийг JOIN хийх шаардлагатай:
-\begin{lstlisting}[language=SQL]
--- SQL: 3 хүснэгт JOIN хийх
-SELECT o.*, c.name, c.phone, p.name as product_name
-FROM orders o
-JOIN customers c ON o.customer_id = c.id
-JOIN products p ON o.product_id = p.id
-WHERE o.id = 'order123';
-\end{lstlisting}
-
-NoSQL (Firestore)-д denormalization ашиглан нэг document-д бүх мэдээллийг хадгална:
-\begin{lstlisting}[language=JavaScript]
-// Firestore: Denormalized document
-{
-  "orderId": "order123",
-  "customer": {
-    "id": "cust456",
-    "name": "Болд",        // Хуулбарласан
-    "phone": "99001122"    // Хуулбарласан
-  },
-  "product": {
-    "id": "prod789",
-    "name": "Coca-Cola 1.5L", // Хуулбарласан
-    "price": 3500
-  },
-  "quantity": 10,
-  "totalAmount": 35000
-}
-\end{lstlisting}
-
-\textbf{Atomic Update - Өгөгдлийн нэгдмэл байдал хангах}
-
-Denormalization-ийн сул тал нь өгөгдөл олон газар хуулбарлагдсан тул нэг газар өөрчлөхөд бүх газар өөрчлөх шаардлагатай. Үүнийг "Atomic Update" буюу batch/transaction ашиглан шийддэг:
-
-\begin{lstlisting}[language=JavaScript]
-// Batch write - Бүх өөрчлөлтийг нэг дор хийх
-const batch = writeBatch(db);
-
-// Үндсэн бүтээгдэхүүний нэр өөрчлөх
-batch.update(doc(db, 'products', 'prod789'), {
-  name: 'Coca-Cola 2L'
-});
-
-// Бүх холбогдох захиалгуудын нэрийг өөрчлөх
-orderIds.forEach(orderId => {
-  batch.update(doc(db, 'orders', orderId), {
-    'product.name': 'Coca-Cola 2L'
-  });
-});
-
-await batch.commit(); // Бүгд амжилттай эсвэл бүгд буцаагдана
-\end{lstlisting}
-
-\textbf{Denormalization-ийн зарчмууд:}
-\begin{enumerate}
-    \item \textbf{Унших давтамж > Бичих давтамж:} Ихэвчлэн уншигддаг өгөгдлийг denormalize хийх нь илүү үр ашигтай.
-    \item \textbf{Хамтдаа хэрэглэгддэг өгөгдөл:} Нэг дэлгэц дээр харуулах өгөгдлийг нэг document-д хадгалах.
-    \item \textbf{Бага өөрчлөгддөг өгөгдөл:} Хэрэглэгчийн нэр, утас зэрэг бага өөрчлөгддөг өгөгдлийг хуулбарлах нь аюулгүй.
-\end{enumerate}
-
-\subsubsection{Навигаци (Navigation)}
-Аппликейшний дэлгэцүүдийн хооронд шилжихэд React Navigation санг ашигласан. Навигаци нь гар утасны аппликейшний хэрэглэгчийн туршлагын (UX) чухал хэсэг бөгөөд зөв зохион байгуулалт нь аппын ашиглахад хялбар байдлыг тодорхойлдог.
-
-\begin{table}[H]
-\centering
-\caption{Навигацийн сангууд}
-\label{tab:navigation}
-\begin{tabular}{|l|l|p{6cm}|}
-\hline
-\textbf{Сан} & \textbf{Хувилбар} & \textbf{Зориулалт} \\
-\hline
-@react-navigation/native & \textasciicircum7.1.8 & Үндсэн навигаци \\
-\hline
-@react-navigation/native-stack & \textasciicircum7.1.9 & Stack навигаци (дэлгэц дээр дэлгэц нэмэх) \\
-\hline
-@react-navigation/bottom-tabs & \textasciicircum7.4.0 & Доод таб навигаци \\
-\hline
-\end{tabular}
-\end{table}
-
-\textbf{React Navigation гэж юу вэ?}
-
-React Navigation нь React Native аппликейшнд навигаци хийхэд хамгийн өргөн хэрэглэгддэг сан юм. Энэ нь JavaScript дээр бичигдсэн тул cross-platform бөгөөд iOS, Android хоёуланд нэг кодоор ажилладаг.
-
-\textbf{Навигацийн төрлүүд:}
-
-\begin{itemize}
-    \item \textbf{Stack Navigator:} Дэлгэцүүдийг "stack" (овоолго) шиг удирддаг. Шинэ дэлгэц нээхэд дээр нь нэмэгдэж, буцах товч дарахад дээрээс хасагдана. Ихэнх апп-ийн үндсэн навигаци.
-    
-    \item \textbf{Bottom Tab Navigator:} Дэлгэцийн доод хэсэгт байрлах табууд. Үндсэн функцуудад хурдан хандах боломжтой. Tdelivery системд: Нүүр, Захиалга, Сагс, Профайл гэсэн 4 таб ашигласан.
-    
-    \item \textbf{Drawer Navigator:} Хажуугаас гулсаж гарах цэс. Олон үйлдэлтэй аппуудад тохиромжтой.
-    
-    \item \textbf{Top Tab Navigator:} Дээд хэсэгт байрлах табууд. Material Design-д түгээмэл.
-\end{itemize}
-
-\textbf{Tdelivery системийн навигацийн бүтэц:}
-
-\begin{lstlisting}[language=JavaScript]
-// Навигацийн бүтэц
-RootNavigator
-  |-- AuthStack (Нэвтрээгүй үед)
-  |     |-- LoginScreen
-  |     |-- RegisterScreen
-  |     |-- OTPVerificationScreen
-  |
-  |-- MainTabs (Нэвтэрсэн үед)
-        |-- HomeStack
-        |     |-- HomeScreen
-        |     |-- ProductDetailScreen
-        |     |-- CategoryScreen
-        |
-        |-- OrdersStack
-        |     |-- OrderListScreen
-        |     |-- OrderDetailScreen
-        |
-        |-- CartStack
-        |     |-- CartScreen
-        |     |-- CheckoutScreen
-        |
-        |-- ProfileStack
-              |-- ProfileScreen
-              |-- EditProfileScreen
-              |-- SettingsScreen
-\end{lstlisting}
-
-\textbf{Navigation-ийн чухал ойлголтууд:}
-\begin{itemize}
-    \item \textbf{Screen:} Бие даасан дэлгэц, компонент
-    \item \textbf{Route:} Дэлгэц рүү очих зам, параметрүүд
-    \item \textbf{Navigator:} Дэлгэцүүдийг удирдах контейнер
-    \item \textbf{Navigation Prop:} Дэлгэц хооронд шилжих функцууд (\texttt{navigate}, \texttt{goBack}, \texttt{push})
-    \item \textbf{Route Prop:} Дэлгэцэнд дамжуулсан параметрүүд (\texttt{route.params})
-\end{itemize}
-
-\subsubsection{UI/UX Сангууд}
-Хэрэглэгчийн интерфэйсийг сайжруулахад дараах сангуудыг ашигласан. UI (User Interface) нь хэрэглэгчийн харж буй визуал элементүүд, UX (User Experience) нь хэрэглэгчийн аппыг ашиглах туршлага юм.
-
-\begin{table}[H]
-\centering
-\caption{UI/UX сангууд}
-\label{tab:ui-libraries}
-\begin{tabular}{|l|l|p{6cm}|}
-\hline
-\textbf{Сан} & \textbf{Хувилбар} & \textbf{Зориулалт} \\
-\hline
-React Native Paper & \textasciicircum5.12.3 & Material Design UI компонентууд \\
-\hline
-@expo/vector-icons & \textasciicircum15.0.3 & Дүрс тэмдэг (Icons) \\
-\hline
-NativeWind & \textasciicircum4.2.1 & Tailwind CSS React Native-д \\
-\hline
-TailwindCSS & \textasciicircum3.4.18 & Utility-first CSS фреймворк \\
-\hline
-Expo Image & \textasciitilde3.0.10 & Зураг харуулах, кэшлэх \\
-\hline
-\end{tabular}
-\end{table}
-
-\textbf{React Native Paper}
-
-React Native Paper нь Google-ийн Material Design дизайны хэлийг React Native-д хэрэгжүүлсэн UI компонент сан юм. 30 гаруй бэлэн компонент агуулдаг:
-
-\begin{itemize}
-    \item \textbf{Button:} Primary, outlined, text, contained төрлүүдтэй товч
-    \item \textbf{Card:} Бүтээгдэхүүн, захиалга харуулахад тохиромжтой карт
-    \item \textbf{TextInput:} Текст оруулах талбар, validation дэмжлэгтэй
-    \item \textbf{Snackbar:} Түр зуурын мэдэгдэл (toast)
-    \item \textbf{Dialog:} Модал цонх
-    \item \textbf{FAB (Floating Action Button):} Хөвөгч үйлдлийн товч
-    \item \textbf{ActivityIndicator:} Ачаалж байгааг харуулах индикатор
-\end{itemize}
-
-\textbf{Material Design-ийн давуу талууд:}
-\begin{itemize}
-    \item Google-ийн дизайны стандарт тул хэрэглэгчдэд танил
-    \item Accessibility (хүртээмжтэй байдал) бэлэн хийгдсэн
-    \item Theming (өнгө, фонт тохируулах) боломжтой
-    \item iOS болон Android дээр нэгдмэл харагдах
-\end{itemize}
-
-\textbf{NativeWind ба TailwindCSS}
-
-TailwindCSS нь "utility-first" CSS фреймворк бөгөөд NativeWind нь үүнийг React Native-д ашиглах боломжийг олгодог. Уламжлалт CSS-ээс ялгаатай нь бэлэн class-уудыг шууд ашиглана.
-
-\textbf{Уламжлалт StyleSheet vs NativeWind харьцуулалт:}
-
-\begin{lstlisting}[language=JavaScript]
-// Уламжлалт React Native StyleSheet
-const styles = StyleSheet.create({
-  container: {
-    padding: 16,
-    backgroundColor: 'white',
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#1f2937',
-  }
-});
-
-<View style={styles.container}>
-  <Text style={styles.title}>Захиалга</Text>
-</View>
-\end{lstlisting}
-
-\begin{lstlisting}[language=JavaScript]
-// NativeWind (TailwindCSS)
-<View className="p-4 bg-white rounded-lg shadow-md">
-  <Text className="text-lg font-bold text-gray-800">Захиалга</Text>
-</View>
-\end{lstlisting}
-
-\textbf{NativeWind/TailwindCSS-ийн давуу талууд:}
-\begin{itemize}
-    \item \textbf{Utility-first:} Бэлэн class-уудаар хурдан стиль хийх боломжтой. \texttt{p-4} нь padding: 16px, \texttt{bg-white} нь цагаан дэвсгэр.
-    \item \textbf{Responsive:} Дэлгэцийн хэмжээнд тохируулсан стиль. \texttt{md:p-8} нь дунд дэлгэц дээр илүү том padding.
-    \item \textbf{Consistency:} Урьдчилан тодорхойлсон утгууд (spacing, colors) нь дизайны нэгдмэл байдлыг хангах.
-    \item \textbf{Жижиг bundle:} Зөвхөн ашигласан стилүүд bundle-д орно (PurgeCSS).
-    \item \textbf{Dark mode:} \texttt{dark:bg-gray-900} гэх мэтээр хар горимыг хялбар тохируулах.
-\end{itemize}
-
-\textbf{@expo/vector-icons}
-
-Expo Vector Icons нь 10+ icon set-ийг агуулсан сан юм:
-\begin{itemize}
-    \item \textbf{MaterialIcons:} Google-ийн Material Design icons
-    \item \textbf{FontAwesome:} Хамгийн түгээмэл icon сан
-    \item \textbf{Ionicons:} iOS-д зориулсан icons
-    \item \textbf{Feather:} Хялбар, цэвэрхэн icons
-\end{itemize}
-
-\begin{lstlisting}[language=JavaScript]
-import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
-
-<MaterialIcons name="shopping-cart" size={24} color="blue" />
-<FontAwesome name="user" size={20} color="#333" />
-\end{lstlisting}
-
-\textbf{Expo Image}
-
-Expo Image нь React Native-ийн үндсэн Image компонентоос илүү хүчирхэг:
-\begin{itemize}
-    \item \textbf{Automatic caching:} Зураг автоматаар кэшлэгдэнэ
-    \item \textbf{Progressive loading:} Бүдэг зургаас тод зураг руу шилжих
-    \item \textbf{Placeholder:} Ачаалж байх үеийн түр зураг
-    \item \textbf{BlurHash:} Зургийн өнгөний товч дүрслэл
-    \item \textbf{WebP support:} Шахагдсан зургийн формат дэмжлэг
-\end{itemize}
-
-\subsubsection{Expo SDK Сангууд}
-Expo платформын бэлэн сангуудыг ашиглан төхөөрөмжийн боломжуудад хандсан. Expo SDK нь native код бичихгүйгээр төхөөрөмжийн hardware болон software боломжуудад хандах боломжийг олгодог.
-
-\begin{table}[H]
-\centering
-\caption{Expo SDK сангууд}
-\label{tab:expo-sdk}
-\begin{tabular}{|l|l|p{6cm}|}
-\hline
-\textbf{Сан} & \textbf{Хувилбар} & \textbf{Зориулалт} \\
-\hline
-expo-constants & \textasciitilde18.0.10 & Апп-ийн тогтмол утгууд \\
-\hline
-expo-font & \textasciitilde14.0.9 & Фонт удирдлага \\
-\hline
-expo-haptics & \textasciitilde15.0.7 & Чичиргээ (Haptic feedback) \\
-\hline
-expo-image-picker & \textasciicircum17.0.8 & Зураг сонгох \\
-\hline
-expo-linking & \textasciitilde8.0.8 & Deep linking \\
-\hline
-expo-splash-screen & \textasciitilde31.0.10 & Splash дэлгэц \\
-\hline
-expo-status-bar & \textasciitilde3.0.8 & Статус бар удирдлага \\
-\hline
-expo-web-browser & \textasciicircum15.0.8 & Веб хөтөч нээх \\
-\hline
-\end{tabular}
-\end{table}
-
-\textbf{Expo SDK сангуудын дэлгэрэнгүй тайлбар:}
-
-\textbf{expo-constants} - Апп болон төхөөрөмжийн мэдээлэлд хандах:
-\begin{lstlisting}[language=JavaScript]
-import Constants from 'expo-constants';
-
-// Апп-ийн хувилбар
-console.log(Constants.expoConfig.version); // "1.0.0"
-// Төхөөрөмжийн нэр
-console.log(Constants.deviceName); // "iPhone 14"
-// Платформ
-console.log(Constants.platform); // { ios: {...} }
-\end{lstlisting}
-
-\textbf{expo-font} - Custom фонт ачаалах:
-\begin{lstlisting}[language=JavaScript]
-import { useFonts } from 'expo-font';
-
-const [fontsLoaded] = useFonts({
-  'Roboto-Bold': require('./assets/fonts/Roboto-Bold.ttf'),
-  'Roboto-Regular': require('./assets/fonts/Roboto-Regular.ttf'),
-});
-
-// Фонт ашиглах
-<Text style={{ fontFamily: 'Roboto-Bold' }}>Текст</Text>
-\end{lstlisting}
-
-\textbf{expo-haptics} - Чичиргээ (Haptic feedback):
-
-Хэрэглэгч товч дарах, swipe хийх зэрэг үйлдэл хийхэд физик мэдрэмж өгөх:
-\begin{lstlisting}[language=JavaScript]
-import * as Haptics from 'expo-haptics';
-
-// Товч дарахад хөнгөн чичиргээ
-const handlePress = () => {
-  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-};
-
-// Алдаа гарахад хүчтэй чичиргээ
-const handleError = () => {
-  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-};
-
-// Захиалга амжилттай болоход
-const handleSuccess = () => {
-  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-};
-\end{lstlisting}
-
-\textbf{expo-image-picker} - Зураг сонгох:
-
-Галерей эсвэл камераас зураг авах. Tdelivery системд бүтээгдэхүүний зураг, хүргэлтийн баталгаажуулалтын зураг авахад ашигласан:
-\begin{lstlisting}[language=JavaScript]
-import * as ImagePicker from 'expo-image-picker';
-
-const pickImage = async () => {
-  // Зөвшөөрөл авах
-  const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-  
-  if (status !== 'granted') {
-    alert('Галерейд хандах зөвшөөрөл шаардлагатай');
-    return;
-  }
-  
-  // Зураг сонгох
-  const result = await ImagePicker.launchImageLibraryAsync({
-    mediaTypes: ImagePicker.MediaTypeOptions.Images,
-    allowsEditing: true,
-    aspect: [4, 3],
-    quality: 0.8,
-  });
-  
-  if (!result.canceled) {
-    console.log(result.assets[0].uri);
-  }
-};
-\end{lstlisting}
-
-\textbf{expo-linking} - Deep linking:
-
-Бусад апп эсвэл вэб хуудаснаас аппыг нээх, тодорхой дэлгэц рүү шилжих:
-\begin{lstlisting}[language=JavaScript]
-import * as Linking from 'expo-linking';
-
-// Апп дотроос утас руу залгах
-Linking.openURL('tel:+97699001122');
-
-// Email илгээх
-Linking.openURL('mailto:support@tdelivery.mn');
-
-// Google Maps нээх
-Linking.openURL('https://maps.google.com/?q=47.9184,106.9177');
-
-// Deep link үүсгэх
-const url = Linking.createURL('order/12345');
-// tdelivery://order/12345
-\end{lstlisting}
-
-\textbf{expo-splash-screen} - Splash дэлгэц:
-
-Апп ачаалж байх үед харуулах эхний дэлгэц:
-\begin{lstlisting}[language=JavaScript]
-import * as SplashScreen from 'expo-splash-screen';
-
-// Splash дэлгэцийг байлгах
-SplashScreen.preventAutoHideAsync();
-
-// Өгөгдөл ачаалсны дараа нуух
-useEffect(() => {
-  async function prepare() {
-    await loadFonts();
-    await fetchInitialData();
-    await SplashScreen.hideAsync();
-  }
-  prepare();
-}, []);
-\end{lstlisting}
-
-\textbf{expo-status-bar} - Статус бар удирдлага:
-
-Дэлгэцийн дээд хэсэгт байрлах статус бар (цаг, батарей, сүлжээ)-ын харагдах байдлыг удирдах:
-\begin{lstlisting}[language=JavaScript]
-import { StatusBar } from 'expo-status-bar';
-
-// Хар дэвсгэр дээр цагаан текст
-<StatusBar style="light" />
-
-// Цагаан дэвсгэр дээр хар текст
-<StatusBar style="dark" />
-
-// Автомат (дэвсгэрээс хамаарч)
-<StatusBar style="auto" />
-\end{lstlisting}
-
-\subsubsection{State Management ба Storage}
-Аппликейшний төлөв удирдлага болон локал хадгалалтад дараах шийдлүүдийг ашигласан. State Management нь аппликейшний өгөгдлийг (төлвийг) компонентууд хооронд хуваалцах, синхрончлох үйл явц юм.
-
-\begin{table}[H]
-\centering
-\caption{State Management ба Storage}
-\label{tab:state-management}
-\begin{tabular}{|l|l|p{6cm}|}
-\hline
-\textbf{Сан} & \textbf{Хувилбар} & \textbf{Зориулалт} \\
-\hline
-React Context API & - & Төлөв удирдлага (AuthContext, CartContext) \\
-\hline
-@react-native-async-storage/async-storage & \textasciicircum2.2.0 & Локал хадгалалт \\
-\hline
-\end{tabular}
-\end{table}
-
-\textbf{State Management гэж юу вэ?}
-
-Гар утасны аппликейшнд олон төрлийн өгөгдөл (төлөв) байдаг:
-\begin{itemize}
-    \item \textbf{Local State:} Нэг компонентын дотоод төлөв (жишээ нь: form input-ийн утга)
-    \item \textbf{Global State:} Олон компонентод хэрэглэгддэг төлөв (жишээ нь: нэвтэрсэн хэрэглэгчийн мэдээлэл)
-    \item \textbf{Server State:} Серверээс ирсэн өгөгдөл (жишээ нь: бүтээгдэхүүний жагсаалт)
-    \item \textbf{URL State:} Navigation параметрүүд
-\end{itemize}
-
-\textbf{React Context API}
-
-React Context API нь React-ийн суурь боломж бөгөөд global state удирдахад хялбар шийдэл юм. Redux, MobX зэрэг гуравдагч талын сангуудаас хялбар, жижиг-дунд хэмжээний аппуудад тохиромжтой.
-
-\textbf{Context-ийн ажиллах зарчим:}
-\begin{enumerate}
-    \item \textbf{Context үүсгэх:} \texttt{createContext()} функцээр context үүсгэнэ
-    \item \textbf{Provider:} Context-ийн утгыг хангах компонент
-    \item \textbf{Consumer:} Context-ийн утгыг ашиглах компонент (\texttt{useContext} hook)
-\end{enumerate}
-
-\textbf{Tdelivery системийн Context-үүд:}
-
-\begin{lstlisting}[language=JavaScript]
-// AuthContext - Хэрэглэгчийн баталгаажуулалт
-const AuthContext = createContext<AuthContextType | null>(null);
-
-interface AuthContextType {
-  user: User | null;
-  isLoading: boolean;
-  signIn: (phone: string, otp: string) => Promise<void>;
-  signOut: () => Promise<void>;
-}
-
-export const AuthProvider: React.FC = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  
-  // Firebase Auth-тай холбогдох
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      setUser(firebaseUser);
-      setIsLoading(false);
-    });
-    return unsubscribe;
-  }, []);
-  
-  const signIn = async (phone: string, otp: string) => {
-    // Нэвтрэх логик
-  };
-  
-  const signOut = async () => {
-    await auth.signOut();
-  };
-  
-  return (
-    <AuthContext.Provider value={{ user, isLoading, signIn, signOut }}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
-
-// Hook ашиглах
-export const useAuth = () => useContext(AuthContext);
-\end{lstlisting}
-
-\begin{lstlisting}[language=JavaScript]
-// CartContext - Сагсны удирдлага
-const CartContext = createContext<CartContextType | null>(null);
-
-interface CartItem {
-  productId: string;
-  name: string;
-  price: number;
-  quantity: number;
-}
-
-interface CartContextType {
-  items: CartItem[];
-  addItem: (product: Product) => void;
-  removeItem: (productId: string) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
-  clearCart: () => void;
-  totalAmount: number;
-  itemCount: number;
-}
-\end{lstlisting}
-
-\textbf{React Context API-ийн давуу талууд:}
-\begin{itemize}
-    \item \textbf{Суурь сан:} Нэмэлт сан суулгах шаардлагагүй, React-д бэлэн байдаг.
-    \item \textbf{Prop drilling шийдэл:} Олон түвшний компонентуудаар дамжуулахгүйгээр өгөгдөл дамжуулах. Жишээ нь: App -> Header -> UserMenu гэсэн бүтцэд Header-ээр user дамжуулах шаардлагагүй.
-    \item \textbf{Хялбар:} Redux-ээс хялбар, boilerplate код бага. Redux-д 5-6 файл үүсгэх шаардлагатай бол Context-д 1 файл хангалттай.
-    \item \textbf{TypeScript дэмжлэг:} Төрлийн шалгалт сайн ажилладаг.
-\end{itemize}
-
-\textbf{AsyncStorage - Локал хадгалалт}
-
-AsyncStorage нь key-value хосоор өгөгдөл хадгалах локал хадгалалт юм. Вэб хөтчийн localStorage-тай төстэй боловч асинхрон ажилладаг.
-
-\textbf{AsyncStorage-ийн хэрэглээ:}
-\begin{lstlisting}[language=JavaScript]
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-// Өгөгдөл хадгалах
-await AsyncStorage.setItem('userToken', 'abc123');
-await AsyncStorage.setItem('settings', JSON.stringify({
-  notifications: true,
-  darkMode: false
-}));
-
-// Өгөгдөл унших
-const token = await AsyncStorage.getItem('userToken');
-const settings = JSON.parse(await AsyncStorage.getItem('settings'));
-
-// Өгөгдөл устгах
-await AsyncStorage.removeItem('userToken');
-
-// Бүх өгөгдөл устгах
-await AsyncStorage.clear();
-\end{lstlisting}
-
-\textbf{AsyncStorage-ийн хэрэглээний жишээ Tdelivery системд:}
-\begin{itemize}
-    \item Хэрэглэгчийн тохиргоо (мэдэгдэл, хар горим)
-    \item Сагсны түр өгөгдөл
-    \item Сүүлд үзсэн бүтээгдэхүүнүүд
-    \item Онбординг харуулсан эсэх
-\end{itemize}
-
-\subsubsection{Network ба API}
-Сервертэй харилцахад дараах сангуудыг ашигласан. Network layer нь аппликейшн болон серверийн хоорондын харилцааг удирддаг чухал хэсэг юм.
-
-\begin{table}[H]
-\centering
-\caption{Network ба API}
-\label{tab:network-api}
-\begin{tabular}{|l|l|p{6cm}|}
-\hline
-\textbf{Сан} & \textbf{Хувилбар} & \textbf{Зориулалт} \\
-\hline
-Axios & \textasciicircum1.7.0 & HTTP хүсэлт илгээх \\
-\hline
-Firebase SDK & \textasciicircum12.4.0 & Firebase API-тай харилцах \\
-\hline
-\end{tabular}
-\end{table}
-
-\textbf{Axios гэж юу вэ?}
-
-Axios нь JavaScript-д зориулагдсан HTTP client сан бөгөөд REST API-тай харилцахад хамгийн түгээмэл ашиглагддаг. Fetch API-аас илүү олон боломжтой.
-
-\textbf{Axios-ийн давуу талууд:}
-\begin{itemize}
-    \item \textbf{Автомат JSON:} Response-ийг автоматаар JSON болгон parse хийнэ
-    \item \textbf{Interceptors:} Request/Response-ийг дунд нь барьж өөрчлөх боломжтой
-    \item \textbf{Timeout:} Хүсэлтийн хугацаа хязгаарлах
-    \item \textbf{Cancel tokens:} Хүсэлтийг цуцлах боломжтой
-    \item \textbf{Error handling:} Алдааны мэдээлэл дэлгэрэнгүй
-\end{itemize}
-
-\textbf{Axios-ийн тохиргоо:}
-\begin{lstlisting}[language=JavaScript]
-import axios from 'axios';
-
-// Axios instance үүсгэх
-const api = axios.create({
-  baseURL: 'https://api.tdelivery.mn/v1',
-  timeout: 10000, // 10 секунд
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
-
-// Request interceptor - токен нэмэх
-api.interceptors.request.use(
-  async (config) => {
-    const token = await AsyncStorage.getItem('authToken');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
-
-// Response interceptor - алдаа боловсруулах
-api.interceptors.response.use(
-  (response) => response.data,
-  (error) => {
-    if (error.response?.status === 401) {
-      // Токен хүчингүй - дахин нэвтрүүлэх
-      navigation.navigate('Login');
-    }
-    return Promise.reject(error);
-  }
-);
-\end{lstlisting}
-
-\textbf{Firebase SDK}
-
-Firebase SDK нь Firebase үйлчилгээнүүдтэй (Firestore, Auth, Storage) холбогдох албан ёсны сан юм. REST API биш, WebSocket-ээр бодит цагийн холболт үүсгэдэг.
-
-\textbf{Firebase SDK-ийн хэрэглээ:}
-\begin{lstlisting}[language=JavaScript]
-import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs, onSnapshot } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
-
-// Firebase тохиргоо
-const firebaseConfig = {
-  apiKey: "AIza...",
-  authDomain: "tdelivery.firebaseapp.com",
-  projectId: "tdelivery",
-  storageBucket: "tdelivery.appspot.com",
-  messagingSenderId: "123456789",
-  appId: "1:123456789:web:abc123"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
-
-// Бүтээгдэхүүн авах (нэг удаа)
-const getProducts = async () => {
-  const snapshot = await getDocs(collection(db, 'products'));
-  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-};
-
-// Бодит цагийн сонсогч
-const subscribeToOrders = (userId: string, callback: Function) => {
-  return onSnapshot(
-    query(collection(db, 'orders'), where('userId', '==', userId)),
-    (snapshot) => {
-      const orders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      callback(orders);
-    }
-  );
-};
-\end{lstlisting}
-
-\subsubsection{Animation ба Gestures}
-Анимаци болон хэрэглэгчийн жестүүдийг удирдахад дараах сангуудыг ашигласан. Сайн анимаци нь хэрэглэгчийн туршлагыг эрс сайжруулж, аппыг илүү "амьд" мэт мэдрүүлдэг.
-
-\begin{table}[H]
-\centering
-\caption{Animation ба Gestures}
-\label{tab:animation}
-\begin{tabular}{|l|l|p{6cm}|}
-\hline
-\textbf{Сан} & \textbf{Хувилбар} & \textbf{Зориулалт} \\
-\hline
-react-native-reanimated & \textasciitilde4.1.1 & Өндөр гүйцэтгэлтэй анимаци \\
-\hline
-react-native-gesture-handler & \textasciitilde2.28.0 & Жест (Gesture) удирдлага \\
-\hline
-react-native-screens & \textasciitilde4.16.0 & Дэлгэцийн оновчлол \\
-\hline
-react-native-safe-area-context & \textasciitilde5.6.0 & Safe area удирдлага \\
-\hline
-\end{tabular}
-\end{table}
-
-\textbf{React Native Reanimated}
-
-Reanimated нь React Native-д өндөр гүйцэтгэлтэй анимаци хийх сан юм. React Native-ийн үндсэн Animated API-аас ялгаатай нь UI thread дээр шууд ажилладаг тул 60 FPS анимаци хийх боломжтой.
-
-\textbf{Reanimated-ийн онцлог:}
-\begin{itemize}
-    \item \textbf{Worklets:} JavaScript код UI thread дээр ажиллах
-    \item \textbf{Shared Values:} JS болон UI thread хооронд хуваалцах утгууд
-    \item \textbf{Animated Styles:} Анимацитай стилүүд
-    \item \textbf{Layout Animations:} Компонент нэмэх/хасахад автомат анимаци
-\end{itemize}
-
-\textbf{Reanimated-ийн жишээ:}
-\begin{lstlisting}[language=JavaScript]
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  withTiming,
-} from 'react-native-reanimated';
-
-const AnimatedCard = () => {
-  const scale = useSharedValue(1);
-  const opacity = useSharedValue(1);
-  
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-    opacity: opacity.value,
-  }));
-  
-  const handlePress = () => {
-    // Spring анимаци - bounce effect
-    scale.value = withSpring(0.95, {}, () => {
-      scale.value = withSpring(1);
-    });
-  };
-  
-  const fadeOut = () => {
-    // Timing анимаци - гөлгөр
-    opacity.value = withTiming(0, { duration: 300 });
-  };
-  
-  return (
-    <Animated.View style={[styles.card, animatedStyle]}>
-      <Pressable onPress={handlePress}>
-        <Text>Анимацитай карт</Text>
-      </Pressable>
-    </Animated.View>
-  );
-};
-\end{lstlisting}
-
-\textbf{React Native Gesture Handler}
-
-Gesture Handler нь touch event-үүдийг native түвшинд боловсруулдаг тул илүү responsive, хурдан ажилладаг.
-
-\textbf{Дэмждэг жестүүд:}
-\begin{itemize}
-    \item \textbf{Tap:} Товших (single, double, long press)
-    \item \textbf{Pan:} Чирэх
-    \item \textbf{Pinch:} Хоёр хуруугаар томруулах/жижигрүүлэх
-    \item \textbf{Rotation:} Эргүүлэх
-    \item \textbf{Fling:} Түрхэх (swipe)
-\end{itemize}
-
-\textbf{Swipe to Delete жишээ:}
-\begin{lstlisting}[language=JavaScript]
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-
-const SwipeableItem = ({ onDelete }) => {
-  const translateX = useSharedValue(0);
-  
-  const panGesture = Gesture.Pan()
-    .onUpdate((event) => {
-      // Зүүн тийш чирэх
-      translateX.value = Math.min(0, event.translationX);
-    })
-    .onEnd(() => {
-      if (translateX.value < -100) {
-        // Устгах
-        runOnJS(onDelete)();
-      } else {
-        // Буцаах
-        translateX.value = withSpring(0);
-      }
-    });
-  
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: translateX.value }],
-  }));
-  
-  return (
-    <GestureDetector gesture={panGesture}>
-      <Animated.View style={animatedStyle}>
-        <Text>Swipe зүүн тийш устгах</Text>
-      </Animated.View>
-    </GestureDetector>
-  );
-};
-\end{lstlisting}
-
-\textbf{react-native-screens}
-
-React Native Screens нь навигацийн дэлгэцүүдийг native container ашиглан оновчлолдог. Энэ нь санах ойн хэрэглээг багасгаж, дэлгэц хоорондын шилжилтийг хурдасгадаг.
-
-\textbf{react-native-safe-area-context}
-
-Safe Area нь iPhone X-ээс хойших notch (зүсэлт), home indicator (гэрийн товч) зэрэг хэсгүүдэд UI элементүүд давхцахгүй байлгах боломжийг олгодог.
-
-\begin{lstlisting}[language=JavaScript]
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-
-// Бүтэн дэлгэц safe area
-const Screen = () => (
-  <SafeAreaView style={{ flex: 1 }}>
-    <Text>Контент</Text>
-  </SafeAreaView>
-);
-
-// Hook ашиглах
-const CustomHeader = () => {
-  const insets = useSafeAreaInsets();
-  return (
-    <View style={{ paddingTop: insets.top }}>
-      <Text>Header</Text>
-    </View>
-  );
-};
-\end{lstlisting}
-
-\subsubsection{Хөгжүүлэлтийн хэрэгслүүд (Development Tools)}
-Кодын чанарыг хангах, алдаа илрүүлэхэд дараах хэрэгслүүдийг ашигласан. Хөгжүүлэлтийн хэрэгслүүд нь кодын чанарыг дээшлүүлж, багийн бүтээмжийг нэмэгдүүлдэг.
-
-\begin{table}[H]
-\centering
-\caption{Хөгжүүлэлтийн хэрэгслүүд}
-\label{tab:dev-tools}
-\begin{tabular}{|l|l|p{6cm}|}
-\hline
-\textbf{Хэрэгсэл} & \textbf{Хувилбар} & \textbf{Зориулалт} \\
-\hline
-ESLint & \textasciicircum9.25.0 & Код шалгалт (Linting) \\
-\hline
-eslint-config-expo & \textasciitilde10.0.0 & Expo ESLint тохиргоо \\
-\hline
-TypeScript & \textasciitilde5.9.2 & Static type checking \\
-\hline
-@types/react & \textasciitilde19.1.0 & React-ийн төрлийн тодорхойлолт \\
-\hline
-@react-native-community/cli & latest & React Native CLI \\
-\hline
-\end{tabular}
-\end{table}
-
-\textbf{ESLint - Код шалгалт}
-
-ESLint нь JavaScript/TypeScript кодын алдаа, стилийн асуудлыг автоматаар илрүүлдэг. Энэ нь:
-\begin{itemize}
-    \item Синтаксийн алдаа олох
-    \item Ашиглагдаагүй хувьсагч илрүүлэх
-    \item Кодын стандарт мөрдүүлэх
-    \item Potential bugs (боломжит алдаа) олох
-\end{itemize}
-
-\textbf{ESLint дүрмийн жишээ:}
-\begin{lstlisting}[language=JavaScript]
-// .eslintrc.js
-module.exports = {
-  extends: ['expo', 'prettier'],
-  plugins: ['react-hooks'],
-  rules: {
-    // React Hooks дүрмүүд
-    'react-hooks/rules-of-hooks': 'error',
-    'react-hooks/exhaustive-deps': 'warn',
-    
-    // Ашиглагдаагүй хувьсагч
-    'no-unused-vars': 'warn',
-    
-    // Console.log хориглох (production-д)
-    'no-console': 'warn',
-    
-    // == биш === ашиглах
-    'eqeqeq': 'error',
-  },
-};
-\end{lstlisting}
-
-\textbf{TypeScript - Статик төрөл шалгалт}
-
-TypeScript нь компайл хийх үед төрлийн алдааг илрүүлдэг. Энэ нь runtime алдааг урьдчилан сэргийлж, кодын найдвартай байдлыг нэмэгдүүлдэг.
-
-\textbf{TypeScript тохиргоо (tsconfig.json):}
-\begin{lstlisting}[language=JavaScript]
-{
-  "compilerOptions": {
-    "target": "ES2020",
-    "module": "ESNext",
-    "strict": true,           // Хатуу төрөл шалгалт
-    "noImplicitAny": true,    // any төрөл хориглох
-    "strictNullChecks": true, // null/undefined шалгах
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "jsx": "react-native",
-    "moduleResolution": "bundler",
-    "paths": {
-      "@/*": ["./src/*"]      // Path alias
-    }
-  },
-  "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"]
-}
-\end{lstlisting}
-
-\textbf{TypeScript-ийн жишээ Tdelivery системд:}
-\begin{lstlisting}[language=JavaScript]
-// Захиалгын төрөл тодорхойлох
-interface Order {
-  id: string;
-  customerId: string;
-  items: OrderItem[];
-  status: OrderStatus;
-  totalAmount: number;
-  createdAt: Date;
-  deliveryAddress: Address;
-}
-
-interface OrderItem {
-  productId: string;
-  productName: string;
-  quantity: number;
-  unitPrice: number;
-}
-
-type OrderStatus = 'pending' | 'confirmed' | 'delivering' | 'delivered' | 'cancelled';
-
-interface Address {
-  street: string;
-  district: string;
-  city: string;
-  coordinates?: {
-    latitude: number;
-    longitude: number;
-  };
-}
-
-// Функцийн төрөл
-const calculateOrderTotal = (items: OrderItem[]): number => {
-  return items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0);
-};
-
-// Generic функц
-const getById = async <T>(collection: string, id: string): Promise<T | null> => {
-  const doc = await getDoc(doc(db, collection, id));
-  return doc.exists() ? (doc.data() as T) : null;
-};
-\end{lstlisting}
-
-\textbf{VS Code - Хөгжүүлэлтийн орчин}
-
-Visual Studio Code нь Microsoft-оос хөгжүүлсэн үнэгүй код засварлагч бөгөөд React Native хөгжүүлэлтэд хамгийн тохиромжтой. Дараах өргөтгөлүүдийг ашигласан:
-\begin{itemize}
-    \item \textbf{ESLint:} Кодын алдаа харуулах
-    \item \textbf{Prettier:} Кодын формат автоматаар засах
-    \item \textbf{React Native Tools:} Debug, log харах
-    \item \textbf{GitLens:} Git түүхийг харах
-    \item \textbf{Tailwind CSS IntelliSense:} NativeWind class-уудын автомат бөглөлт
-\end{itemize>
-
-\textbf{Git - Хувилбарын удирдлага}
-
-Git нь кодын хувилбарыг хянах систем бөгөөд олон хөгжүүлэгч хамтран ажиллахад зайлшгүй шаардлагатай. Tdelivery төсөлд GitHub дээр хадгалагдсан бөгөөд дараах branch стратеги ашигласан:
-\begin{itemize}
-    \item \textbf{main:} Production-д гарсан код
-    \item \textbf{develop:} Хөгжүүлэлтийн үндсэн branch
-    \item \textbf{feature/*:} Шинэ боломж нэмэх branch
-    \item \textbf{bugfix/*:} Алдаа засах branch
-\end{itemize}
-
-\subsubsection{Технологийн стекийн нэгтгэл}
-Дээрх бүх технологиуд хамтдаа ажиллаж, бүрэн функциональ B2B түгээлтийн систем болгодог. Технологиудыг зөв сонгох, нэгтгэх нь төслийн амжилтын гол түлхүүр юм.
-
-\textbf{Технологийн сонголтын шалгуурууд:}
-\begin{enumerate}
-    \item \textbf{Community support:} Идэвхтэй коммьюнити, тогтмол шинэчлэлт
-    \item \textbf{Documentation:} Сайн баримт бичиг
-    \item \textbf{Performance:} Гүйцэтгэлийн өндөр түвшин
-    \item \textbf{Scalability:} Өргөтгөх боломж
-    \item \textbf{Developer Experience:} Хөгжүүлэгчийн туршлага
-\end{enumerate}
-
-\textbf{Технологиудын харилцан үйлчлэл:}
+Multi-tenant систем дэх өгөгдлийг зохион байгуулахад Chong нар (2006) гурван загварыг тодорхойлсон (Зураг~\ref{fig:multitenant_models}): тусдаа database, тусдаа schema, эсвэл хуваалцсан schema дээр row-level isolation~\cite{chong2006multitenant}. Сүүлчийн хувилбар нь өртөг багатай боловч application-layer алдааны эрсдэл өндөр бөгөөд Bezemer ба Zaidman (2010) нар isolation-ыг \emph{lowest possible layer}-д, ихэвчлэн database түвшинд хэрэгжүүлэхийг зөвлөсөн~\cite{bezemer2010multitenant}.
 
 \begin{figure}[H]
 \centering
+\resizebox{\textwidth}{!}{%
 \begin{tikzpicture}[
-    layer/.style={rectangle, draw, minimum width=12cm, minimum height=1.2cm, align=center, font=\small},
-    arrow/.style={->, thick}
+  font=\footnotesize,
+  tenantbox/.style={rectangle, rounded corners=3pt, draw=black!50, minimum width=1.7cm, minimum height=0.75cm, align=center, font=\scriptsize, inner sep=4pt},
+  dbbox/.style={rectangle, rounded corners=6pt, draw=blue!60!black, thick, minimum width=5.2cm, minimum height=4.2cm, align=center, inner sep=10pt},
+  titlebox/.style={rectangle, rounded corners=3pt, fill=gray!12, draw=gray!45, minimum width=5.4cm, minimum height=0.9cm, align=center, font=\small\bfseries, inner sep=5pt},
+  infobox/.style={rectangle, rounded corners=2pt, minimum width=4.8cm, minimum height=1cm, align=left, inner sep=5pt, font=\scriptsize},
 ]
-% Layers from bottom to top
-\node[layer, fill=blue!20] (backend) at (0,0) {Backend: Firebase (Firestore, Auth, Storage, Functions)};
-\node[layer, fill=green!20] (state) at (0,1.5) {State Management: React Context API + AsyncStorage};
-\node[layer, fill=yellow!20] (logic) at (0,3) {Business Logic: TypeScript Services};
-\node[layer, fill=orange!20] (ui) at (0,4.5) {UI Layer: React Native + NativeWind + React Native Paper};
-\node[layer, fill=red!20] (platform) at (0,6) {Platform: Expo SDK (iOS + Android + Web)};
+
+% ===== Model 1: Separate Database =====
+\node[titlebox] (t1) at (0, 4.0) {1. Separate Database\\\textit{\small(Тусдаа DB)}};
+\node[dbbox, fill=blue!5] at (0, 1.0) {};
+\node[tenantbox, fill=blue!20] at (-1.3, 2.0) {Org A};
+\node[tenantbox, fill=green!20] at (1.3, 2.0) {Org B};
+\node[tenantbox, fill=orange!20] at (-1.3, 0.7) {Org C};
+\node[tenantbox, fill=red!20] at (1.3, 0.7) {Org D};
+\node[font=\scriptsize, text=black!65] at (0, -0.4) {4 тусдаа DB instance};
+\node[infobox, draw=red!50, fill=red!8] at (0, -2.0)
+  {\textbf{Өртөг:} Маш өндөр\\\textbf{Isolation:} Физик};
+
+% ===== Model 2: Separate Schema =====
+\node[titlebox] (t2) at (7, 4.0) {2. Separate Schema\\\textit{\small(Тусдаа schema)}};
+\node[dbbox, fill=orange!5] at (7, 1.0) {};
+\node[tenantbox, fill=blue!20, minimum width=4.0cm] at (7, 2.3) {schema\_org\_a};
+\node[tenantbox, fill=green!20, minimum width=4.0cm] at (7, 1.4) {schema\_org\_b};
+\node[tenantbox, fill=orange!20, minimum width=4.0cm] at (7, 0.5) {schema\_org\_c};
+\node[tenantbox, fill=red!20, minimum width=4.0cm] at (7, -0.4) {schema\_org\_d};
+\node[infobox, draw=orange!50, fill=orange!8] at (7, -2.0)
+  {\textbf{Өртөг:} Дунд\\\textbf{Isolation:} Logical};
+
+% ===== Model 3: Shared Schema + RLS (HIGHLIGHTED BACKGROUND) =====
+\begin{scope}[on background layer]
+\node[rectangle, rounded corners=8pt, fill=green!8, minimum width=6.2cm, minimum height=7.5cm] at (14, 0.7) {};
+\end{scope}
+\node[titlebox, fill=green!20, draw=green!55!black] (t3) at (14, 4.0) {3. Shared Schema + RLS\\\textit{\small(Сонгосон шийдэл)}};
+\node[dbbox, fill=white, draw=green!60!black, very thick] at (14, 1.0) {};
+\node[tenantbox, fill=blue!15, minimum width=4.0cm] at (14, 2.3) {\texttt{row} (org\_id=A)};
+\node[tenantbox, fill=green!15, minimum width=4.0cm] at (14, 1.4) {\texttt{row} (org\_id=B)};
+\node[tenantbox, fill=orange!15, minimum width=4.0cm] at (14, 0.5) {\texttt{row} (org\_id=C)};
+\node[tenantbox, fill=red!15, minimum width=4.0cm] at (14, -0.4) {\texttt{row} (org\_id=D)};
+\node[rectangle, fill=white, rounded corners=2pt, draw=green!55!black, inner sep=3pt, font=\scriptsize\itshape, text=black] at (14, -1.15) {$\leftarrow$ RLS policy нь \texttt{org\_id}-аар шүүнэ};
+\node[infobox, draw=green!55!black, fill=green!8] at (14, -2.0)
+  {\textbf{Өртөг:} Бага\\\textbf{Isolation:} Database-level};
+
 \end{tikzpicture}
-\caption{Технологийн стекийн архитектур}
-\label{fig:tech-stack}
+}
+\caption{Multi-tenant өгөгдлийн тусгаарлалтын 3 загвар (Chong et al. 2006)}
+\label{fig:multitenant_models}
 \end{figure}
 
-\textbf{Давхаргуудын тайлбар:}
+Энэ зөвлөмжийг хэрэгжүүлэхийн тулд системд PostgreSQL Row Level Security (RLS)-ыг сонгосон. RLS нь хүснэгтийн мөр бүрд \texttt{USING}/\texttt{WITH CHECK} policy хавсаргаж, planner уг policy-г \texttt{WHERE}-д автоматаар нэмдэг~\cite{postgresql2024rowsecurity}. Policy-ийн шалгуур нь Ferraiolo ба Kuhn (1992) нарын RBAC загварын дагуу \texttt{auth.jwt()->>'org\_id'} claim-аар ажиллана~\cite{ferraiolo1992rbac}. Ийнхүү RLS нь Chong 2006-ийн таксономи, Bezemer 2010-ын зөвлөмж, Ferraiolo 1992-ийн RBAC-ийг нэг шийдлээр нэгтгэдэг.
 
-\begin{itemize}
-    \item \textbf{Platform Layer (Платформын давхарга):} Expo SDK нь iOS, Android, Web гурван платформд нэг кодоор ажиллах боломжийг олгоно. Expo-ийн бэлэн модулиуд (Camera, Location, Notifications) нь native код бичихгүйгээр төхөөрөмжийн боломжуудад хандана.
-    
-    \item \textbf{UI Layer (Хэрэглэгчийн интерфэйсийн давхарга):} React Native компонентууд, React Native Paper (Material Design), NativeWind (TailwindCSS) хамтран ажиллаж гоёмсог, responsive UI үүсгэнэ. Reanimated болон Gesture Handler нь анимаци, жестүүдийг удирдана.
-    
-    \item \textbf{Business Logic Layer (Бизнес логикийн давхарга):} TypeScript-ээр бичигдсэн service-үүд нь бизнес дүрмүүдийг хэрэгжүүлнэ. Жишээ нь: захиалгын тооцоо, хүргэлтийн төлөв шинэчлэлт, мэдэгдэл илгээх логик.
-    
-    \item \textbf{State Management Layer (Төлөв удирдлагын давхарга):} React Context API нь global state (хэрэглэгчийн мэдээлэл, сагс, тохиргоо) удирдана. AsyncStorage нь offline горимд өгөгдөл хадгална.
-    
-    \item \textbf{Backend Layer (Backend давхарга):} Firebase үйлчилгээнүүд (Firestore, Authentication, Storage, Cloud Functions) нь серверийн бүх функцийг хариуцна. Real-time синхрончлол, offline support, аюулгүй байдал бүгд Firebase-аар хангагдана.
-\end{itemize}
+\subsubsection{Concurrency control}
+\label{subsubsec:concurrency}
 
-\textbf{Өгөгдлийн урсгал (Data Flow):}
+Bernstein нар (1987) concurrency control-ыг \textbf{pessimistic} (транзакцаас өмнө lock авах) ба \textbf{optimistic} (commit үед conflict шалгах) гэж ангилсан~\cite{bernstein1987concurrency}. Kleppmann (2017) write-heavy workload-д pessimistic хандлага илүү найдвартай гэж дүгнэсэн~\cite{kleppmann2017ddia}. Хоёр хандлагын ялгааг Зураг~\ref{fig:concurrency_compare}-д харуулав.
 
-\begin{enumerate}
-    \item Хэрэглэгч UI дээр үйлдэл хийнэ (товч дарах, form бөглөх)
-    \item UI компонент event handler-ийг дуудна
-    \item Handler нь Context-ийн функцийг дуудна
-    \item Context нь Firebase SDK-аар серверт хүсэлт илгээнэ
-    \item Firebase өгөгдлийг боловсруулж, хариу буцаана
-    \item Context state-ийг шинэчилнэ
-    \item React компонентуудыг дахин render хийнэ
-    \item UI шинэчлэгдэнэ
-\end{enumerate}
+\begin{figure}[H]
+\centering
+\resizebox{0.95\textwidth}{!}{%
+\begin{tikzpicture}[
+  font=\footnotesize,
+  txnbox/.style={rectangle, rounded corners=3pt, draw=black!55, thick, minimum width=4.0cm, minimum height=0.85cm, align=center, font=\scriptsize, inner sep=4pt},
+  lockbox/.style={txnbox, fill=red!15, draw=red!60!black},
+  successbox/.style={txnbox, fill=green!20, draw=green!55!black},
+  failbox/.style={txnbox, fill=orange!25, draw=orange!70!black},
+  readbox/.style={txnbox, fill=blue!15, draw=blue!60!black},
+  arrow/.style={-Latex, thick, draw=gray!60},
+  titlebox/.style={rectangle, rounded corners=3pt, fill=gray!12, draw=gray!45, minimum width=5cm, minimum height=1cm, align=center, font=\small\bfseries, inner sep=5pt},
+]
 
-\textbf{Технологийн нэгтгэлийн үр дүн:}
+% ===== PESSIMISTIC (left) content =====
+\node[titlebox] (ptitle) at (-5, 3.5) {Pessimistic\\\textit{\small(\texttt{FOR UPDATE SKIP LOCKED})}};
+\node[lockbox] (p1) at (-5, 2.2) {T1: LOCK row \#1};
+\node[successbox] (p2) at (-5, 1.1) {T1: UPDATE $\rightarrow$ COMMIT};
+\node[failbox] (p3) at (-5, 0.0) {T2: SKIP row \#1, LOCK row \#2};
+\node[successbox] (p4) at (-5, -1.1) {T2: UPDATE $\rightarrow$ COMMIT};
+\draw[arrow] (p1) -- (p2);
+\draw[arrow] (p2) -- (p3);
+\draw[arrow] (p3) -- (p4);
+\node[align=left, font=\scriptsize, text=green!55!black] (pmark) at (-5, -2.7) {%
+  {\large\textbf{+}} Correctness баталгаатай\\
+  {\large\textbf{+}} Deadlock 0\\
+  {\large\textbf{+}} Халуун write-д тохиромжтой};
+
+% ===== OPTIMISTIC (right) content =====
+\node[titlebox] (otitle) at (2.5, 3.5) {Optimistic\\\textit{\small(MVCC, check-at-commit)}};
+\node[readbox] (o1) at (2.5, 2.2) {T1: READ row \#1 (v1)};
+\node[readbox] (o2) at (2.5, 1.1) {T2: READ row \#1 (v1)};
+\node[successbox] (o3) at (2.5, 0.0) {T1: COMMIT (v1$\rightarrow$v2)};
+\node[failbox] (o4) at (2.5, -1.1) {T2: COMMIT $\rightarrow$ CONFLICT!};
+\draw[arrow] (o1) -- (o3);
+\draw[arrow] (o2) -- (o4);
+\node[align=left, font=\scriptsize, text=orange!70!black] (omark) at (2.5, -2.7) {%
+  {\large\textbf{--}} Lost update эрсдэл\\
+  {\large\textbf{--}} Retry логик хэрэгтэй\\
+  {\large\textbf{--}} Халуун claim-д сул};
+
+% ===== Frames using fit library — both identical bounds =====
+\begin{scope}[on background layer]
+\node[rectangle, rounded corners=6pt, fill=blue!3, draw=blue!25,
+      fit={(ptitle)(p1)(pmark) (-6.7,3.9) (-3.3,-3.5)}] {};
+\node[rectangle, rounded corners=6pt, fill=blue!3, draw=blue!25,
+      fit={(otitle)(o1)(omark) (0.8,3.9) (4.2,-3.5)}] {};
+\end{scope}
+
+\end{tikzpicture}
+}
+\caption{Pessimistic vs Optimistic concurrency control: write-write contention-ы зан төлөв}
+\label{fig:concurrency_compare}
+\end{figure}
+
+Хүргэгч нэг даалгаврыг зэрэг claim хийх үе нь яг ийм богино, халуун write-write contention тул PostgreSQL-ийн \texttt{SELECT ... FOR UPDATE SKIP LOCKED} construct тохиромжтой: нэг транзакц lock авсан мөрийг өөр транзакц алгасаж дараагийн мөрийг авна~\cite{postgresql2024locking}. Энэ нь давхар claim-ын магадлалыг 0 болгож, deadlock-ийг бүрмөсөн арилгана.
+
+Kleppmann-ы нэр томьёогоор \texttt{SKIP LOCKED} нь зөвхөн lock primitive биш, харин ``database-д суулгасан work queue'' хэрэгжүүлэх шийдэл юм~\cite{kleppmann2017ddia}. Ингэснээр тусдаа queue service (Redis, Kafka) шаардлагагүйгээр correctness guarantee, performance, audit trail-г нэг эх үүсвэрээс олдог.
+
+\subsubsection{BaaS (Backend-as-a-Service) архитектур}
+\label{subsubsec:baas_theory}
+
+Уламжлалт three-tier архитектурт бизнесийн логик нь тусдаа удирддаг application server (Node.js, Spring Boot)-д хэрэгждэг. Харин serverless/BaaS загвар уг давхаргыг платформд даалгаж, pay-per-use model-д шилжүүлсэн~\cite{baldini2017serverless}. Adzic ба Chatley (2017) уг загвар зардлыг 60--80\% хүртэл бууруулж чадах боловч vendor lock-in, cold start, хязгаарлагдмал observability зэрэг trade-off үүсгэдгийг тэмдэглэсэн~\cite{adzic2017serverless}. Jonas нарын Berkeley-ийн тоймд (2019) stateful үйлчилгээг function-тай хослуулсан нэгдсэн BaaS платформыг cloud programming-ийг хялбаршуулах хамгийн ирээдүйтэй чиглэл гэж дүгнэсэн~\cite{jonas2019berkeleyserverless}.
+
+Supabase нь PostgreSQL дээр үүссэн BaaS платформ юм. PostgREST нь REST API-г schema-аас автомат үүсгэнэ. RLS нь JWT claim-аар идэвхжинэ. Realtime нь WAL log-оос өөрчлөлтийг авдаг. Иймд бизнесийн логик нь RLS policy, \texttt{SECURITY DEFINER} RPC, триггер, Edge Functions-д тархана. Уг \emph{BaaS-mediated} загвар нь Adzic 2017-ийн анхааруулсан observability эрсдэлтэй тулгардаг. Тиймээс бизнесийн логикийг database-ээс шууд шалгах туршилтын аргачлалыг Бүлэг~4-т сонгов.
+
+%-------------------------------------------------------------------------------
+\subsection{Холбогдох судалгаанууд}
+\label{subsec:related_works}
+
+Энэ судалгааны онолын суурийг 5 үндсэн чиглэлд ангилж, Хүснэгт~\ref{tab:related_works_taxonomy}-д нэгтгэв. Чиглэл бүрд тус судалгаанд ямар үүрэг гүйцэтгэсэн эх сурвалжийг тусад нь дурдсан.
 
 \begin{table}[H]
 \centering
-\caption{Технологийн нэгтгэлийн үр дүн}
-\label{tab:tech-benefits}
-\begin{tabular}{|l|p{10cm}|}
+\footnotesize
+\renewcommand{\arraystretch}{1.3}
+\caption{Холбогдох судалгааны таксономи: чиглэл $\to$ эх сурвалж $\to$ энэ ажилд өгсөн хувь нэмэр}
+\label{tab:related_works_taxonomy}
+\begin{tabular}{|p{3cm}|p{5.5cm}|p{5.5cm}|}
 \hline
-\textbf{Үзүүлэлт} & \textbf{Үр дүн} \\
+\textbf{Чиглэл} & \textbf{Үндсэн эх сурвалж} & \textbf{Тус судалгаанд өгсөн үүрэг} \\ \hline
+Crowdsourced хүргэлт & Rougès \& Montreuil (2014)~\cite{rouges2014crowdsourcing}, Lim нар (2018)~\cite{lim2018lastmile}, Alnaggar нар (2021)~\cite{alnaggar2021crowdsourced} & Dispatcher-гүй self-service marketplace загварын үндэслэл \\ \hline
+Платформ эдийн засаг & Rochet \& Tirole (2003)~\cite{rochet2003platform}, Parker нар (2016)~\cite{parker2016platform}, Evans \& Schmalensee (2016)~\cite{evans2016matchmakers} & FCFS загварын cold-start давуу талын онолын нотолгоо \\ \hline
+Multi-tenant isolation & Chong нар (2006)~\cite{chong2006multitenant}, Bezemer \& Zaidman (2010)~\cite{bezemer2010multitenant}, PostgreSQL RLS docs~\cite{postgresql2024rowsecurity} & Database-level RLS сонголтын таксономи ба зөвлөмж \\ \hline
+Access control \& auth & Ferraiolo \& Kuhn (1992)~\cite{ferraiolo1992rbac}, Provos \& Mazi\`eres (1999)~\cite{provos1999bcrypt}, Jones нар (2015)~\cite{jones2015jwt}, OWASP (2024)~\cite{owasp2024authcheatsheet} & RBAC, bcrypt ePOD OTP, JWT best-practice-ийн суурь \\ \hline
+Concurrency control & Bernstein нар (1987)~\cite{bernstein1987concurrency}, Kleppmann (2017)~\cite{kleppmann2017ddia}, PostgreSQL locking docs~\cite{postgresql2024locking} & Pessimistic locking ба \texttt{FOR UPDATE SKIP LOCKED} сонголтын үндэслэл \\ \hline
+BaaS \& Serverless & Baldini нар (2017)~\cite{baldini2017serverless}, Adzic \& Chatley (2017)~\cite{adzic2017serverless}, Jonas нар (2019)~\cite{jonas2019berkeleyserverless} & BaaS-mediated архитектурын сонголт, trade-off-ийн үндэслэл \\ \hline
+\end{tabular}
+\end{table}
+
+Энэхүү таксономи нь судалгааны шийдвэр тус бүр — \textit{яагаад FCFS?}, \textit{яагаад RLS?}, \textit{яагаад BaaS?} — онолын эх сурвалжтай нягт уялдсаныг харуулна.
+
+%-------------------------------------------------------------------------------
+\subsection{Ижил төрлийн системүүдийн судалгаа ба харьцуулалт}
+\label{subsec:comparable_systems}
+
+\subsubsection{Uber Freight (олон улсын платформ)}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.35\textwidth]{Figures/chapter2/download.png}
+    \caption{Uber Freight платформ}
+    \label{fig:uber_freight}
+\end{figure}
+
+Uber Freight нь дижитал брокер, TMS, аналитик, ML шийдлүүдийг нэгтгэсэн хоёр талт платформ юм~\cite{uberfreight2023blog}. Shipper нь FTL/LTL горимоор instant quote-ыг ML-д суурилсан үнийн алгоритмаар авдаг. Carrier нь DOT/MC дугаар, даатгалын шаардлагыг хангаж онбординг хийгдэн, апп/веб порталаар ачаа book хийж, гүйцэтгэлийн баримт (POD) илгээдэг. Платформ нь recommendation system-ээр ажилладаг: carrier-ийн зан төлвийг implicit суралцаж, candidate generation → ranking/booster бүтцээр ачааг оновчтой санал болгодог. Тээвэрлэлтийн дараа бодит цагийн visibility, cargo damage claim зэрэг механизмуудаар гүйцэтгэлийг хянадаг. Нийтдээ Uber Freight нь liquidity, алгоритмын шийдвэр, API-д суурилсан интеграцийг нэгтгэсэн өндөр scalable экосистемийг бүрдүүлдэг~\cite{parker2016platform}.
+
+\subsubsection{Papa Logistics (Монголын платформ)}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.35\textwidth]{Figures/chapter2/papa_logistics.png}
+    \caption{Papa Logistics платформ}
+    \label{fig:papa_logistics}
+\end{figure}
+
+Papa Logistics нь shipper, carrier/жолооч, broker компаниудыг нэг системд холбосон multi-sided логистикийн платформ юм~\cite{papalogistics2024}. Transaction lifecycle нь: захиалга үүсгэх → түгээх → үнийн санал цуглуулах → хэрэглэгч сонгох → location tracking → гүйцэтгэл баталгаажуулах → үнэлгээ. Shipper нь олон үнийн санал харьцуулах, явц хянах, үнэлгээ өгөх боломжтой. Carrier нь тээврийн хэрэгсэл, бүс, үнийн нөхцөлөө тодорхойлж, захиалганд bid илгээдэг. Pricing нь Uber Freight шиг dynamic ML биш, харилцан тохиролцоонд суурилсан. Даатгалын төрөл, нөхөн төлбөрийн журам, хариуцлагын заалтуудын ил тод баримт бичиг хомс нь risk management-ийн тодорхойгүй байдлыг үүсгэж байна. Ерөнхийдөө Papa Logistics нь Монголын дотоод хэрэгцээнд нийцсэн боловч алгоритмын автоматжуулалт, risk management, API integration-ийн хувьд хөгжих боломжтой.
+
+\subsubsection{Архитектурын хязгаарлалтууд ба шийдэл}
+
+Судалгаанаас 4 үндсэн хязгаарлалт илэрч, тус бүрт тодорхой шийдлийг зураглав (Зураг~\ref{fig:gap_solution_map}).
+
+\begin{figure}[H]
+\centering
+\resizebox{0.95\textwidth}{!}{%
+\begin{tikzpicture}[
+  font=\footnotesize,
+  gapbox/.style={rectangle, rounded corners=4pt, draw=red!55!black, thick, fill=red!10,
+    text width=6cm, minimum height=1.1cm, align=center, inner sep=6pt},
+  solbox/.style={rectangle, rounded corners=4pt, draw=green!55!black, thick, fill=green!15,
+    text width=6cm, minimum height=1.1cm, align=center, inner sep=6pt},
+  arrow/.style={-Latex, very thick, draw=blue!60!black},
+  titlebox/.style={font=\small\bfseries, align=center},
+]
+
+% Background stripes with rounded corners
+\begin{scope}[on background layer]
+\node[rectangle, rounded corners=6pt, fill=red!4, draw=red!25, minimum width=7cm, minimum height=7.5cm] at (-4.6, 0.2) {};
+\node[rectangle, rounded corners=6pt, fill=green!4, draw=green!25, minimum width=7cm, minimum height=7.5cm] at (4.6, 0.2) {};
+\end{scope}
+
+% Headers
+\node[titlebox, text=red!55!black] at (-4.6, 4.3) {\Large Асуудал (Gap)};
+\node[titlebox, text=green!55!black] at (4.6, 4.3) {\Large Шийдэл};
+
+% Row 1
+\node[gapbox] (g1) at (-4.6, 3.0) {\textbf{Dispatcher bottleneck}\\Гараар хуваарилах $\to$ scalability хязгаартай};
+\node[solbox] (s1) at (4.6, 3.0) {\textbf{Autonomous FCFS claim model}\\\texttt{FOR UPDATE SKIP LOCKED}};
+\draw[arrow] (g1.east) -- (s1.west);
+
+% Row 2
+\node[gapbox] (g2) at (-4.6, 1.1) {\textbf{Data isolation сул}\\Application-level хяналт хангалтгүй};
+\node[solbox] (s2) at (4.6, 1.1) {\textbf{Database-level RLS}\\\texttt{org\_id}-д суурилсан policy};
+\draw[arrow] (g2.east) -- (s2.west);
+
+% Row 3
+\node[gapbox] (g3) at (-4.6, -0.8) {\textbf{Audit trail хязгаарлагдмал}\\Execution log хомс};
+\node[solbox] (s3) at (4.6, -0.8) {\textbf{Timestamp-based tracking}\\\texttt{assigned\_at}, \texttt{picked\_up\_at}, \texttt{delivered\_at}};
+\draw[arrow] (g3.east) -- (s3.west);
+
+% Row 4
+\node[gapbox] (g4) at (-4.6, -2.7) {\textbf{API integration сул}\\Стандарт бус интерфэйс};
+\node[solbox] (s4) at (4.6, -2.7) {\textbf{RESTful API + JWT auth}\\PostgREST auto-generated + RFC 7519};
+\draw[arrow] (g4.east) -- (s4.west);
+
+\end{tikzpicture}
+}
+\caption{Архитектурын 4 хязгаарлалт $\to$ тэдгээрийн шийдлийн зураглал}
+\label{fig:gap_solution_map}
+\end{figure}
+
+Эдгээр 4 шийдэл нь ном зүйн онолтой нягт уялдсан: FCFS claim model-ыг Bernstein~\cite{bernstein1987concurrency} болон Kleppmann~\cite{kleppmann2017ddia}-ны pessimistic locking зарчмаар, RLS-ийг Bezemer~\cite{bezemer2010multitenant}, Ferraiolo~\cite{ferraiolo1992rbac}-гийн зөвлөмжөөр, JWT auth-ыг RFC 7519~\cite{jones2015jwt} стандартаар тус тус үндэслэсэн.
+
+\subsubsection{Харьцуулалтын хүснэгт ба gap analysis}
+
+\begin{table}[h!]
+\centering
+\footnotesize
+\caption{Судалгаа хоорондын архитектурын харьцуулалт}
+\label{tab:comparative_analysis}
+\begin{tabular}{|p{2.8cm}|p{3.3cm}|p{3.3cm}|p{3.5cm}|}
 \hline
-Хөгжүүлэлтийн хугацаа & Нэг платформд хөгжүүлэхтэй харьцуулахад 40-50\% бага \\
+\textbf{Шинж чанар} & \textbf{Uber Freight} & \textbf{Papa Logistics} & \textbf{Судалгааны систем} \\
 \hline
-Кодын дахин ашиглалт & iOS, Android, Web хооронд 85-90\% код дахин ашиглагдсан \\
+Task allocation & ML recommendation & Location-based bid & FCFS + pessimistic locking \\
 \hline
-Гүйцэтгэл & 60 FPS, native аппликейшнтэй дүйцэхүйц \\
+Pricing & Dynamic ML & Харилцан тохиролцоо & Борлуулагч тогтоодог \\
 \hline
-Offline support & Интернэтгүй үед ч үндсэн функцууд ажиллана \\
+Data isolation & Enterprise (тодорхойгүй) & Application-level & Database-level RLS \\
 \hline
-Real-time & Захиалгын төлөв өөрчлөгдөхөд 100ms дотор мэдэгдэл хүрнэ \\
+Audit trail & Execution tracking & Хязгаарлагдмал & Timestamp-based \\
+\hline
+API integration & API-first, webhook & Сул & RESTful, webhook-ready \\
+\hline
+Real-time & Location tracking & Location tracking & WebSocket/subscription \\
+\hline
+Scalability & Horizontal scaling & Dispatcher bottleneck & Event-driven horizontal \\
+\hline
+Security & Enterprise (proprietary) & Application-level & RLS + role policy \\
+\hline
+Multi-tenant & Built-in & Тодорхойгүй & Organization-level RLS \\
 \hline
 \end{tabular}
 \end{table}
 
-\subsection{Ижил төстэй системүүдийн харьцуулалт}
-Дэлхийн зах зээлд болон бүс нутгийн хэмжээнд ашиглагдаж буй ижил төстэй системүүдийг харьцуулан судлав.
+\begin{table}[h!]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\caption{Архитектурын зөрүү болон дизайн шаардлагын уялдаа}
+\label{tab:gap_design_mapping}
+\begin{tabular}{|p{5.5cm}|p{7cm}|}
+\hline
+\textbf{Тодорхойлогдсон зөрүү} & \textbf{Дизайн шаардлага} \\
+\hline
+Гараар хуваарилалт давамгай & Marketplace-д суурилсан dynamic task allocation \\
+\hline
+Multi-tenant isolation сул & RLS-д суурилсан organization-level isolation \\
+\hline
+Audit trail хязгаарлагдмал & Event sourcing зарчимд тулгуурласан бүрэн audit log \\
+\hline
+API integration хязгаарлагдмал & API-first, стандарт REST interface \\
+\hline
+Scalability сул & Horizontal scalable event-driven архитектур \\
+\hline
+Real-time дамжуулалт сул & Subscription-based push механизм \\
+\hline
+\end{tabular}
+\end{table}
 
-\begin{longtable}{|p{2.5cm}|p{3.5cm}|p{3.5cm}|p{3.5cm}|}
-\caption{Ижил төстэй системүүдийн харьцуулалт} \label{tab:comparison} \\
-\hline
-\textbf{Шалгуур} & \textbf{Lalamove (Ази)} & \textbf{Borzo (ОХУ/Монгол)} & \textbf{Tdelivery (Санал болгож буй)} \\
-\hline
-\endfirsthead
-\hline
-\textbf{Шалгуур} & \textbf{Lalamove (Ази)} & \textbf{Borzo (ОХУ/Монгол)} & \textbf{Tdelivery (Санал болгож буй)} \\
-\hline
-\endhead
-\hline
-\endfoot
-\hline
-\endlastfoot
-
-\textbf{Үндсэн зорилго} & C2C, B2C Шуурхай хүргэлт & Crowdsourced хүргэлт & B2B Бараа түгээлт, SCM \\
-\hline
-\textbf{Хэрэглэгчид} & Хувь хүн, Жижиг бизнес & Хувь хүн, Онлайн дэлгүүр & Бөөний төв, Дэлгүүр, Нийлүүлэгч \\
-\hline
-\textbf{Тээврийн хэрэгсэл} & Мотоцикл, Ван, Машин & Явган, Мото, Машин & Портер, Ван (Ачаа тээвэр) \\
-\hline
-\textbf{Real-time Tracking} & Маш сайн & Сайн & Сайн \\
-\hline
-\textbf{Маршрут оновчлол} & AI суурьтай, автомат хуваарилалт & Автомат хуваарилалт & Google Maps API, Гараар болон автомат \\
-\hline
-\textbf{Төлбөрийн шийдэл} & Онлайн, Бэлэн & Бэлэн, Данс, COD & Бэлэн, Данс, Зээл (Credit) \\
-\hline
-\textbf{e-POD} & Зураг, Гарын үсэг & Зураг & Зураг, Гарын үсэг, GPS \\
-\hline
-\textbf{Үнэ} & Зайнаас хамаарсан & Зайнаас хамаарсан & Захиалгын дүнгийн хувь, эсвэл сарын хураамж \\
-\hline
-\textbf{Сул тал} & B2B нарийн процесс (нэхэмжлэх, буцаалт) дутмаг & Тогтмол хүргэгчгүй, найдвартай байдал сул & Зах зээлд шинэ, хэрэглэгчийн бааз бага \\
-\hline
-\end{longtable}
-
-\subsubsection{Харьцуулсан дүгнэлт}
-Lalamove болон Borzo нь "On-demand" буюу яаралтай, нэг удаагийн хүргэлтэд маш сайн шийдэл боловч B2B харилцааны нарийн процессуудыг (бараа буцаалт, зээлийн тооцоо, тогтмол маршрут, их хэмжээний бараа хүлээлцэх) бүрэн шийдэж чадахгүй байна. "Tdelivery" систем нь эдгээр дутагдлыг нөхөж, Монголын жижиг дунд бизнесүүдийн онцлогт тохирсон, нийлүүлэлтийн сүлжээг бүхэлд нь хамарсан шийдэл болохоороо давуу талтай юм.
-
-\vfill
+Эдгээр шаардлагууд нь судлагдсан системүүдийн хязгаарлалтыг давж, Монгол Улсын B2B логистикийн зах зээлд технологийн алхам урагшлуулах боломжийг олгоно.

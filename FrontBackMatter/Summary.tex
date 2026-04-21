@@ -1,0 +1,239 @@
+%-------------------------------------------------------------------------------
+%   SUMMARY (ТОВЧЛОЛ) — Two-column condensed thesis summary
+%-------------------------------------------------------------------------------
+
+\newpage
+\phantomsection
+\addchaptertocentry{Товчлол}
+\thispagestyle{plain}
+
+\vspace*{-6mm}
+\begin{center}
+{\headingfont\large \ttitle}\\[1mm]
+\end{center}
+
+\begin{flushright}
+\deptname\\
+Оюутан: \authorcode, \authorshort\\
+Удирдагч багш: \supervisor
+\end{flushright}
+
+\vspace{1mm}
+\setcounter{table}{0}
+\setcounter{figure}{0}
+\renewcommand{\thetable}{\arabic{table}}
+\renewcommand{\thefigure}{\arabic{figure}}
+\setlength{\columnsep}{7mm}
+\begin{multicols}{2}
+\setlength{\parskip}{5pt}
+\sloppy
+
+\noindent{\headingfont 1. Удиртгал}
+
+Монгол Улсын жижиг, дунд бизнесийн байгууллагууд (ЖДБ) хоорондоо бараа захиалах, хүргэх үйл явцаа одоо хүртэл гол төлөв утас, мессеж, цаасан бичгээр гүйцэтгэсээр байна. Ийм гараар зохицуулдаг хэлбэр нь цаг алдагдуулж, зохион байгуулалтын алдаа үүсгэж, явцыг хянахад төвөгтэй болгодог. Монголын зах зээлд B2B хүргэлтийн нэгдсэн шийдэл хараахан төлөвшөөгүй бөгөөд одоогийн тоглогчид голдуу dispatcher-т тулгуурласан нэг талтай загвартай хэвээр байна.
+
+Судалгааны зорилго нь:
+\begin{itemize}
+    \item Operator-гүй, multi-tenant B2B хүргэлтийн платформыг Supabase (PostgreSQL + PostgREST + RLS) технологи дээр боловсруулах,
+    \item Concurrency хамгаалалтыг database түвшинд шийдэж баталгаажуулах,
+    \item Multi-tenant data isolation-ыг нотлох,
+    \item ePOD OTP верификацыг аюулгүй болгох,
+    \item Туршилтаар системийн performance-ийг үнэлэх.
+\end{itemize}
+
+Судалгааны асуултууд (RQ) нь дараах гурван чиглэлд төвлөрсөн: RQ1 — FCFS claim загварын concurrency correctness; RQ2 — RLS-ийн multi-tenant isolation найдвартай байдал; RQ3 — BaaS-mediated архитектурын production viability. Эдгээрийг concurrency test, load test, security penetration test, functional E2E test гэсэн 4 төрлийн туршилтаар хэмжив.
+
+\noindent{\headingfont 2. Судалгааны сэдвийн онол, өнөөгийн байдал}
+
+B2B хүргэлтийн платформын онолын суурь нь таван үндсэн чиглэлд тулгуурласан: last-mile логистик, two-sided marketplace, multi-tenant isolation, concurrency control, BaaS архитектур.
+
+Last-mile хүргэлт нь нийт тээврийн зардлын 13--75\%-ийг эзэлдэг тул crowdsourced загвар нь уламжлалт өөрийн парктай системийг орлох шинэ чиг хандлага болсон. Two-sided marketplace онолоор (Rochet \& Tirole 2003) B2B платформын гол саад нь liquidity тул cold-start шатанд FCFS загвар давуу талтай.
+
+Multi-tenant өгөгдлийн тусгаарлалтыг Chong (2006), Bezemer \& Zaidman (2010) нар database түвшинд хэрэгжүүлэхийг зөвлөсөн. Үүнийг PostgreSQL Row Level Security (RLS) нь хүснэгтийн мөр бүрд \texttt{USING}/\texttt{WITH CHECK} policy хавсарган хангана.
+
+Concurrency control-ыг Bernstein (1987), Kleppmann (2017) нар pessimistic/optimistic хоёр хандлагад ангилсан. Write-heavy workload-д pessimistic илүү найдвартай тул PostgreSQL-ийн \texttt{SELECT ... FOR UPDATE SKIP LOCKED} нь race condition-ыг 0 магадлалаар шийднэ.
+
+Харьцуулсан судалгаанд Uber Freight (ML-д суурилсан enterprise платформ) болон Papa Logistics (dispatcher-based Монголын платформ) хоёрыг авч үзсэн. Эдгээрээс dispatcher bottleneck, data isolation сул, audit trail хязгаарлагдмал, API integration сул гэсэн 4 архитектурын зөрүүг тодорхойлсон.
+
+\noindent{\headingfont 3. Судалгааны арга зүй}
+
+Судалгааг Design Science Research арга барилаар 3 үе шатаар (загварчлал → хөгжүүлэлт → туршилт) Agile давталттай хэрэгжүүлэв. Системийн архитектурын гол онцлог нь \textbf{BaaS-mediated architecture} бөгөөд уламжлалт three-tier биш, Supabase BaaS платформоор бүх backend үйлчилгээг зуучилсан гурван давхаргат бүтэц юм (Зураг~\ref{fig:tovchlol_arch}).
+
+\begin{figure}[H]
+\centering
+\resizebox{\columnwidth}{!}{%
+\begin{tikzpicture}[
+  layer/.style={draw, rounded corners, minimum width=10cm, align=center, font=\footnotesize},
+  arrow/.style={->, >=stealth, thick},
+]
+\node[layer, fill=blue!10, minimum height=1.1cm] (pres) at (0, 0) {
+  \textbf{Client layer}\\
+  React Native (мобайл) $|$ Next.js (веб) $|$ SDK
+};
+\node[layer, fill=orange!10, minimum height=1.6cm] (baas) at (0, -2.0) {
+  \textbf{BaaS layer --- Supabase}\\
+  PostgREST $|$ GoTrue (JWT) $|$ Realtime\\
+  Storage $|$ Edge Functions $|$ RPC
+};
+\node[layer, fill=green!10, minimum height=1.1cm] (data) at (0, -3.9) {
+  \textbf{Data layer}\\
+  PostgreSQL $|$ RLS $|$ Triggers $|$ SECURITY DEFINER
+};
+\draw[arrow] (pres.south) -- (baas.north) node[midway, right, font=\tiny] {HTTPS / WS};
+\draw[arrow] (baas.south) -- (data.north) node[midway, right, font=\tiny] {SQL / PL/pgSQL};
+\end{tikzpicture}
+}
+\caption{BaaS-mediated архитектурын гурван давхаргат бүтэц}
+\label{fig:tovchlol_arch}
+\end{figure}
+
+Client layer нь хэрэглэгчийн интерфэйсийг хариуцна. BaaS layer нь Supabase платформоор API-г автомат үүсгэж, JWT authentication, realtime WebSocket, storage болон RPC дуудлагыг нэгтгэнэ. Data layer нь PostgreSQL + RLS + триггер + \texttt{SECURITY DEFINER} функцээр бизнесийн логикийг database дотор хэрэгжүүлнэ.
+
+Өгөгдлийн түвшинд 11 хүснэгт бүхий schema зохион байгуулж, multi-tenant isolation-ыг \texttt{org\_id} талбар дээр суурилсан RLS-ээр, зэрэгцээ claim-ийг \texttt{FOR UPDATE SKIP LOCKED} lock-оор хангасан. Бизнесийн логикийн гол функцүүд: \texttt{claim\_delivery\_task} (атомик байдлаар даалгавар оноох), \texttt{verify\_epod\_otp} (bcrypt харьцуулалтаар OTP баталгаажуулах), мөн автомат төлөв шилжилт, орлого бүртгэлийн триггерүүд.
+
+Proof of Delivery (ePOD)-г 6 оронтой OTP код (bcrypt hash, 10 мин expiry, 5 оролдлогын хязгаар) хэлбэрээр хэрэгжүүлсэн. Client-server contract-ыг хамгаалах schema drift prevention strategy-г Supabase CLI-ийн auto-generated TypeScript type + CI шатны харьцуулалтаар хангасан.
+
+\textbf{Системийн үндсэн урсгал.} Бүртгэлээс орлого бүртгэл хүртэлх үйл явцыг 8 алхамт дараалалд зохион байгуулсан (Зураг~\ref{fig:tovchlol_flow}). Энэ урсгал нь веб апп (1–4 алхам), мобайл апп (5–7 алхам), database триггер (8 алхам) гэсэн 3 бүрэлдэхүүнийг нэг гинжид уялдуулсан.
+\end{multicols}
+
+\begin{figure}[H]
+\centering
+\resizebox{0.98\textwidth}{!}{%
+\begin{tikzpicture}[
+  font=\scriptsize,
+  node distance=0.15cm,
+  stepbox/.style={rectangle, rounded corners=3pt, draw=green!60!black, fill=green!25,
+    line width=0.7pt, minimum width=2.3cm, minimum height=0.6cm, align=center, inner sep=2pt},
+  flowarrow/.style={->, >=stealth, thick, draw=green!60!black}
+]
+  \node[stepbox] (s1) {\textbf{1.} Байгууллага\\бүртгүүлэх};
+  \node[stepbox, right=of s1] (s2) {\textbf{2.} Бүтээгдэхүүн\\нэмэх};
+  \node[stepbox, right=of s2] (s3) {\textbf{3.} Захиалга\\хүлээн авах};
+  \node[stepbox, right=of s3] (s4) {\textbf{4.} Даалгавар\\нийтлэх};
+  \node[stepbox, below=0.5cm of s4] (s5) {\textbf{5.} Даалгавар\\claim};
+  \node[stepbox, left=of s5] (s6) {\textbf{6.} Хүргэлт\\гүйцэтгэх};
+  \node[stepbox, left=of s6] (s7) {\textbf{7.} ePOD OTP\\баталгаажуулалт};
+  \node[stepbox, left=of s7] (s8) {\textbf{8.} Орлого\\бүртгэх};
+  \draw[flowarrow] (s1) -- (s2);
+  \draw[flowarrow] (s2) -- (s3);
+  \draw[flowarrow] (s3) -- (s4);
+  \draw[flowarrow] (s4.south) -- (s5.north);
+  \draw[flowarrow] (s5) -- (s6);
+  \draw[flowarrow] (s6) -- (s7);
+  \draw[flowarrow] (s7) -- (s8);
+\end{tikzpicture}
+}
+\caption{Системийн үндсэн урсгал: 8 алхамт үе шат}
+\label{fig:tovchlol_flow}
+\end{figure}
+
+\begin{multicols}{2}
+
+\textbf{Аюулгүй байдлын олон давхаргат хамгаалалт.} Системд 5 түвшний security давхарга хэрэгжсэн: (1) HTTPS/TLS сүлжээний шифрлэлт, (2) Supabase Auth + JWT, (3) Next.js middleware / Navigation guard, (4) database-level RLS бодлого (\texttt{org\_id}, \texttt{courier\_id}, \texttt{auth.uid()}), (5) \texttt{SECURITY DEFINER} RPC функц дэх бизнесийн дүрмийн шалгалт.
+
+\begin{table}[H]
+\centering
+\caption{Технологийн стекийн хураангуй}
+\label{tab:tovchlol_stack}
+\scriptsize
+\setlength{\tabcolsep}{2.5pt}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Давхарга} & \textbf{Технологи} \\ \hline
+Мобайл апп & React Native + Expo 54, TS 5.9 \\ \hline
+Веб апп & Next.js 16.1, React 19.2 \\ \hline
+Backend & Supabase (PostgreSQL 15+) \\ \hline
+Security & RLS, JWT, bcrypt ePOD OTP \\ \hline
+\end{tabular}
+\end{table}
+
+Туршилтын орчин: Supabase Pro tier, PostgreSQL 15.6, PgBouncer transaction pooling. Өгөгдлийн синтетик багц: 20 байгууллага, 200 хэрэглэгч, 1,000 захиалга, 1,000 даалгавар. Ашигласан хэрэгсэл: \texttt{@supabase/supabase-js}, \texttt{k6 0.54}, \texttt{psql} + \texttt{SET request.jwt.claims}.
+
+\noindent{\headingfont 4. Судалгааны үр дүн, нэгтгэсэн дүгнэлт}
+
+\textbf{Concurrency test.} $N \in \{10, 50, 100\}$ хүргэгч нэг даалгаврыг зэрэг claim хийх 30 сорилын туршид \textbf{давхардсан claim нэг ч удаа гараагүй} (100\% амжилт). 100 зэрэгцээ хандалт 512~ms-д шийдэгдсэн нь O($n$) шугаман хэмжээтэй, deadlock-гүй pessimistic locking-ийн онолын хүлээгдсэн зан төлөвтэй нийцнэ.
+
+\textbf{Load test.} k6-аар 100 VU, 30 мин ачаалал өгөхөд бүх endpoint-ийн p95 latency 2 секундын зорилтот хязгаарт багтсан:
+\end{multicols}
+
+\begin{figure}[H]
+\centering
+\resizebox{0.85\columnwidth}{!}{%
+\begin{tikzpicture}
+\begin{axis}[
+    ybar,
+    bar width=11pt,
+    width=0.92\textwidth,
+    height=6.2cm,
+    enlarge x limits=0.12,
+    ymin=0, ymax=900,
+    ylabel={Хариу хугацаа (ms)},
+    symbolic x coords={available\_tasks,claim\_task,verify\_otp,orders,dashboard},
+    xtick=data,
+    x tick label style={font=\scriptsize, rotate=15, anchor=east},
+    ymajorgrids=true,
+    grid style={gray!30},
+    legend style={at={(0.5,-0.32)}, anchor=north, legend columns=3, font=\footnotesize},
+    ylabel style={font=\small},
+    tick label style={font=\footnotesize}
+]
+\addplot[fill=blue!40, draw=blue!60!black] coordinates {
+    (available\_tasks,145) (claim\_task,287) (verify\_otp,198) (orders,167) (dashboard,234)
+};
+\addplot[fill=orange!60, draw=orange!70!black] coordinates {
+    (available\_tasks,312) (claim\_task,621) (verify\_otp,287) (orders,389) (dashboard,567)
+};
+\addplot[fill=red!50, draw=red!70!black] coordinates {
+    (available\_tasks,456) (claim\_task,834) (verify\_otp,345) (orders,512) (dashboard,789)
+};
+\legend{p50, p95, p99}
+\end{axis}
+\end{tikzpicture}
+}
+\caption{k6 load test — endpoint latency хуваарилалт (100 VU, 30 мин)}
+\label{fig:tovchlol_latency}
+\end{figure}
+
+\begin{multicols*}{2}
+
+\textbf{Security penetration test.} Org~A хэрэглэгчийн JWT-ээр Org~B-гийн өгөгдөлд хандах 6 хувилбар (cross-tenant SELECT/UPDATE, SQL injection, pending courier access, JWT forgery) бүгд амжилтгүй болсон (6/6). OTP brute-force туршилтад 5 дахь алдаатай оролдлогын дараа сесс блоклогдож, brute-force амжилтын онолын магадлал $5 \times 10^{-4}\%$ болж буурсан.
+
+\textbf{Functional E2E.} Байгууллагын бүртгэл → бүтээгдэхүүн нэмэх → захиалга → даалгавар нийтлэх → хүргэгч claim → pickup → delivery → ePOD OTP → орлого бүртгэл гэсэн 8 алхамт урсгал зөв дарааллаар биелэв. Timestamp invariant (\texttt{assigned\_at} < \texttt{picked\_up\_at} < \texttt{delivered\_at} < \texttt{completed\_at}) зөрөлгүй, хүргэлтийн орлого автомат бүртгэгдсэн.
+
+\begin{table}[H]
+\centering
+\caption{Харьцуулсан үнэлгээний хураангуй}
+\label{tab:tovchlol_comparison}
+\scriptsize
+\begin{tabular}{|l|c|}
+\hline
+\textbf{Платформ} & \textbf{Чадамжийн хувь} \\ \hline
+Uber Freight & $\sim$35--40\% \\ \hline
+Papa Logistics & $\sim$70--75\% \\ \hline
+\end{tabular}
+\end{table}
+
+\textbf{Хязгаарлалт.} Туршилт нь Supabase Pro tier-ийн нөөцийн хязгаарт, 100 VU хүртэлх concurrent ачаалалд, synthetic өгөгдөл дээр, single-region тохиргоонд явагдсан. 500+ VU, multi-region, 3G/4G сүлжээний нөхцөл үнэлэгдээгүй. Бодит GPS tracking, QPay/SocialPay төлбөрийн integration, ML recommendation нь future work-т үлдсэн.
+
+\textbf{Ерөнхий дүгнэлт.} Судалгааны гол дүгнэлт нь B2B хүргэлтийн платформын найдвартай байдлыг database түвшинд хэрэгжүүлсэн concurrency control (\texttt{FOR UPDATE SKIP LOCKED}) ба RLS гэсэн хоёр тулгуурт механизмд суурилан бүтээх боломжтойг туршилтын тоогоор нотолсон явдал юм. FCFS claim загвар, row-level isolation, bcrypt-д суурилсан ePOD OTP гэсэн гурван архитектурын шийдэл хамтдаа ажилласнаар multi-tenant орчинд race condition, cross-tenant access, OTP brute-force гэсэн гурван гол эрсдэлийг бодитоор шийдсэн.
+
+\noindent{\headingfont 5. Ном зүй}
+
+\small
+Судалгааны гол эх сурвалжууд:
+\begin{enumerate}
+    \itemsep=0pt
+    \item Chong, F., Carraro, G., \& Wolter, R. (2006). Multi-tenant data architecture.
+    \item Bezemer, C.-P., \& Zaidman, A. (2010). Multi-tenant SaaS applications: Maintenance dream or nightmare?
+    \item Ferraiolo, D. F., \& Kuhn, D. R. (1992). Role-based access controls.
+    \item Bernstein, P. A., Hadzilacos, V., \& Goodman, N. (1987). Concurrency Control and Recovery in Database Systems.
+    \item Kleppmann, M. (2017). Designing Data-Intensive Applications. O'Reilly.
+    \item Provos, N., \& Mazi\`eres, D. (1999). A future-adaptable password scheme (bcrypt).
+    \item Jones, M., Bradley, J., \& Sakimura, N. (2015). JSON Web Token (RFC 7519).
+    \item Baldini, I., et al. (2017). Serverless computing: Current trends and open problems.
+    \item Rochet, J.-C., \& Tirole, J. (2003). Platform competition in two-sided markets.
+    \item Alnaggar, A., et al. (2021). Crowdsourced delivery: A review.
+\end{enumerate}
+\normalsize
+
+\end{multicols*}

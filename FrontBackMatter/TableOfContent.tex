@@ -2,8 +2,27 @@
 %	TABLE OF CONTENTS
 %-------------------------------------------------------------------------------
 
-\phantomsection % Ensures hyperref links to the correct page
-\addcontentsline{toc}{section}{\contentsname} % Adds "Гарчиг" to the ToC itself
+\renewcommand{\contentsname}{Гарчиг}
+
+\phantomsection
+\addcontentsline{toc}{section}{Гарчиг}
 \tableofcontents
 
 \vfill
+\clearpage
+
+%-------------------------------------------------------------------------------
+%	ЗУРГИЙН ЖАГСААЛТ
+%-------------------------------------------------------------------------------
+\phantomsection
+\addcontentsline{toc}{section}{Зургийн жагсаалт}
+\listoffigures
+\clearpage
+
+%-------------------------------------------------------------------------------
+%	ХҮСНЭГТИЙН ЖАГСААЛТ
+%-------------------------------------------------------------------------------
+\phantomsection
+\addcontentsline{toc}{section}{Хүснэгтийн жагсаалт}
+\listoftables
+\clearpage

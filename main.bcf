@@ -96,15 +96,15 @@
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>maxbibnames</bcf:key>
-      <bcf:value>3</bcf:value>
+      <bcf:value>6</bcf:value>
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>maxcitenames</bcf:key>
-      <bcf:value>3</bcf:value>
+      <bcf:value>2</bcf:value>
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>maxsortnames</bcf:key>
-      <bcf:value>3</bcf:value>
+      <bcf:value>6</bcf:value>
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>maxitems</bcf:key>
@@ -331,15 +331,15 @@
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>maxbibnames</bcf:key>
-      <bcf:value>3</bcf:value>
+      <bcf:value>6</bcf:value>
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>maxcitenames</bcf:key>
-      <bcf:value>3</bcf:value>
+      <bcf:value>2</bcf:value>
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>maxsortnames</bcf:key>
-      <bcf:value>3</bcf:value>
+      <bcf:value>6</bcf:value>
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>maxitems</bcf:key>
@@ -643,6 +643,7 @@
     <bcf:option datatype="boolean">eprint</bcf:option>
     <bcf:option datatype="boolean">related</bcf:option>
     <bcf:option datatype="boolean">subentry</bcf:option>
+    <bcf:option datatype="boolean">dashed</bcf:option>
     <bcf:option datatype="boolean">bibtexcaseprotection</bcf:option>
     <bcf:option datatype="integer">mincrossrefs</bcf:option>
     <bcf:option datatype="integer">minxrefs</bcf:option>
@@ -2372,12 +2373,72 @@
     <bcf:datasource type="file" datatype="bibtex" glob="false">references.bib</bcf:datasource>
   </bcf:bibdata>
   <bcf:section number="0">
-    <bcf:citekey order="1" intorder="1">chopra2019supply</bcf:citekey>
-    <bcf:citekey order="2" intorder="1">grandview2023</bcf:citekey>
-    <bcf:citekey order="3" intorder="1">nso2023</bcf:citekey>
-    <bcf:citekey order="4" intorder="1">toth2014vehicle</bcf:citekey>
-    <bcf:citekey order="5" intorder="1">wang2016bigdata</bcf:citekey>
-    <bcf:citekey order="6" intorder="1">greenlogistics2020</bcf:citekey>
+    <bcf:citekey order="1" intorder="1">nso2023</bcf:citekey>
+    <bcf:citekey order="2" intorder="1">mckinsey2021delivery</bcf:citekey>
+    <bcf:citekey order="2" intorder="2">grandview2023</bcf:citekey>
+    <bcf:citekey order="3" intorder="1">wang2016bigdata</bcf:citekey>
+    <bcf:citekey order="4" intorder="1">savelsbergh2016city</bcf:citekey>
+    <bcf:citekey order="4" intorder="2">lim2018lastmile</bcf:citekey>
+    <bcf:citekey order="5" intorder="1">chopra2019supply</bcf:citekey>
+    <bcf:citekey order="5" intorder="2">mckinnon2015greenlogistics</bcf:citekey>
+    <bcf:citekey order="6" intorder="1">rouges2014crowdsourcing</bcf:citekey>
+    <bcf:citekey order="7" intorder="1">alnaggar2021crowdsourced</bcf:citekey>
+    <bcf:citekey order="8" intorder="1">mancini2022bundle</bcf:citekey>
+    <bcf:citekey order="9" intorder="1">rochet2003platform</bcf:citekey>
+    <bcf:citekey order="10" intorder="1">parker2016platform</bcf:citekey>
+    <bcf:citekey order="10" intorder="2">evans2016matchmakers</bcf:citekey>
+    <bcf:citekey order="11" intorder="1">chong2006multitenant</bcf:citekey>
+    <bcf:citekey order="12" intorder="1">bezemer2010multitenant</bcf:citekey>
+    <bcf:citekey order="13" intorder="1">postgresql2024rowsecurity</bcf:citekey>
+    <bcf:citekey order="14" intorder="1">ferraiolo1992rbac</bcf:citekey>
+    <bcf:citekey order="15" intorder="1">bernstein1987concurrency</bcf:citekey>
+    <bcf:citekey order="16" intorder="1">kleppmann2017ddia</bcf:citekey>
+    <bcf:citekey order="17" intorder="1">postgresql2024locking</bcf:citekey>
+    <bcf:citekey order="18" intorder="1">kleppmann2017ddia</bcf:citekey>
+    <bcf:citekey order="19" intorder="1">baldini2017serverless</bcf:citekey>
+    <bcf:citekey order="20" intorder="1">adzic2017serverless</bcf:citekey>
+    <bcf:citekey order="21" intorder="1">jonas2019berkeleyserverless</bcf:citekey>
+    <bcf:citekey order="22" intorder="1">rouges2014crowdsourcing</bcf:citekey>
+    <bcf:citekey order="23" intorder="1">lim2018lastmile</bcf:citekey>
+    <bcf:citekey order="24" intorder="1">alnaggar2021crowdsourced</bcf:citekey>
+    <bcf:citekey order="25" intorder="1">rochet2003platform</bcf:citekey>
+    <bcf:citekey order="26" intorder="1">parker2016platform</bcf:citekey>
+    <bcf:citekey order="27" intorder="1">evans2016matchmakers</bcf:citekey>
+    <bcf:citekey order="28" intorder="1">chong2006multitenant</bcf:citekey>
+    <bcf:citekey order="29" intorder="1">bezemer2010multitenant</bcf:citekey>
+    <bcf:citekey order="30" intorder="1">postgresql2024rowsecurity</bcf:citekey>
+    <bcf:citekey order="31" intorder="1">ferraiolo1992rbac</bcf:citekey>
+    <bcf:citekey order="32" intorder="1">provos1999bcrypt</bcf:citekey>
+    <bcf:citekey order="33" intorder="1">jones2015jwt</bcf:citekey>
+    <bcf:citekey order="34" intorder="1">owasp2024authcheatsheet</bcf:citekey>
+    <bcf:citekey order="35" intorder="1">bernstein1987concurrency</bcf:citekey>
+    <bcf:citekey order="36" intorder="1">kleppmann2017ddia</bcf:citekey>
+    <bcf:citekey order="37" intorder="1">postgresql2024locking</bcf:citekey>
+    <bcf:citekey order="38" intorder="1">baldini2017serverless</bcf:citekey>
+    <bcf:citekey order="39" intorder="1">adzic2017serverless</bcf:citekey>
+    <bcf:citekey order="40" intorder="1">jonas2019berkeleyserverless</bcf:citekey>
+    <bcf:citekey order="41" intorder="1">uberfreight2023blog</bcf:citekey>
+    <bcf:citekey order="42" intorder="1">parker2016platform</bcf:citekey>
+    <bcf:citekey order="43" intorder="1">papalogistics2024</bcf:citekey>
+    <bcf:citekey order="44" intorder="1">bernstein1987concurrency</bcf:citekey>
+    <bcf:citekey order="45" intorder="1">kleppmann2017ddia</bcf:citekey>
+    <bcf:citekey order="46" intorder="1">bezemer2010multitenant</bcf:citekey>
+    <bcf:citekey order="47" intorder="1">ferraiolo1992rbac</bcf:citekey>
+    <bcf:citekey order="48" intorder="1">jones2015jwt</bcf:citekey>
+    <bcf:citekey order="49" intorder="1">agile2001manifesto</bcf:citekey>
+    <bcf:citekey order="50" intorder="1">baldini2017serverless</bcf:citekey>
+    <bcf:citekey order="50" intorder="2">adzic2017serverless</bcf:citekey>
+    <bcf:citekey order="51" intorder="1">jonas2019berkeleyserverless</bcf:citekey>
+    <bcf:citekey order="52" intorder="1">fowler2003evolutionary</bcf:citekey>
+    <bcf:citekey order="53" intorder="1">react_native</bcf:citekey>
+    <bcf:citekey order="54" intorder="1">postgresql2024locking</bcf:citekey>
+    <bcf:citekey order="54" intorder="2">kleppmann2017ddia</bcf:citekey>
+    <bcf:citekey order="55" intorder="1">k6docs</bcf:citekey>
+    <bcf:citekey order="56" intorder="1">bernstein1987concurrency</bcf:citekey>
+    <bcf:citekey order="56" intorder="2">kleppmann2017ddia</bcf:citekey>
+    <bcf:citekey order="57" intorder="1">provos1999bcrypt</bcf:citekey>
+    <bcf:citekey order="58" intorder="1">owasp2024authcheatsheet</bcf:citekey>
+    <bcf:citekey order="59" intorder="1">jones2015jwt</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="none">

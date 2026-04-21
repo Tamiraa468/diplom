@@ -1,0 +1,22 @@
+\babel@toc {english}{}\relax 
+\contentsline {section}{Хураангуй}{i}{Doc-Start}%
+\contentsline {section}{Товчлолын жагсаалт}{ii}{section*.1}%
+\contentsline {section}{\numberline {1}Удиртгал}{1}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Үндэслэл, ач холбогдол}{1}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Зорилго, зорилт}{1}{subsection.1.2}%
+\contentsline {section}{\numberline {2}Судалгааны сэдвийн онол, өнөөгийн байдал}{3}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Онол, арга зүй, технологийн үндэс}{3}{subsection.2.1}%
+\contentsline {subsubsection}{\numberline {2.1.1}Last-mile логистик ба crowdsourced хүргэлтийн загвар}{3}{subsubsection.2.1.1}%
+\contentsline {subsubsection}{\numberline {2.1.2}Платформ эдийн засаг ба олон талт зах зээл}{4}{subsubsection.2.1.2}%
+\contentsline {subsubsection}{\numberline {2.1.3}Multi-tenant системийн өгөгдлийн аюулгүй байдал}{4}{subsubsection.2.1.3}%
+\contentsline {subsection}{\numberline {2.2}Related work ба холбогдох судалгаанууд}{4}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Ижил төрлийн системүүдийн судалгаа ба харьцуулалт}{4}{subsection.2.3}%
+\contentsline {subsubsection}{\numberline {2.3.1}Олон улсын платформуудын case study}{5}{subsubsection.2.3.1}%
+\contentsline {subsubsection}{\numberline {2.3.2}Монгол Улсын платформуудын case study}{5}{subsubsection.2.3.2}%
+\contentsline {subsubsection}{\numberline {2.3.3}Архитектурын хязгаарлалтын шинжилгээ}{5}{subsubsection.2.3.3}%
+\contentsline {paragraph}{Dispatcher bottleneck}{5}{section*.5}%
+\contentsline {paragraph}{Data isolation limitation}{5}{section*.6}%
+\contentsline {paragraph}{Traceability limitation}{5}{section*.7}%
+\contentsline {paragraph}{Integration limitation}{5}{section*.8}%
+\contentsline {subsubsection}{\numberline {2.3.4}Gap analysis ба дизайн шаардлагууд}{6}{subsubsection.2.3.4}%
+\contentsline {subsubsection}{\numberline {2.3.5}Судалгааны системийн байршуулалт}{6}{subsubsection.2.3.5}%
