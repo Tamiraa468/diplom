@@ -1,0 +1,52 @@
+%--- FrontBackMatter/CoverPage.tex ---
+\begin{titlepage}
+
+\raggedright
+
+\noindent\begin{minipage}{0.15\textwidth}
+\vspace{-24mm}
+\IfFileExists{Figures/logo.png}{%
+  \includegraphics[width=\linewidth]{Figures/logo}
+}{}
+\end{minipage}
+\hfill
+\begin{minipage}{0.8\textwidth}
+\centering
+\vspace{-24mm}
+\textbf{\Large\MakeUppercase{\univname}}\\[1.2mm]
+\textbf{\Large\MakeUppercase{\deptname}}\\
+\end{minipage}
+\noindent
+
+\vspace{18mm}
+\raggedleft
+\text{ Оюутны код: }\authorcode\\
+\text{ Оюутны овог нэр: }\authorlong\\
+
+\vspace{48mm}
+\centering
+{\linespread{1.08}\selectfont\textbf{\Large \parbox{0.95\textwidth}{\centering \MakeUppercase{\ttitle}}}\\[2.5mm]}
+\normalsize /ДЭД БАКАЛАВРЫН ТӨГСӨЛТИЙН СУДАЛГААНЫ АЖИЛ/\\
+
+\vspace{20mm}
+\begin{center}
+\begin{minipage}{0.25\textwidth}
+Удирдагч багш\\[1.5mm]
+Гүйцэтгэсэн оюутан
+\end{minipage}
+\hspace{0.5cm}
+\begin{minipage}{0.3\textwidth}
+\raggedleft
+/\supervisor, Магистр/\\[1.5mm]
+/\authorcode, \authorshort/
+\end{minipage}
+\end{center}
+
+\vspace{75mm}
+
+\begin{center}
+ Улаанбаатар хот \\
+ \submitdate \hspace{1pt} он
+\end{center}
+
+\end{titlepage}

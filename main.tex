@@ -1,12 +1,11 @@
 % Modular main.tex: includes front-matter files from FrontBackMatter/
 \documentclass[11pt,a4paper,oneside]{article}
 
-\usepackage[utf8]{inputenc}
-\usepackage[T1,T2A]{fontenc}
 \usepackage[mongolian,english]{babel}
 
-% Times New Roman фонт (бие)
-\usepackage{times}
+% Times New Roman фонт (бие) — XeLaTeX + fontspec
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
 
 % ============================================================
 % Geometry - ТСА-ын албан шаардлагын дагуу
@@ -154,24 +153,24 @@
 % Times нь T2A кириллийн bold хувилбар дэмждэггүй тул зөвхөн гарчгуудад
 % PT Serif bold-ыг түр сэлгэж хэрэглэнэ. Биеийн текст Times хэвээр.
 \usepackage{titlesec}
-\newcommand{\headingfont}{\fontfamily{PTSerif-TLF}\selectfont\bfseries}
+\newcommand{\headingfont}{\bfseries}
 \titleformat{\section}{\headingfont\Large}{\thesection}{1em}{}
 \titleformat{\subsection}{\headingfont\large}{\thesubsection}{1em}{}
 \titleformat{\subsubsection}{\headingfont\normalsize}{\thesubsubsection}{1em}{}
 
 % TOC дотор ч адил зөвхөн bold хэрэгтэй газарт PTSerif ашиглана
-\renewcommand{\cftsecfont}{\fontfamily{PTSerif-TLF}\selectfont\bfseries}
-\renewcommand{\cftsecpagefont}{\fontfamily{PTSerif-TLF}\selectfont\bfseries}
+\renewcommand{\cftsecfont}{\bfseries}
+\renewcommand{\cftsecpagefont}{\bfseries}
 
 % Preamble metadata
 \newcommand{\univname}{Шинэ Монгол Технологийн Коллеж}
 \newcommand{\deptname}{Компьютерын ухааны тэнхим}
-\newcommand{\ttitle}{Байгууллагын бүтээгдэхүүн хүргэлтийн нэгдсэн систем}
-\newcommand{\ttitleeng}{Unified B2B Product Delivery System}
+\newcommand{\ttitle}{``Crowdsource'' хүргэлтийн нэгдсэн систем}
+\newcommand{\ttitleeng}{``Crowdsource'' integrated delivery system}
 \newcommand{\thesistype}{ДЭД БАКАЛАВРЫН ТӨГСӨЛТИЙН СУДАЛГААНЫ АЖИЛ}
 
 \newcommand{\authorshort}{Ү. Тамир}
-\newcommand{\authorlong}{Үдэлгомбо Тамир}
+\newcommand{\authorlong}{Үдэлгомбо ТАМИР}
 \newcommand{\authorcode}{s21c011b}
 \newcommand{\authoremail}{s21c011b@nmct.edu.mn}
 \newcommand{\authorphone}{89475188}
@@ -209,6 +208,7 @@
 
 \pagenumbering{roman}
 
+\include{FrontBackMatter/CoverPage}
 \include{FrontBackMatter/TitlePage}
 \include{FrontBackMatter/Abstract}
 \include{FrontBackMatter/Abbreviation}
@@ -236,8 +236,8 @@
 \printbibliography[title={Ном зүй}]
 
 %===============================================================================
-% Товчлол (Summary) — two-column condensed thesis summary at the very end
+% Товчлол (Summary) — тусдаа PDF болгон Summary_Standalone.tex-д шилжүүлэв
+% Compile тусад нь: xelatex Summary_Standalone.tex
 %===============================================================================
-\include{FrontBackMatter/Summary}
 
 \end{document}

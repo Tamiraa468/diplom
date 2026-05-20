@@ -1,0 +1,117 @@
+% =============================================================================
+% Summary_Standalone.tex
+% Дипломын ажлын ТОВЧЛОЛ-ыг тусдаа PDF болгон гаргах standalone document
+% Compile: xelatex Summary_Standalone.tex
+% =============================================================================
+\documentclass[11pt,a4paper,oneside]{article}
+
+\usepackage[mongolian,english]{babel}
+
+% Times New Roman фонт — XeLaTeX + fontspec
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
+
+% ============================================================
+% Geometry — main.tex-тэй ижил тохиргоо
+% ============================================================
+\usepackage{geometry}
+\geometry{
+  a4paper,
+  left=3.0cm,
+  right=1.5cm,
+  top=2.0cm,
+  bottom=2.0cm,
+  headheight=14pt,
+  headsep=10pt,
+  footskip=25pt,
+  includeheadfoot=false
+}
+
+\usepackage{setspace}
+\setstretch{1.15}
+\setlength{\parskip}{6pt}
+\setlength{\parindent}{0pt}
+
+\tolerance=1000
+\emergencystretch=3em
+\hyphenpenalty=50
+\hbadness=10000
+
+% Графикс, math, хүснэгт
+\usepackage{graphicx,amsmath,amssymb,booktabs,caption,subcaption}
+\usepackage{array,multirow,longtable}
+\usepackage{multicol}
+\usepackage{xcolor,colortbl}
+\usepackage{float}
+
+% TikZ диаграмд зориулсан
+\usepackage{tikz}
+\usetikzlibrary{shapes,shapes.multipart,arrows,arrows.meta,positioning,fit,calc,shadows,backgrounds}
+
+% PGFPlots — баганан график
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+% Hyperlinks
+\usepackage[
+    colorlinks=true,
+    linkcolor=black,
+    citecolor=black,
+    filecolor=black,
+    urlcolor=black,
+    pdfborder={0 0 0}
+]{hyperref}
+
+\usepackage{fancyhdr}
+
+% Гарчгийн фонт
+\usepackage{titlesec}
+\newcommand{\headingfont}{\bfseries}
+\titleformat{\section}{\headingfont\Large}{\thesection}{1em}{}
+\titleformat{\subsection}{\headingfont\large}{\thesubsection}{1em}{}
+
+% =============================================================================
+% Preamble metadata — main.tex-ийн утгуудыг хуулсан
+% =============================================================================
+\newcommand{\univname}{Шинэ Монгол Технологийн Коллеж}
+\newcommand{\deptname}{Компьютерын ухааны тэнхим}
+\newcommand{\ttitle}{Байгууллагын бүтээгдэхүүн хүргэлтийн нэгдсэн систем}
+\newcommand{\ttitleeng}{Unified B2B Product Delivery System}
+
+\newcommand{\authorshort}{Ү. Тамир}
+\newcommand{\authorlong}{Үдэлгомбо ТАМИР}
+\newcommand{\authorcode}{s21c011b}
+
+\newcommand{\supervisor}{Н.Соронзонболд}
+
+% \addchaptertocentry-г энгийн TOC оруулга болгож тодорхойлно
+\newcommand{\addchaptertocentry}[1]{\addcontentsline{toc}{section}{#1}}
+
+% Caption-ы нэрсийг монголоор
+\captionsetup[figure]{name=Зураг, font=small, labelfont=bf, justification=centering}
+\captionsetup[table]{name=Хүснэгт, font=small, labelfont=bf, justification=centering}
+
+% =============================================================================
+% Header / Footer — тусдаа дугаарлалт
+% Standalone хувилбарт хуудсыг 1-ээс эхлүүлнэ
+% =============================================================================
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\footnotesize \ttitle}
+\fancyhead[R]{\footnotesize \authorlong}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0.5pt}
+
+% =============================================================================
+% Document
+% =============================================================================
+\begin{document}
+
+% Тусдаа дугаарлалт — Арабын тоогоор 1-ээс эхэлнэ
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\include{FrontBackMatter/Summary}
+
+\end{document}
